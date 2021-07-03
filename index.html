@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload image</title>
+</head>
+<body style="background-color: black;min-height: 100vh;color: white;">
+    <center>
+        <h1>Form</h1>
+    
+        <form action="/profile" method="post" enctype="multipart/form-data">
+            <input type="file" name="avatar" />
+            <button type="submit">Submit</button>
+        </form>
+       
+    </center>
+    <script>
+        let list = null;
+        let id = 0;
+        const center = document.querySelector("center")
+       
+        fetch("http://localhost:8080/api/images")
+        .then((res)=> res.json())
+        .then((data) => {
+            list = data
+            list.forEach(element => {
+                id++
+                let a = document.createElement("a")
+                a.setAttribute("href",element.url)
+                a.innerText = `Image ${id}`
+                center.appendChild(a)
+            });
+        })
+    </script>
+</body>
+</html>
