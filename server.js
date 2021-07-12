@@ -80,25 +80,25 @@ app.get("/delete/:key", async (req, res) => {
 
 app.post('/profile', upload.single('avatar'), async (req, res, next) => {
     const file = req.file
-    console.log(file.path);
+    console.log(file);
     sharp(file.path)
         .rotate()
         .resize(550)
         .jpeg({ mozjpeg: true })
-        .toFile('upload/resize.jpeg')
+        .toFile(`upload/resize.jpeg`)
         .then(async (data) => {
             console.log(data);
-            const result = await uploadFile(data).catch((err) => console.log(err))
-            const url = `http://localhost:8080/images/resizedd`;
+            const result = await uploadFile(file).catch((err) => console.log(err))
+            const url = `https://doge-memes.com/images/${file.filename}`;
             const picture = new Image({ url: url });
             picture.save((err, picture) => {
                 if (err) return console.error(err);
                 console.log("Saved: " + picture)
             });
-            await unlinkFile('upload/resize.jpeg');
             await unlinkFile(file.path);
+            await unlinkFile('upload/resize.jpeg');
             console.log(result);
-            res.send("File uploaded!")
+            res.redirect("/")
         })
 })
 
