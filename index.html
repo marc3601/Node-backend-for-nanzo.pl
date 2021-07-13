@@ -10,8 +10,11 @@
     <center>
         <h1>Form</h1>
     
-        <form action="/profile" method="post" enctype="multipart/form-data">
-            <input type="file" name="avatar" />
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" />
+            <input type="text" name="title" id="title">
+            <textarea type="text" name="description" id="description" cols="30" rows="10"></textarea>
+
             <button type="submit">Submit</button>
         </form>
        
