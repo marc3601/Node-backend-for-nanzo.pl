@@ -32,7 +32,12 @@ db.once('open', function () {
     console.log("Database connected");
 });
 const imageSchema = new mongoose.Schema({
-    url: String
+    url: String,
+    width: Number,
+    height: Number,
+    description: String,
+    title: String,
+    urlParam: String
 });
 const Image = mongoose.model('Image', imageSchema);
 
@@ -66,21 +71,10 @@ app.get("/images/:key", (req, res) => {
     }
 })
 
-app.get("/delete/:key", async (req, res) => {
-    const key = req.params.key
-    const removeFiles = await deleteFiles(key).catch((err) => {
-        res.send(err)
-    });
-    console.log(removeFiles.Deleted);
-    const removeEntry = await Image.findOneAndDelete({ url: key })
-    console.log(removeEntry);
-    res.send("File removed")
-
-})
-
-app.post('/profile', upload.single('avatar'), async (req, res, next) => {
+app.post('/upload', upload.single('image'), async (req, res, next) => {
     const file = req.file
-    console.log(file);
+    const title = req.body.title
+    const description = req.body.description
     sharp(file.path)
         .rotate()
         .resize(550)
@@ -89,8 +83,8 @@ app.post('/profile', upload.single('avatar'), async (req, res, next) => {
         .then(async (data) => {
             console.log(data);
             const result = await uploadFile(file).catch((err) => console.log(err))
-            const url = `https://doge-memes.com/images/${file.filename}`;
-            const picture = new Image({ url: url });
+            const url = `http://localhost:8080/images/${file.filename}`;
+            const picture = new Image({ url: url, width: data.width, height: data.height, description: description, title: title, urlParam: file.filename });
             picture.save((err, picture) => {
                 if (err) return console.error(err);
                 console.log("Saved: " + picture)
