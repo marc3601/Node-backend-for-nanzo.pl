@@ -3,30 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Nowe ogloszenie</title>
     <style>
+   
         .form {
             display: flex;
             flex-direction: column;
-            width: 90vw;
+            max-width: 50vw;
             margin: 0 auto;
         }
+        @media screen and (max-width: 350px) {
+            .form {
+                max-width: 90vw;
+        }
+}
+
+       
     </style>
 </head>
 <body style="background-color: black;min-height: 100vh;color: white;">
     <center>
         <h1>Dodaj ogloszenie</h1>
-    
         <form class="form" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="image" />
-            <input placeholder="Podaj tytul" type="text" name="title" id="title">
-            <textarea placeholder="Wpisz opis" type="text" name="description" id="description" cols="30" rows="10"></textarea>
-
+            <label for="image">Wybierz zdjecia</label>
+            <input type="file" name="image" multiple required />
+            <input placeholder="Podaj tytul" type="text" name="title" id="title" required>
+            <input placeholder="Podaj cene" type="number" name="price" id="price" required>
+            <textarea placeholder="Wpisz opis" type="text" name="description" id="description" cols="30" rows="10" required></textarea>
             <button type="submit">Submit</button>
         </form>
-       
     </center>
-  
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const getTodoItems = async () => {
+        try {
+            const response = await axios.get(`https://doge-memes.com/api/auctions`);
+            const todoItems = response.data;
+            console.log(`GET: Here's the list of todos`, todoItems);
+            return todoItems;
+        } catch (errors) {
+            console.error(errors);
+        }
+            }
+
+    getTodoItems();
+    </script>
 </body>
 </html>

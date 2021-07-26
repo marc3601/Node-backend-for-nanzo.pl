@@ -5,14 +5,14 @@ const upload = multer({ dest: 'upload/' })
 const fs = require("fs")
 const util = require('util')
 const unlinkFile = util.promisify(fs.unlink)
-const app = express()
+const app = express();
+const { v4: uuidv4 } = require('uuid');
 const port = 8080
 const sharp = require('sharp');
 const cors = require('cors');
-
+const DIR = '/upload';
 app.use(cors());
 app.options('*', cors());
-
 process.on('uncaughtException', (error, origin) => {
     console.log('----- Uncaught exception -----')
     console.log(error)
@@ -26,44 +26,51 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log('----- Reason -----')
     console.log(reason)
 })
-
 // Database
-mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/images', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.log("Database connected");
 });
-const imageSchema = new mongoose.Schema({
-    url: String,
-    width: Number,
-    height: Number,
+const auctionSchema = new mongoose.Schema({
+    image: [
+        {
+            width: Number,
+            height: Number,
+            url: String
+        }
+    ],
     description: String,
     title: String,
-    urlParam: String
+    price: Number,
+    id: String
 });
-const Image = mongoose.model('Image', imageSchema);
-
-
-
-// Image.deleteMany((err, pictures) => {
+const Auction = mongoose.model('Auction', auctionSchema);
+//Multer configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, DIR);
+    },
+    filename: (req, file, cb) => {
+        const fileName = req.body.title;
+        cb(null, fileName)
+    }
+});
+// Auction.deleteMany((err, auctions) => {
 //     if (err) return console.error(err);
-//     console.log(pictures)
+//     console.log(auctions)
 // })
 const { uploadFile, getFileStream, deleteFiles } = require("./s3")
-
-
 app.get('/', (req, res) => {
     res.sendFile(__dirname + "/index.html")
 })
-
-app.get("/api/images", (req, res) => {
-    Image.find((err, pictures) => {
+app.get("/api/auctions", (req, res) => {
+    Auction.find((err, auctions) => {
         if (err) return console.error(err);
-        res.send(pictures)
+        res.send(auctions)
     })
 })
-
 app.get("/images/:key", (req, res) => {
     const key = req.params.key
     try {
@@ -73,32 +80,50 @@ app.get("/images/:key", (req, res) => {
         res.sendStatus(404)
     }
 })
-
-app.post('/upload', upload.single('image'), async (req, res, next) => {
-    const file = req.file
-    const title = req.body.title
-    const description = req.body.description
-    sharp(file.path)
-        .rotate()
-        .resize(550)
-        .jpeg({ mozjpeg: true })
-        .toFile(`upload/resize.jpeg`)
-        .then(async (data) => {
-            console.log(data);
-            const result = await uploadFile(file).catch((err) => console.log(err))
-            const url = `http://localhost:8080/images/${file.filename}`;
-            const picture = new Image({ url: url, width: data.width, height: data.height, description: description, title: title, urlParam: file.filename });
-            picture.save((err, picture) => {
-                if (err) return console.error(err);
-                console.log("Saved: " + picture)
-            });
-            await unlinkFile(file.path);
-            await unlinkFile('upload/resize.jpeg');
-            console.log(result);
-            res.redirect("/")
-        })
+app.post('/upload', upload.array("image", 6), async (req, res, next) => {
+    if (req.files.length !== 0) {
+        const title = req.body.title
+        const description = req.body.description
+        const price = req.body.price
+        let image = [];
+        const handleImageResizing = async (req) => {
+            if (!req.files) return next();
+            await Promise.all(
+                req.files.map(async (item, id) => {
+                    await sharp(item.path)
+                        .rotate()
+                        .resize(550)
+                        .jpeg({ mozjpeg: true })
+                        .toFile(`upload/result${id}.jpeg`)
+                        .then(async (data) => {
+                            const result = await uploadFile(`upload/result${id}.jpeg`, item).catch((err) => console.log(err))
+                            const url = `https://doge-memes.com/images/${item.filename}`;
+                            image.push({
+                                width: data.width,
+                                height: data.height,
+                                url: url
+                            })
+                            await unlinkFile(item.path);
+                            await unlinkFile(`upload/result${id}.jpeg`);
+                        })
+                })
+            ).then(() => {
+                const auction = new Auction({ image: image, description: description, title: title, price: price, id: uuidv4() });
+                auction.save((err, auction) => {
+                    if (err) return console.error(err);
+                    console.log("Saved: " + auction)
+                });
+                image = [];
+            }).catch((err) => {
+                res.send("Wystapil blad serwera")
+            })
+        }
+        handleImageResizing(req)
+        res.redirect("/")
+    } else {
+        res.send("Wybierz pliki do wgrania")
+    }
 })
-
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
