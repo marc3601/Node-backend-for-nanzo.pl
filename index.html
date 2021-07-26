@@ -4,38 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload image</title>
+    <title>Nowe ogloszenie</title>
+    <style>
+        .form {
+            display: flex;
+            flex-direction: column;
+            width: 90vw;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body style="background-color: black;min-height: 100vh;color: white;">
     <center>
-        <h1>Form</h1>
+        <h1>Dodaj ogloszenie</h1>
     
-        <form action="/upload" method="post" enctype="multipart/form-data">
+        <form class="form" action="/upload" method="post" enctype="multipart/form-data">
             <input type="file" name="image" />
-            <input type="text" name="title" id="title">
-            <textarea type="text" name="description" id="description" cols="30" rows="10"></textarea>
+            <input placeholder="Podaj tytul" type="text" name="title" id="title">
+            <textarea placeholder="Wpisz opis" type="text" name="description" id="description" cols="30" rows="10"></textarea>
 
             <button type="submit">Submit</button>
         </form>
        
     </center>
-    <script>
-        let list = null;
-        let id = 0;
-        const center = document.querySelector("center")
-       
-        fetch("http://localhost:8080/api/images")
-        .then((res)=> res.json())
-        .then((data) => {
-            list = data
-            list.forEach(element => {
-                id++
-                let a = document.createElement("a")
-                a.setAttribute("href",element.url)
-                a.innerText = `Image ${id}`
-                center.appendChild(a)
-            });
-        })
-    </script>
+  
 </body>
 </html>
