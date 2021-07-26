@@ -8,8 +8,11 @@ const unlinkFile = util.promisify(fs.unlink)
 const app = express()
 const port = 8080
 const sharp = require('sharp');
+const cors = require('cors');
 
-console.log(process.env.HOST);
+app.use(cors());
+app.options('*', cors());
+
 process.on('uncaughtException', (error, origin) => {
     console.log('----- Uncaught exception -----')
     console.log(error)
