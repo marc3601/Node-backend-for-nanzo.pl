@@ -12,8 +12,8 @@ const s3 = new S3({
     secretAccessKey
 })
 
-function uploadFile(file) {
-    const fileStream = fs.createReadStream(`upload/resize.jpeg`)
+function uploadFile(path, file) {
+    const fileStream = fs.createReadStream(path)
 
     const uploadParams = {
         Bucket: bucketName,
