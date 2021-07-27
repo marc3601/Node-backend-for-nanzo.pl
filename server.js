@@ -82,6 +82,7 @@ app.get("/images/:key", (req, res) => {
 })
 app.post('/upload', upload.array("image", 6), async (req, res, next) => {
     if (req.files.length !== 0) {
+        console.log(req.files)
         const title = req.body.title
         const description = req.body.description
         const price = req.body.price
@@ -90,7 +91,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
             if (!req.files) return next();
             await Promise.all(
                 req.files.map(async (item, id) => {
-                    await sharp(item.path)
+                    await sharp(item.path, { failOnError: false })
                         .rotate()
                         .resize(550)
                         .jpeg({ mozjpeg: true })
@@ -114,12 +115,13 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                     console.log("Saved: " + auction)
                 });
                 image = [];
+                res.send("Pliki zostaly przeslane.")
+
             }).catch((err) => {
-                res.send("Wystapil blad serwera")
+                res.send("Blad przesylania")
             })
         }
         handleImageResizing(req)
-        res.redirect("/")
     } else {
         res.send("Wybierz pliki do wgrania")
     }
