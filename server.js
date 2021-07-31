@@ -66,10 +66,17 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + "/index.html")
 })
 app.get("/api/auctions", (req, res) => {
-    Auction.find((err, auctions) => {
-        if (err) return console.error(err);
-        res.send(auctions)
-    })
+    if (req.query.id) {
+        Auction.findOne({ id: req.query.id }, (err, auction) => {
+            if (err) return console.error(err);
+            res.send(auction)
+        });
+    } else {
+        Auction.find((err, auctions) => {
+            if (err) return console.error(err);
+            res.send(auctions)
+        })
+    }
 })
 app.get("/images/:key", (req, res) => {
     const key = req.params.key
