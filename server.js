@@ -67,9 +67,11 @@ app.get('/', (req, res) => {
 })
 app.get("/api/auctions", (req, res) => {
     if (req.query.id) {
+        const response = []
         Auction.findOne({ id: req.query.id }, (err, auction) => {
             if (err) return console.error(err);
-            res.send(auction)
+            response.push(auction);
+            res.send(response);
         });
     } else {
         Auction.find((err, auctions) => {
