@@ -13,11 +13,18 @@
             max-width: 50vw;
             margin: 0 auto;
         }
+        .images {
+            max-width: 50vw;
+        }
         @media screen and (max-width: 550px) {
             .form {
                 max-width: 90vw;
+            }
+            .images {
+                max-width: 90vw;
+            }
         }
-        }
+
 
     </style>
 </head>
@@ -33,6 +40,7 @@
             <button class="button" type="submit">Submit</button>
         </form>
         <h4 class="response"></h4>
+        <div class="images"></div>
     </center>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
@@ -46,6 +54,28 @@
         let totalSize = 0
         const config = {
             onUploadProgress: progressEvent => response.innerText = `${Math.round((progressEvent.loaded/totalSize)*100)} % przeslane` 
+        }
+
+        imagefile.onchange = (e) => {
+
+            const files = imagefile.files;
+            console.log(files);
+            const images = document.getElementsByTagName("img")
+                Array.from(images).forEach(image => {
+                    image.remove();
+                })
+            
+            if(files) {
+                Array.from(files).forEach((file) => {
+                    const imga = document.createElement("img");
+                    const url = URL.createObjectURL(file)
+                    imga.setAttribute("src", url);
+                    imga.setAttribute("style","width:100%;margin-top:10px")
+                    document.querySelector(".images").appendChild(imga)
+                })
+            }
+           
+             
         }
 
         imagefile.addEventListener("input", (e) => {
@@ -71,7 +101,8 @@
              }).then((res) => {
                  response.innerText = res.data
                  totalSize = 0;
-                })
+            }).catch(err => console.log(err))
+
         })
        
         const getTodoItems = async () => {
