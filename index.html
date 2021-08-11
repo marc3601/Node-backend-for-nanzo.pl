@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Nowe ogloszenie</title>
     <style>
@@ -57,9 +58,18 @@
         }
 
         imagefile.onchange = (e) => {
-
-            const files = imagefile.files;
-            console.log(files);
+            formData.delete('title');
+            formData.delete('price');
+            formData.delete('description');
+            formData.delete('image');
+            formData.append('title', title.value)
+            formData.append('price', price.value)
+            formData.append('description', description.value)
+            let files = [...e.target.files];
+            for (let item of files) {
+            formData.append('image', item)
+            }
+    
             const images = document.getElementsByTagName("img")
                 Array.from(images).forEach(image => {
                     image.remove();
@@ -78,22 +88,13 @@
              
         }
 
-        imagefile.addEventListener("input", (e) => {
-            let files = [...e.target.files];
-            for (let item of files) {
-            formData.append('image', item)
-            }
-        })
         button.addEventListener("click", (e) => {
             e.preventDefault();
            
             formData.getAll("image")?.forEach(element => {
                 totalSize += element.size;
             });
-
-            formData.append('title', title.value)
-            formData.append('price', price.value)
-            formData.append('description', description.value)
+           
             axios.post('/upload', formData, config, {
             headers: {
                 'Content-Type': 'multipart/form-data'
