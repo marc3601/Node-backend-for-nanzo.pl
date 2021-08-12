@@ -6,6 +6,7 @@
 
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Nowe ogloszenie</title>
+ 
     <style>
    
         .form {
@@ -16,13 +17,32 @@
         }
         .images {
             max-width: 50vw;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: repeat(auto-fill,100px);
+            grid-auto-rows: 10px;
+            justify-content: center;
         }
+        .card {
+                display: flex;
+                justify-content: center;
+                margin: 5px;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+                grid-row-end: span 11;
+            }
         @media screen and (max-width: 550px) {
             .form {
                 max-width: 90vw;
             }
             .images {
-                max-width: 90vw;
+                max-width: 95vw;
             }
         }
 
@@ -58,18 +78,16 @@
         }
 
         imagefile.onchange = (e) => {
-            formData.delete('title');
-            formData.delete('price');
-            formData.delete('description');
+        
             formData.delete('image');
-            formData.append('title', title.value)
-            formData.append('price', price.value)
-            formData.append('description', description.value)
             let files = [...e.target.files];
             for (let item of files) {
             formData.append('image', item)
             }
-    
+            const cards = document.getElementsByClassName("card")
+                Array.from(cards).forEach(card => {
+                    card.remove()
+                })
             const images = document.getElementsByTagName("img")
                 Array.from(images).forEach(image => {
                     image.remove();
@@ -77,20 +95,31 @@
             
             if(files) {
                 Array.from(files).forEach((file) => {
+                    const imgContainer = document.createElement("div");
                     const imga = document.createElement("img");
                     const url = URL.createObjectURL(file)
                     imga.setAttribute("src", url);
-                    imga.setAttribute("style","width:100%;margin-top:10px")
-                    document.querySelector(".images").appendChild(imga)
+                    document.querySelector(".images").appendChild(imgContainer)
+                    imgContainer.classList.add("card")
+                    imgContainer.appendChild(imga)
                 })
-            }
-           
-             
+            }  
+        }
+        title.onchange = (e) => {
+            formData.delete('title');
+            formData.append('title', title.value)
+        }
+        price.onchange = (e) => {
+            formData.delete('price');
+            formData.append('price', price.value)
+        }
+        desc.onchange = (e) => {
+            formData.delete('description');
+            formData.append('description', description.value)
         }
 
         button.addEventListener("click", (e) => {
             e.preventDefault();
-           
             formData.getAll("image")?.forEach(element => {
                 totalSize += element.size;
             });
