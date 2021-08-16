@@ -11,12 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            overflow: hidden;
+            overflow-x: hidden;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
-            min-height: 100vh;
+            min-height: 150vh;
             color: white;
             font-family: 'Poppins', sans-serif;
         }
@@ -157,6 +157,7 @@
         const desc = document.querySelector("#description")
         const response = document.querySelector(".response")
         const progress = document.getElementById("progress")
+
         const formData = new FormData();
         const dataTrans = new DataTransfer();
         let totalSize = 0
@@ -201,6 +202,7 @@
                 })
             }  
         }
+
         title.onchange = (e) => {
             formData.delete('title');
             formData.append('title', title.value)
@@ -214,8 +216,16 @@
             formData.append('description', description.value)
         }
 
+
         button.addEventListener("click", (e) => {
             e.preventDefault();
+            response.innerText = ""
+            progress.value = "0"
+            button.setAttribute("disabled", true)
+            imagefile.setAttribute("disabled", true)
+            title.setAttribute("disabled", true)
+            price.setAttribute("disabled", true)
+            desc.setAttribute("disabled", true)
             formData.getAll("image")?.forEach(element => {
                 totalSize += element.size;
             });
@@ -225,14 +235,24 @@
             }
              }).then((res) => {
                  response.innerText = res.data
-                 progress.value = "0"
                  totalSize = 0;
-                 setTimeout(() => {
-                    response.innerText = ""
-                 },3000)
-            }).catch(err => console.log(err))
+                 button.removeAttribute("disabled")
+                 imagefile.removeAttribute("disabled")
+                 title.removeAttribute("disabled")
+                 price.removeAttribute("disabled")
+                 desc.removeAttribute("disabled")
+            }).catch(err => {
+                console.log(err)
+                response.innerText = "Błąd. Spróbuj ponownie."
+                button.removeAttribute("disabled")
+                 imagefile.removeAttribute("disabled")
+                 title.removeAttribute("disabled")
+                 price.removeAttribute("disabled")
+                 desc.removeAttribute("disabled")
+            })
 
         })
+
     </script>
 </body>
 </html>
