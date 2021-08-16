@@ -3,17 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>Nowe ogloszenie</title>
- 
+    <meta name="theme-color" content="#d27303">
+    <title>Nowe ogłoszenie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-   
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+        center {
+            padding-top: 15px;
+        }
+        
+        progress::-webkit-progress-bar {background-color: rgb(255, 255, 255); width: 100%;}
+        progress {
+            background-color: rgb(255, 255, 255);
+            text-align: left;
+            width: 50vw;
+            margin-top: 15px;
+        }
+
+        /* value: */
+        progress::-webkit-progress-value {background-color: #d27303 !important;}
+        /* progress::-moz-progress-bar {background-color: #d27303 !important;} */
+        progress {color: #d27303;}
+
         .form {
             display: flex;
             flex-direction: column;
             max-width: 50vw;
             margin: 0 auto;
+        }
+        #files, #title, #price, #description {
+            margin-top: 10px;
+            padding: 5px;
+            outline: none;
+            border: none;
+        }
+
+        #title, #price, #description {
+            color: #ad3100;
+        }
+        #title, #price {
+            height: 25px;
+        }
+        input[type=file]::-webkit-input-placeholder {
+            color: white;
+            padding: 5px;
+        }
+        .response {
+            color: #ad3100;
         }
         .images {
             max-width: 50vw;
@@ -28,6 +76,39 @@
             grid-auto-rows: 10px;
             justify-content: center;
         }
+
+        input[type=file]::file-selector-button, button {
+            background-color: #ad3100;
+            color: white;
+            /* display: inline-flex; */
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 4px;
+            min-width: 36px;
+            height: 36px;
+            box-sizing: border-box;
+            padding: 0 8px;
+            margin: 15px;
+            position: relative;
+            font-family: "Roboto", "Noto", sans-serif;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            font-size: 14px;
+            line-height: 20px;
+            outline: none;
+            border: none;   
+        }
+        button {
+            width: 100%;
+            margin: 15px auto 0;
+        }
+       
         .card {
                 display: flex;
                 justify-content: center;
@@ -41,25 +122,29 @@
             .form {
                 max-width: 90vw;
             }
+            progress {
+                width: 90vw;
+            }
             .images {
-                max-width: 95vw;
+                max-width: 90vw;
             }
         }
 
 
     </style>
 </head>
-<body style="background-color: black;min-height: 100vh;color: white;">
+<body>
     <center>
-        <h1>Dodaj ogloszenie</h1>
+        <h1>Dodaj ogłoszenie</h1>
         <form  class="form" action="/upload" method="post" enctype="multipart/form-data">
             <label for="image">Wybierz zdjecia</label>
             <input type="file" name="image" multiple required id="files" />
             <input placeholder="Podaj tytul" type="text" name="title" id="title" required>
             <input placeholder="Podaj cene" type="number" name="price" id="price" required>
             <textarea placeholder="Wpisz opis" type="text" name="description" id="description" cols="30" rows="10" required></textarea>
-            <button class="button" type="submit">Submit</button>
+            <button class="button" type="submit">Prześlij</button>
         </form>
+        <progress id="progress" max="100"></progress>
         <h4 class="response"></h4>
         <div class="images"></div>
     </center>
@@ -71,14 +156,22 @@
         const price = document.querySelector("#price");
         const desc = document.querySelector("#description")
         const response = document.querySelector(".response")
+        const progress = document.getElementById("progress")
         const formData = new FormData();
+        const dataTrans = new DataTransfer();
         let totalSize = 0
         const config = {
-            onUploadProgress: progressEvent => response.innerText = `${Math.round((progressEvent.loaded/totalSize)*100)} % przeslane` 
+            onUploadProgress: progressEvent => {
+                let value = Math.round((progressEvent.loaded/totalSize)*100)
+                progress.value = value
+                if (value >= 100) {
+                    response.innerText = "Trwa przetwarzanie..."
+                }
+            }
         }
-
+    
         imagefile.onchange = (e) => {
-        
+           
             formData.delete('image');
             let files = [...e.target.files];
             for (let item of files) {
@@ -94,14 +187,17 @@
                 })
             
             if(files) {
-                Array.from(files).forEach((file) => {
+                Array.from(files).forEach((file,i) => {
                     const imgContainer = document.createElement("div");
                     const imga = document.createElement("img");
                     const url = URL.createObjectURL(file)
                     imga.setAttribute("src", url);
+                    imga.classList.add("preview")
                     document.querySelector(".images").appendChild(imgContainer)
+                    imgContainer.setAttribute("draggable", true)
+                    imgContainer.setAttribute("id", i)
                     imgContainer.classList.add("card")
-                    imgContainer.appendChild(imga)
+                    imgContainer.appendChild(imga)   
                 })
             }  
         }
@@ -123,30 +219,20 @@
             formData.getAll("image")?.forEach(element => {
                 totalSize += element.size;
             });
-           
             axios.post('/upload', formData, config, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
              }).then((res) => {
                  response.innerText = res.data
+                 progress.value = "0"
                  totalSize = 0;
+                 setTimeout(() => {
+                    response.innerText = ""
+                 },3000)
             }).catch(err => console.log(err))
 
         })
-       
-        const getTodoItems = async () => {
-        try {
-            const response = await axios.get(`https://doge-memes.com/api/auctions`);
-            const todoItems = response.data;
-            console.log(`GET: Here's the list of todos`, todoItems);
-            return todoItems;
-        } catch (error) {
-            console.error(error);
-        }
-        }
-
-    getTodoItems();
     </script>
 </body>
 </html>
