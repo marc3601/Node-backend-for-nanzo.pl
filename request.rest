@@ -1,0 +1,12 @@
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "username": "admin@admin.pl",
+    "password": "admin123"
+}
+
+###
+
+GET http://localhost:8080/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW5AYWRtaW4ucGwiLCJwYXNzd29yZCI6ImFkbWluMTIzIiwiaWF0IjoxNjI5MjI1NzIxfQ.4e4VxGUF7d7sbb3IpSfyzepvbpy6IlxeOZTG3eAZF2M

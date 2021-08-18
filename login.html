@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+         body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+            min-height: 150vh;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+        center {
+            margin-top: 60px;
+        }
+        #username, #password {
+            margin: 10px;
+            padding: 5px;
+            height: 25px;
+            outline: none;
+            border: none;
+            color: #ad3100;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            max-width: 30vw;
+            margin: 0 auto;
+        }
+        input[type="button" i] input[type="submit" i] input[type="reset" i], input[type="file" i]::-webkit-file-upload-button,  .button {
+            background-color: #ad3100;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 4px;
+            min-width: 36px;
+            height: 36px;
+            box-sizing: border-box;
+            padding: 0 8px;
+            margin: 10px;
+            position: relative;
+            font-family: "Roboto", "Noto", sans-serif;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            font-size: 14px;
+            line-height: 20px;
+            outline: none;
+            border: none;   
+        }
+        .message {
+            color: #ad3100;
+        }
+       
+        @media screen and (max-width: 550px) {
+            .form {
+                max-width: 90vw;
+            }
+           
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1>Zaloguj sie</h1>
+        <form  class="form" action="/login" method="post" enctype="application/json">
+            <input placeholder="Podaj login" type="email" name="username" id="username" required>
+            <input placeholder="Podaj haslo" type="password" name="password" id="password" required>
+            <button class="button" type="submit">Zaloguj</button>
+            <div class="message"></div>
+        </form>
+    </center>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+         const username = document.querySelector("#username");
+         const password = document.querySelector("#password");
+         const button = document.querySelector(".button")
+         const message = document.querySelector(".message")
+         const data = {username: "", password: ""}
+       
+
+         button.addEventListener('click', (e) => {
+            e.preventDefault();
+            data.username = username.value;
+            data.password = password.value
+            axios.post('/login', data,  {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+             }).then((res) => {
+                document.cookie=`auth=${res.data.accessToken}`
+                const value = ('; '+document.cookie).split(`; auth=`).pop().split(';')[0];
+                window.location=`/admin?id=${value}`
+
+            }).catch(err => {
+               message.textContent = "Blad, Sproboj ponownie."
+            })
+         })
+        
+    </script>
+</body>
+</html>
