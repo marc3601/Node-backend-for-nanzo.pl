@@ -34,7 +34,7 @@
 
         /* value: */
         progress::-webkit-progress-value {background-color: #d27303 !important;}
-        /* progress::-moz-progress-bar {background-color: #d27303 !important;} */
+        progress::-moz-progress-bar {background-color: #d27303 !important;}
         progress {color: #d27303;}
 
         .form {
@@ -77,10 +77,9 @@
             justify-content: center;
         }
 
-        input[type=file]::file-selector-button, button {
+        input[type="button" i] input[type="submit" i] input[type="reset" i], input[type="file" i]::-webkit-file-upload-button,  .button {
             background-color: #ad3100;
             color: white;
-            /* display: inline-flex; */
             text-align: center;
             cursor: pointer;
             user-select: none;
@@ -104,7 +103,7 @@
             outline: none;
             border: none;   
         }
-        button {
+        .button {
             width: 100%;
             margin: 15px auto 0;
         }
@@ -157,14 +156,17 @@
         const desc = document.querySelector("#description")
         const response = document.querySelector(".response")
         const progress = document.getElementById("progress")
-
         const formData = new FormData();
-        const dataTrans = new DataTransfer();
         let totalSize = 0
         const config = {
             onUploadProgress: progressEvent => {
                 let value = Math.round((progressEvent.loaded/totalSize)*100)
                 progress.value = value
+                if (document.hidden) {
+                    document.title = `Przeslano ${value} %`
+                } else {
+                    document.title = "Nowe ogloszenie"
+                }
                 if (value >= 100) {
                     response.innerText = "Trwa przetwarzanie..."
                 }
@@ -216,6 +218,11 @@
             formData.append('description', description.value)
         }
 
+
+        window.onfocus = e => {
+            document.title = "Nowe ogloszenie"
+        }
+       
 
         button.addEventListener("click", (e) => {
             e.preventDefault();
