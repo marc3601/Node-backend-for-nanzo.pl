@@ -10,9 +10,14 @@ const { v4: uuidv4 } = require('uuid');
 const port = 8080
 const sharp = require('sharp');
 const cors = require('cors');
+const bcrypt = require('bcrypt')
+const jwt = require("jsonwebtoken")
+require('dotenv').config()
 const DIR = '/upload';
 app.use(cors());
 app.options('*', cors());
+app.use(express.json())
+// haslo admin123
 process.on('uncaughtException', (error, origin) => {
     console.log('----- Uncaught exception -----')
     console.log(error)
@@ -61,9 +66,48 @@ const storage = multer.diskStorage({
 //     if (err) return console.error(err);
 //     console.log(auctions)
 // })
-const { uploadFile, getFileStream, deleteFiles } = require("./s3")
+const { uploadFile, getFileStream, deleteFiles } = require("./s3");
+
+const authenticateToken = (req, res, next) => {
+    // const authHeader = req.headers['authorization']
+    // const token = authHeader && authHeader.split(' ')[1]
+    const token = req.query.id
+    if (token == null) return res.redirect("/")
+    jwt.verify(token, process.env.ACCES_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+        req.user = user
+        next()
+    })
+
+}
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/index.html")
+    res.sendFile(__dirname + "/login.html")
+})
+app.post("/login", async (req, res) => {
+    const user = req.body.username;
+    const pass = req.body.password;
+    console.log(user, pass);
+    if (user === process.env.ADMIN_LOGIN) {
+        try {
+            if (await bcrypt.compare(pass, process.env.ADMIN_PASS)) {
+                const authUser = {
+                    user: user,
+                    password: pass
+                }
+                const accessToken = jwt.sign(authUser, process.env.ACCES_TOKEN_SECRET)
+                res.json({ accessToken: accessToken })
+            } else {
+                res.status(401).send("Login failed")
+            }
+        } catch {
+            res.status(404).send("Server error")
+        }
+    } else {
+        res.status(404).send("User not found")
+    }
+})
+app.get('/admin', authenticateToken, (req, res) => {
+    res.sendFile(__dirname + "/admin.html")
 })
 app.get("/api/auctions", (req, res) => {
     if (req.query.id) {
