@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta name="theme-color" content="#d27303">
+    <title>Nowe ogłoszenie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+            min-height: 150vh;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+        center {
+            padding-top: 15px;
+        }
+        
+        progress::-webkit-progress-bar {background-color: rgb(255, 255, 255); width: 100%;}
+        progress {
+            background-color: rgb(255, 255, 255);
+            text-align: left;
+            width: 50vw;
+            margin-top: 15px;
+        }
+
+        /* value: */
+        progress::-webkit-progress-value {background-color: #d27303 !important;}
+        progress::-moz-progress-bar {background-color: #d27303 !important;}
+        progress {color: #d27303;}
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            max-width: 50vw;
+            margin: 0 auto;
+        }
+        #files, #title, #price, #description {
+            margin-top: 10px;
+            padding: 5px;
+            outline: none;
+            border: none;
+        }
+
+        #title, #price, #description {
+            color: #ad3100;
+        }
+        #title, #price {
+            height: 25px;
+        }
+        input[type=file]::-webkit-input-placeholder {
+            color: white;
+            padding: 5px;
+        }
+        .response {
+            color: #ad3100;
+        }
+        .images {
+            max-width: 50vw;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: repeat(auto-fill,100px);
+            grid-auto-rows: 10px;
+            justify-content: center;
+        }
+
+        input[type="button" i] input[type="submit" i] input[type="reset" i], input[type="file" i]::-webkit-file-upload-button,  .button {
+            background-color: #ad3100;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 4px;
+            min-width: 36px;
+            height: 36px;
+            box-sizing: border-box;
+            padding: 0 8px;
+            margin: 15px;
+            position: relative;
+            font-family: "Roboto", "Noto", sans-serif;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            font-size: 14px;
+            line-height: 20px;
+            outline: none;
+            border: none;   
+        }
+        .button {
+            width: 100%;
+            margin: 15px auto 0;
+        }
+       
+        .card {
+                display: flex;
+                justify-content: center;
+                margin: 5px;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+                grid-row-end: span 11;
+            }
+        @media screen and (max-width: 550px) {
+            .form {
+                max-width: 90vw;
+            }
+            progress {
+                width: 90vw;
+            }
+            .images {
+                max-width: 90vw;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <center>
+        <h1>Dodaj ogłoszenie</h1>
+        <form  class="form" action="/upload" method="post" enctype="multipart/form-data">
+            <label for="image">Wybierz zdjecia</label>
+            <input type="file" name="image" multiple required id="files" />
+            <input placeholder="Podaj tytul" type="text" name="title" id="title" required>
+            <input placeholder="Podaj cene" type="number" name="price" id="price" required>
+            <textarea placeholder="Wpisz opis" type="text" name="description" id="description" cols="30" rows="10" required></textarea>
+            <button class="button" type="submit">Prześlij</button>
+        </form>
+        <progress id="progress" max="100"></progress>
+        <h4 class="response"></h4>
+        <div class="images"></div>
+    </center>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const button = document.querySelector(".button")
+        const imagefile = document.querySelector('#files');
+        const title = document.querySelector("#title");
+        const price = document.querySelector("#price");
+        const desc = document.querySelector("#description")
+        const response = document.querySelector(".response")
+        const progress = document.getElementById("progress")
+        const formData = new FormData();
+        let totalSize = 0
+        const config = {
+            onUploadProgress: progressEvent => {
+                let value = Math.round((progressEvent.loaded/totalSize)*100)
+                progress.value = value
+                if (document.hidden) {
+                    document.title = `Przeslano ${value} %`
+                } else {
+                    document.title = "Nowe ogloszenie"
+                }
+                if (value >= 100) {
+                    response.innerText = "Trwa przetwarzanie..."
+                }
+            }
+        }
+    
+        imagefile.onchange = (e) => {
+           
+            formData.delete('image');
+            let files = [...e.target.files];
+            for (let item of files) {
+            formData.append('image', item)
+            }
+            const cards = document.getElementsByClassName("card")
+                Array.from(cards).forEach(card => {
+                    card.remove()
+                })
+            const images = document.getElementsByTagName("img")
+                Array.from(images).forEach(image => {
+                    image.remove();
+                })
+            
+            if(files) {
+                Array.from(files).forEach((file,i) => {
+                    const imgContainer = document.createElement("div");
+                    const imga = document.createElement("img");
+                    const url = URL.createObjectURL(file)
+                    imga.setAttribute("src", url);
+                    imga.classList.add("preview")
+                    document.querySelector(".images").appendChild(imgContainer)
+                    imgContainer.setAttribute("draggable", true)
+                    imgContainer.setAttribute("id", i)
+                    imgContainer.classList.add("card")
+                    imgContainer.appendChild(imga)   
+                })
+            }  
+        }
+
+        title.onchange = (e) => {
+            formData.delete('title');
+            formData.append('title', title.value)
+        }
+        price.onchange = (e) => {
+            formData.delete('price');
+            formData.append('price', price.value)
+        }
+        desc.onchange = (e) => {
+            formData.delete('description');
+            formData.append('description', description.value)
+        }
+
+
+        window.onfocus = e => {
+            document.title = "Nowe ogloszenie"
+        }
+       
+
+        button.addEventListener("click", (e) => {
+            e.preventDefault();
+            response.innerText = ""
+            progress.value = "0"
+            button.setAttribute("disabled", true)
+            imagefile.setAttribute("disabled", true)
+            title.setAttribute("disabled", true)
+            price.setAttribute("disabled", true)
+            desc.setAttribute("disabled", true)
+            formData.getAll("image")?.forEach(element => {
+                totalSize += element.size;
+            });
+            axios.post('/upload', formData, config, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+             }).then((res) => {
+                 response.innerText = res.data
+                 totalSize = 0;
+                 button.removeAttribute("disabled")
+                 imagefile.removeAttribute("disabled")
+                 title.removeAttribute("disabled")
+                 price.removeAttribute("disabled")
+                 desc.removeAttribute("disabled")
+            }).catch(err => {
+                console.log(err)
+                response.innerText = "Błąd. Spróbuj ponownie."
+                button.removeAttribute("disabled")
+                 imagefile.removeAttribute("disabled")
+                 title.removeAttribute("disabled")
+                 price.removeAttribute("disabled")
+                 desc.removeAttribute("disabled")
+            })
+
+        })
+
+    </script>
+</body>
+</html>
