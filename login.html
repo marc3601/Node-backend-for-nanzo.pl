@@ -100,11 +100,11 @@
             }
              }).then((res) => {
                 document.cookie=`auth=${res.data.accessToken}`
-                const value = ('; '+document.cookie).split(`; auth=`).pop().split(';')[0];
-                window.location=`/admin?id=${value}`
+                window.location=`/admin`
 
             }).catch(err => {
                message.textContent = "Blad, Sproboj ponownie."
+               console.log(err);
             })
          })
         
