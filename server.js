@@ -1,10 +1,10 @@
-const express = require('express')
-const multer = require('multer')
+const express = require('express');
+const multer = require('multer');
 const mongoose = require('mongoose');
-const upload = multer({ dest: 'upload/' })
-const fs = require("fs")
-const util = require('util')
-const unlinkFile = util.promisify(fs.unlink)
+const upload = multer({ dest: 'upload/' });
+const fs = require("fs");
+const util = require('util');
+const unlinkFile = util.promisify(fs.unlink);
 const app = express();
 const { v4: uuidv4 } = require('uuid');
 const port = 8080
@@ -17,6 +17,9 @@ const DIR = '/upload';
 app.use(cors());
 app.options('*', cors());
 app.use(express.json())
+
+
+
 // haslo admin123
 process.on('uncaughtException', (error, origin) => {
     console.log('----- Uncaught exception -----')
@@ -31,6 +34,8 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log('----- Reason -----')
     console.log(reason)
 })
+
+
 // Database
 mongoose.connect('mongodb://localhost:27017/images', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
@@ -69,24 +74,32 @@ const storage = multer.diskStorage({
 const { uploadFile, getFileStream, deleteFiles } = require("./s3");
 
 const authenticateToken = (req, res, next) => {
-    // const authHeader = req.headers['authorization']
-    // const token = authHeader && authHeader.split(' ')[1]
-    const token = req.query.id
-    if (token == null) return res.redirect("/")
-    jwt.verify(token, process.env.ACCES_TOKEN_SECRET, (err, user) => {
+    let reqToken = null;
+    if (req.headers.cookie) {
+        reqToken = req.headers.cookie.split("=")[1];
+    }
+
+    if (reqToken == null) return res.redirect("/")
+    jwt.verify(reqToken, process.env.ACCES_TOKEN_SECRET, (err, user) => {
         if (err) return res.sendStatus(403)
         req.user = user
         next()
     })
-
 }
+
+
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/login.html")
+
+    if (req.headers.cookie !== undefined) {
+        res.redirect("/admin");
+    } else {
+        res.sendFile(__dirname + "/login.html")
+    }
+
 })
 app.post("/login", async (req, res) => {
     const user = req.body.username;
     const pass = req.body.password;
-    console.log(user, pass);
     if (user === process.env.ADMIN_LOGIN) {
         try {
             if (await bcrypt.compare(pass, process.env.ADMIN_PASS)) {
@@ -106,8 +119,9 @@ app.post("/login", async (req, res) => {
         res.status(404).send("User not found")
     }
 })
+
 app.get('/admin', authenticateToken, (req, res) => {
-    res.sendFile(__dirname + "/admin.html")
+    res.sendFile(__dirname + "/admin.html");
 })
 app.get("/api/auctions", (req, res) => {
     if (req.query.id) {
@@ -134,7 +148,7 @@ app.get("/images/:key", (req, res) => {
     }
 })
 app.post('/upload', upload.array("image", 6), async (req, res, next) => {
-    if (req.files.length !== 0) {
+    if (req.files.length <= 6) {
         console.log(req.files)
         const title = req.body.title
         const description = req.body.description
@@ -176,7 +190,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
         }
         handleImageResizing(req)
     } else {
-        res.send("Wybierz pliki do wgrania")
+        res.send("Wybierz max 6 plikow")
     }
 })
 app.listen(port, () => {

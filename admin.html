@@ -145,7 +145,9 @@
         </form>
         <progress id="progress" max="100"></progress>
         <h4 class="response"></h4>
+        <button class="logout">Wyloguj</button>
         <div class="images"></div>
+       
     </center>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
@@ -156,18 +158,20 @@
         const desc = document.querySelector("#description")
         const response = document.querySelector(".response")
         const progress = document.getElementById("progress")
+        const logout = document.querySelector('.logout');
         const formData = new FormData();
-        let totalSize = 0
+        let progressValue = 0;
+        let totalSize = 0;
         const config = {
             onUploadProgress: progressEvent => {
-                let value = Math.round((progressEvent.loaded/totalSize)*100)
-                progress.value = value
-                if (document.hidden) {
-                    document.title = `Przeslano ${value} %`
-                } else {
+                progressValue = Math.round((progressEvent.loaded/totalSize)*100)
+                progress.value = isFinite(progressValue) ? progressValue : 0;
+                if (document.hidden && progressValue > 0) {
+                    document.title = `Przesłano ${progressValue} %`
+                    } else {
                     document.title = "Nowe ogloszenie"
-                }
-                if (value >= 100) {
+                    }
+                if (progressValue >= 100) {
                     response.innerText = "Trwa przetwarzanie..."
                 }
             }
@@ -219,14 +223,20 @@
         }
 
 
-        window.onfocus = e => {
-            document.title = "Nowe ogloszenie"
-        }
        
+        document.addEventListener("visibilitychange", (e) => {
+            if (document.hidden && progressValue > 0 && progressValue < 100) {
+                document.title = `Przesłano ${progressValue} %`
+            } else {
+                document.title = "Nowe ogloszenie"
+            }
+        })
+
 
         button.addEventListener("click", (e) => {
             e.preventDefault();
-            response.innerText = ""
+            if (imagefile.files.length > 0) {
+                response.innerText = ""
             progress.value = "0"
             button.setAttribute("disabled", true)
             imagefile.setAttribute("disabled", true)
@@ -257,7 +267,12 @@
                  price.removeAttribute("disabled")
                  desc.removeAttribute("disabled")
             })
-
+            }
+        })
+        logout.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location="/";
         })
 
     </script>
