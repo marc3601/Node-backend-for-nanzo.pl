@@ -145,7 +145,7 @@
         </form>
         <progress id="progress" max="100"></progress>
         <h4 class="response"></h4>
-        <button class="logout">Wyloguj</button>
+        <a href="http://localhost:8080/logout" class="logout">Wyloguj</a>
         <div class="images"></div>
        
     </center>
@@ -158,7 +158,7 @@
         const desc = document.querySelector("#description")
         const response = document.querySelector(".response")
         const progress = document.getElementById("progress")
-        const logout = document.querySelector('.logout');
+        const logout = document.querySelector(".logout");
         const formData = new FormData();
         let progressValue = 0;
         let totalSize = 0;
@@ -232,6 +232,10 @@
             }
         })
 
+        logout.addEventListener("click", (e) => {
+            e.preventDefault();
+            axios.get("/logout",{withCredentials: true}).then((res) =>  window.location=`/`).catch(err => console.log(err));
+        })
 
         button.addEventListener("click", (e) => {
             e.preventDefault();
@@ -269,11 +273,7 @@
             })
             }
         })
-        logout.addEventListener("click", (e) => {
-            e.preventDefault();
-            document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location="/";
-        })
+       
 
     </script>
 </body>

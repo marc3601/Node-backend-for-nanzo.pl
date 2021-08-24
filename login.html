@@ -99,9 +99,7 @@
                 'Content-Type': 'application/json'
             }
              }).then((res) => {
-                document.cookie=`auth=${res.data.accessToken}`
-                window.location=`/admin`
-
+                    window.location=`/admin`;
             }).catch(err => {
                message.textContent = "Blad, Sproboj ponownie."
                console.log(err);

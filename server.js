@@ -18,9 +18,6 @@ app.use(cors());
 app.options('*', cors());
 app.use(express.json())
 
-
-
-// haslo admin123
 process.on('uncaughtException', (error, origin) => {
     console.log('----- Uncaught exception -----')
     console.log(error)
@@ -107,8 +104,9 @@ app.post("/login", async (req, res) => {
                     user: user,
                     password: pass
                 }
-                const accessToken = jwt.sign(authUser, process.env.ACCES_TOKEN_SECRET)
-                res.json({ accessToken: accessToken })
+                const accessToken = jwt.sign(authUser, process.env.ACCES_TOKEN_SECRET);
+                res.cookie("auth", accessToken, { httpOnly: true, maxAge: 3600000 })
+                    .redirect(301, '/admin')
             } else {
                 res.status(401).send("Login failed")
             }
@@ -118,6 +116,11 @@ app.post("/login", async (req, res) => {
     } else {
         res.status(404).send("User not found")
     }
+})
+
+app.get("/logout", (reg, res) => {
+    res.clearCookie("auth")
+        .redirect(301, '/')
 })
 
 app.get('/admin', authenticateToken, (req, res) => {
