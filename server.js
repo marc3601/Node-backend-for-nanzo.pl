@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate')
 const upload = multer({ dest: 'upload/' });
 const fs = require("fs");
 const util = require('util');
@@ -53,6 +54,7 @@ const auctionSchema = new mongoose.Schema({
     price: Number,
     id: String
 });
+auctionSchema.plugin(mongoosePaginate);
 const Auction = mongoose.model('Auction', auctionSchema);
 //Multer configuration
 const storage = multer.diskStorage({
@@ -127,19 +129,34 @@ app.get('/admin', authenticateToken, (req, res) => {
     res.sendFile(__dirname + "/admin.html");
 })
 app.get("/api/auctions", (req, res) => {
-    if (req.query.id) {
-        const response = []
-        Auction.findOne({ id: req.query.id }, (err, auction) => {
+    if (req.query.page && req.query.limit) {
+        let page, limit;
+        try {
+            page = parseInt(req.query.page);
+            limit = parseInt(req.query.limit);
+        } catch (error) {
+            console.error(error)
+        }
+        Auction.paginate({}, { offset: page, limit: limit }, (err, auctions) => {
             if (err) return console.error(err);
-            response.push(auction);
-            res.send(response);
-        });
-    } else {
-        Auction.find((err, auctions) => {
-            if (err) return console.error(err);
-            res.send(auctions)
+            res.send(auctions.docs)
         })
+    } else {
+        if (req.query.id) {
+            const response = []
+            Auction.findOne({ id: req.query.id }, (err, auction) => {
+                if (err) return console.error(err);
+                response.push(auction);
+                res.send(response);
+            });
+        } else {
+            Auction.find((err, auctions) => {
+                if (err) return console.error(err);
+                res.send(auctions)
+            })
+        }
     }
+
 })
 app.get("/images/:key", (req, res) => {
     const key = req.params.key
