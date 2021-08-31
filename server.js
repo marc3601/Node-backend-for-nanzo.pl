@@ -46,7 +46,9 @@ const auctionSchema = new mongoose.Schema({
         {
             width: Number,
             height: Number,
-            url: String
+            url: String,
+            title: String,
+            thumbnail: { type: Boolean, default: false }
         }
     ],
     description: String,
@@ -169,10 +171,10 @@ app.get("/images/:key", (req, res) => {
 })
 app.post('/upload', upload.array("image", 6), async (req, res, next) => {
     if (req.files.length <= 6) {
-        console.log(req.files)
         const title = req.body.title
         const description = req.body.description
         const price = req.body.price
+        const thumbnail = req.body.thumbnail
         let image = [];
         const handleImageResizing = async (req) => {
             if (!req.files) return next();
@@ -189,7 +191,9 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                             image.push({
                                 width: data.width,
                                 height: data.height,
-                                url: url
+                                url: url,
+                                title: item.originalname,
+                                thumbnail: item.originalname === thumbnail ? true : false
                             })
                             await unlinkFile(item.path);
                             await unlinkFile(`upload/result${id}.jpeg`);
