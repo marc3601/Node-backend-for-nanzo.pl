@@ -10,18 +10,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body, main {
+            min-height:100%;height:100%;
+        }
         body {
             overflow-x: hidden;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
-            min-height: 150vh;
+
             color: white;
             font-family: 'Poppins', sans-serif;
         }
+        main {
+            background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+            background-repeat: no-repeat;
+        }
         center {
-            padding-top: 15px;
+            padding-top: 25px;
         }
         
         progress::-webkit-progress-bar {background-color: rgb(255, 255, 255); width: 100%;}
@@ -42,6 +53,7 @@
             flex-direction: column;
             max-width: 50vw;
             margin: 0 auto;
+            position: relative;
         }
         #files, #title, #price, #description {
             margin-top: 10px;
@@ -52,6 +64,9 @@
 
         #title, #price, #description {
             color: #ad3100;
+        }
+        #description {
+            resize: none;
         }
         #title, #price {
             height: 25px;
@@ -103,6 +118,26 @@
             outline: none;
             border: none;   
         }
+        .characters_left {
+            position: absolute;
+            right: 0;
+            bottom: 51px;
+            color: green
+        }
+        .characters {
+            margin: 0;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            font-size: .9rem;
+            -webkit-transition: color .3s, font-size .3s;
+            -moz-transition: color .3s, font-size .3s;
+            -o-transition: color .3s, font-size .3s;
+            transition: color .3s, font-size .3s;
+        }
+        .alert_char {
+            color: red;
+            font-size: 1rem;
+        }
         .button {
             width: 100%;
             margin: 15px auto 0;
@@ -139,121 +174,136 @@
     </style>
 </head>
 <body>
+    <main>
     <center>
         <h1>Dodaj ogłoszenie</h1>
         <form  class="form" action="/upload" method="post" enctype="multipart/form-data">
             <label for="image">Wybierz zdjecia</label>
             <input type="file" name="image" multiple required id="files" />
-            <input placeholder="Podaj tytul" type="text" name="title" id="title" required>
+            <input placeholder="Podaj tytul" type="text" maxlength="100" name="title" id="title" required>
             <input placeholder="Podaj cene" type="number" name="price" id="price" required>
-            <textarea placeholder="Wpisz opis" type="text" name="description" id="description" cols="30" rows="10" required></textarea>
+            <textarea placeholder="Wpisz opis" type="text" maxlength="300" name="description" id="description" cols="30" rows="10" required></textarea>
+            <div class="characters_left"><p class="characters">0</p></div>
             <button class="button" type="submit">Prześlij</button>
         </form>
         <progress id="progress" max="100"></progress>
         <h4 class="response"></h4>
         <!-- <a href="http://localhost:8080/logout" class="logout">Wyloguj</a> -->
         <div class="images"></div>
-       
     </center>
+    </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-        const button = document.querySelector(".button")
-        const imagefile = document.querySelector('#files');
-        const title = document.querySelector("#title");
-        const price = document.querySelector("#price");
-        const desc = document.querySelector("#description")
-        const response = document.querySelector(".response")
-        const progress = document.getElementById("progress")
-        // const logout = document.querySelector(".logout");
-        const cards = document.getElementsByClassName("card")
-        const images = document.getElementsByTagName("img")
-        const formData = new FormData();
-        let progressValue = 0;
-        let totalSize = 0;
-        const config = {
-            onUploadProgress: progressEvent => {
-                progressValue = Math.round((progressEvent.loaded/totalSize)*100)
-                progress.value = isFinite(progressValue) ? progressValue : 0;
-                if (document.hidden && progressValue > 0) {
-                    document.title = `Przesłano ${progressValue} %`
-                    } else {
-                    document.title = "Nowe ogloszenie"
-                    }
-                if (progressValue >= 100) {
-                    response.innerText = "Trwa przetwarzanie..."
-                }
-            }
-        }
-    
-        imagefile.onchange = (e) => {
-           
-            formData.delete('image');
-            let files = [...e.target.files];
-            for (let item of files) {
-                formData.append('image', item)
-            }
-                Array.from(cards).forEach(card => {
-                    card.remove()
-                })
-                Array.from(images).forEach(image => {
-                    image.remove();
-                })
-            
-            if(files) {
-                Array.from(files).forEach((file,i) => {
-                    const imgContainer = document.createElement("div");
-                    const imga = document.createElement("img");
-                    const url = URL.createObjectURL(file)
-                    imga.setAttribute("src", url);
-                    imga.classList.add("preview")
-                    document.querySelector(".images").appendChild(imgContainer)
-                    imgContainer.setAttribute("id", i)
-                    imgContainer.classList.add("card")
-                    imgContainer.appendChild(imga)
-                    imgContainer.addEventListener("click", (e)=> {
-                        document.querySelectorAll(".card").forEach((item)=> item.classList.remove("border"))
-                        e.currentTarget.classList.add("border")
-                        console.log(file.name);
-                        formData.delete("thumbnail");
-                        formData.append("thumbnail", file.name);
-                    })   
-                })
-            }  
-        }
-
-        title.onchange = (e) => {
-            formData.delete('title');
-            formData.append('title', title.value)
-        }
-        price.onchange = (e) => {
-            formData.delete('price');
-            formData.append('price', price.value)
-        }
-        desc.onchange = (e) => {
-            formData.delete('description');
-            formData.append('description', description.value)
-        }
-
-
-       
-        document.addEventListener("visibilitychange", (e) => {
-            if (document.hidden && progressValue > 0 && progressValue < 100) {
+    const button = document.querySelector(".button")
+    const imagefile = document.querySelector('#files');
+    const title = document.querySelector("#title");
+    const price = document.querySelector("#price");
+    const desc = document.querySelector("#description")
+    const response = document.querySelector(".response")
+    const progress = document.getElementById("progress")
+    // const logout = document.querySelector(".logout");
+    const cards = document.getElementsByClassName("card")
+    const images = document.getElementsByTagName("img")
+    const characters = document.querySelector(".characters");
+    const formData = new FormData();
+    let progressValue = 0;
+    let totalSize = 0;
+    const config = {
+        onUploadProgress: progressEvent => {
+            progressValue = Math.round((progressEvent.loaded / totalSize) * 100)
+            progress.value = isFinite(progressValue) ? progressValue : 0;
+            if (document.hidden && progressValue > 0) {
                 document.title = `Przesłano ${progressValue} %`
             } else {
                 document.title = "Nowe ogloszenie"
             }
+            if (progressValue >= 100) {
+                response.innerText = "Trwa przetwarzanie..."
+            }
+        }
+    }
+
+    imagefile.onchange = (e) => {
+
+        formData.delete('image');
+        let files = [...e.target.files];
+        for (let item of files) {
+            formData.append('image', item)
+        }
+        Array.from(cards).forEach(card => {
+            card.remove()
+        })
+        Array.from(images).forEach(image => {
+            image.remove();
         })
 
+        if (files) {
+            Array.from(files).forEach((file, i) => {
+                const imgContainer = document.createElement("div");
+                const imga = document.createElement("img");
+                const url = URL.createObjectURL(file)
+                imga.setAttribute("src", url);
+                imga.classList.add("preview")
+                document.querySelector(".images").appendChild(imgContainer)
+                imgContainer.setAttribute("id", i)
+                imgContainer.classList.add("card")
+                imgContainer.appendChild(imga)
+                imgContainer.addEventListener("click", (e) => {
+                    document.querySelectorAll(".card").forEach((item) => item.classList.remove("border"))
+                    e.currentTarget.classList.add("border")
+                    console.log(file.name);
+                    formData.delete("thumbnail");
+                    formData.append("thumbnail", file.name);
+                })
+            })
+        }
+    }
 
-        // logout.addEventListener("click", (e) => {
-        //     e.preventDefault();
-        //     axios.get("/logout",{withCredentials: true}).then((res) =>  window.location=`/`).catch(err => console.log(err));
-        // })
+    title.onchange = (e) => {
+        formData.delete('title');
+        formData.append('title', title.value)
+    }
+    price.onchange = (e) => {
+        formData.delete('price');
+        formData.append('price', price.value)
+    }
+    desc.onchange = (e) => {
+        console.log("Desc change");
+        formData.delete('description');
+        formData.append('description', description.value)
+    }
 
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            if (imagefile.files.length > 0) {
-                response.innerText = ""
+    desc.addEventListener("input", (e) => {
+        let length = desc.value.length
+        characters.innerText = length;
+        if (length > 170) {
+            if (!characters.classList.contains("alert_char")) {
+                characters.classList.add("alert_char")
+            }
+
+        } else if (characters.classList.contains("alert_char")) {
+            characters.classList.remove("alert_char")
+        }
+    })
+
+    document.addEventListener("visibilitychange", (e) => {
+        if (document.hidden && progressValue > 0 && progressValue < 100) {
+            document.title = `Przesłano ${progressValue} %`
+        } else {
+            document.title = "Nowe ogloszenie"
+        }
+    })
+
+
+    // logout.addEventListener("click", (e) => {
+    //     e.preventDefault();
+    //     axios.get("/logout",{withCredentials: true}).then((res) =>  window.location=`/`).catch(err => console.log(err));
+    // })
+
+    button.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (imagefile.files.length > 0) {
+            response.innerText = ""
             progress.value = "0"
             button.setAttribute("disabled", true)
             imagefile.setAttribute("disabled", true)
@@ -264,30 +314,28 @@
                 totalSize += element.size;
             });
             axios.post('/upload', formData, config, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-             }).then((res) => {
-                 response.innerText = res.data
-                 totalSize = 0;
-                 button.removeAttribute("disabled")
-                 imagefile.removeAttribute("disabled")
-                 title.removeAttribute("disabled")
-                 price.removeAttribute("disabled")
-                 desc.removeAttribute("disabled")
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then((res) => {
+                response.innerText = res.data
+                totalSize = 0;
+                button.removeAttribute("disabled")
+                imagefile.removeAttribute("disabled")
+                title.removeAttribute("disabled")
+                price.removeAttribute("disabled")
+                desc.removeAttribute("disabled")
             }).catch(err => {
                 console.log(err)
                 response.innerText = "Błąd. Spróbuj ponownie."
                 button.removeAttribute("disabled")
-                 imagefile.removeAttribute("disabled")
-                 title.removeAttribute("disabled")
-                 price.removeAttribute("disabled")
-                 desc.removeAttribute("disabled")
+                imagefile.removeAttribute("disabled")
+                title.removeAttribute("disabled")
+                price.removeAttribute("disabled")
+                desc.removeAttribute("disabled")
             })
-            }
-        })
-       
-
+        }
+    })
     </script>
 </body>
 </html>
