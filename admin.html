@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="/favicon.ico">
     <meta name="theme-color" content="#d27303">
     <title>Nowe ogłoszenie</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,6 +65,9 @@
 
         #title, #price, #description {
             color: #ad3100;
+        }
+        #title:focus, #price:focus, #description:focus {
+            outline: 2px solid #ad3100;
         }
         #description {
             resize: none;
@@ -178,10 +182,10 @@
     <center>
         <h1>Dodaj ogłoszenie</h1>
         <form  class="form" action="/upload" method="post" enctype="multipart/form-data">
-            <label for="image">Wybierz zdjecia</label>
+            <label for="image">Wybierz zdjęcia</label>
             <input type="file" name="image" multiple required id="files" />
-            <input placeholder="Podaj tytul" type="text" maxlength="100" name="title" id="title" required>
-            <input placeholder="Podaj cene" type="number" name="price" id="price" required>
+            <input placeholder="Podaj tytuł" type="text" maxlength="100" name="title" id="title" required>
+            <input placeholder="Podaj cenę" type="number" min="0" max="50000" maxlength="5" name="price" id="price" required>
             <textarea placeholder="Wpisz opis" type="text" maxlength="300" name="description" id="description" cols="30" rows="10" required></textarea>
             <div class="characters_left"><p class="characters">0</p></div>
             <button class="button" type="submit">Prześlij</button>
@@ -273,7 +277,7 @@
         formData.append('description', description.value)
     }
 
-    desc.addEventListener("input", (e) => {
+    desc.addEventListener("input", () => {
         let length = desc.value.length
         characters.innerText = length;
         if (length > 170) {
@@ -283,6 +287,11 @@
 
         } else if (characters.classList.contains("alert_char")) {
             characters.classList.remove("alert_char")
+        }
+    })
+    price.addEventListener("input", () => {
+        if(price.value > 50000) {
+            price.value = 50000
         }
     })
 
