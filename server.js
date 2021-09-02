@@ -9,6 +9,7 @@ const unlinkFile = util.promisify(fs.unlink);
 const app = express();
 const { v4: uuidv4 } = require('uuid');
 const port = 8080
+const path = require('path');
 const sharp = require('sharp');
 const cors = require('cors');
 const bcrypt = require('bcrypt')
@@ -138,7 +139,7 @@ app.get("/api/auctions", (req, res) => {
         } catch (error) {
             console.error(error)
         }
-        Auction.paginate({}, { offset: page, limit: limit }, (err, auctions) => {
+        Auction.paginate({}, { offset: page, limit: limit, sort: { _id: -1 } }, (err, auctions) => {
             if (err) return console.error(err);
             res.send(auctions.docs)
         })
@@ -151,7 +152,7 @@ app.get("/api/auctions", (req, res) => {
                 res.send(response);
             });
         } else {
-            Auction.find((err, auctions) => {
+            Auction.find().sort({ _id: -1 }).exec((err, auctions) => {
                 if (err) return console.error(err);
                 res.send(auctions)
             })
@@ -168,6 +169,10 @@ app.get("/images/:key", (req, res) => {
         res.sendStatus(404)
     }
 })
+app.get("/favicon.ico", (req, res) => {
+    res.sendFile(path.join(__dirname, "/favicon.ico"))
+})
+
 app.post('/upload', upload.array("image", 6), async (req, res, next) => {
     if (req.files.length <= 6) {
         const title = req.body.title
@@ -198,7 +203,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                         })
                 })
             ).then(() => {
-                const auction = new Auction({ image: image, description: description, title: title, price: price, id: uuidv4() });
+                const auction = new Auction({ image: image, description: description, price: price, id: uuidv4() });
                 auction.save((err, auction) => {
                     if (err) return console.error(err);
                     console.log("Saved: " + auction)
