@@ -47,7 +47,6 @@ const auctionSchema = new mongoose.Schema({
             width: Number,
             height: Number,
             url: String,
-            title: String,
             thumbnail: { type: Boolean, default: false }
         }
     ],
@@ -192,7 +191,6 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                                 width: data.width,
                                 height: data.height,
                                 url: url,
-                                title: item.originalname,
                                 thumbnail: item.originalname === thumbnail ? true : false
                             })
                             await unlinkFile(item.path);
