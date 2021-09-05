@@ -169,6 +169,12 @@ app.get("/images/:key", (req, res) => {
         res.sendStatus(404)
     }
 })
+app.get("/api/latest", (req, res) => {
+    Auction.findOne().sort({ _id: -1 }).limit(1).exec((err, auction) => {
+        if (err) return console.error(err);
+        res.send(auction)
+    })
+})
 app.get("/favicon.ico", (req, res) => {
     res.sendFile(path.join(__dirname, "/favicon.ico"))
 })
@@ -203,7 +209,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                         })
                 })
             ).then(() => {
-                const auction = new Auction({ image: image, description: description, price: price, id: uuidv4() });
+                const auction = new Auction({ image: image, description: description, price: price, title: title, id: uuidv4() });
                 auction.save((err, auction) => {
                     if (err) return console.error(err);
                     console.log("Saved: " + auction)
