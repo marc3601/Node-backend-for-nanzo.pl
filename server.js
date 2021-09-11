@@ -197,7 +197,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                         .toFile(`upload/result${id}.jpeg`)
                         .then(async (data) => {
                             const result = await uploadFile(`upload/result${id}.jpeg`, item).catch((err) => console.log(err))
-                            const url = `https://doge-memes.com/images/${item.filename}`;
+                            const url = `https://admin.noanzo.pl/images/${item.filename}`;
                             image.push({
                                 width: data.width,
                                 height: data.height,
@@ -215,7 +215,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                     console.log("Saved: " + auction)
                 });
                 image = [];
-                res.send("Pliki zostaly przeslane.")
+                res.send("Pliki zostały przesłane.")
 
             }).catch((err) => {
                 res.send("Blad przesylania")
@@ -223,7 +223,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
         }
         handleImageResizing(req)
     } else {
-        res.send("Wybierz max 6 plikow")
+        res.send("Wybierz max 6 plików")
     }
 })
 app.listen(port, () => {
