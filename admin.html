@@ -41,7 +41,7 @@
             background-color: rgb(255, 255, 255);
             text-align: left;
             width: 50vw;
-            margin-top: 15px;
+            margin: 10px 0;
         }
 
         /* value: */
@@ -81,6 +81,10 @@
         }
         .response {
             color: #ad3100;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .images {
             max-width: 50vw;
@@ -155,12 +159,19 @@
                 position: relative;
                 cursor: pointer;
                 grid-row-end: span 11;
-            }
-
+        }
         .border {
             border: 5px solid rgb(255, 0, 0);
             border-style: inset;
             border-radius: 5%;
+        }
+        .thumbzz {
+            color: #ad3100;
+            font-size: .8rem;
+            width: 100%;
+        }
+        .thumbzz_hidden {
+            display: none;
         }
         @media screen and (max-width: 550px) {
             .form {
@@ -191,9 +202,12 @@
             <button class="button" type="submit">Prześlij</button>
         </form>
         <progress id="progress" max="100"></progress>
-        <h4 class="response"></h4>
+        <div class="response"></div>
         <!-- <a href="http://localhost:8080/logout" class="logout">Wyloguj</a> -->
-        <div class="images"></div>
+        <div class="thumbzz thumbzz_hidden">Kliknij na zdjęcie, które ma być miniaturką.</div>
+        <div class="images">
+            
+        </div>
     </center>
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -209,6 +223,7 @@
     const cards = document.getElementsByClassName("card")
     const images = document.getElementsByTagName("img")
     const characters = document.querySelector(".characters");
+    const thumbInfo = document.querySelector(".thumbzz")
     const formData = new FormData();
     let progressValue = 0;
     let totalSize = 0;
@@ -216,6 +231,7 @@
         onUploadProgress: progressEvent => {
             progressValue = Math.round((progressEvent.loaded / totalSize) * 100)
             progress.value = isFinite(progressValue) ? progressValue : 0;
+            response.innerText = `Przesłano ${progressValue} %`
             if (document.hidden && progressValue > 0) {
                 document.title = `Przesłano ${progressValue} %`
             } else {
@@ -226,11 +242,62 @@
             }
         }
     }
+    const checkmark = `<span style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24"><path style="fill:green;" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.393 7.5l-5.643 5.784-2.644-2.506-1.856 1.858 4.5 4.364 7.5-7.643-1.857-1.857z"/></svg></span>`
+
+    const warning =  `<span><?xml version="1.0" encoding="iso-8859-1"?>
+    <!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40px" height="30px" x="30px" y="20px"
+         viewBox="0 0 320.83 320.83" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+    <g>
+        <g>
+            <path style="fill:red;" d="M180.494,39.687l-1.333-1.327c-5.009-5.015-11.667-7.772-18.754-7.772
+                c-7.082,0-13.739,2.758-18.748,7.767l-1.333,1.333L5.551,256.847c-5.466,6.413-7.016,14.196-4.112,21.207
+                c3.16,7.631,10.704,12.189,20.173,12.189h277.604c9.475,0,17.013-4.558,20.173-12.189c2.904-7.011,1.354-14.8-4.112-21.207
+                L180.494,39.687z M43.484,257.614L160.413,69.221l116.934,188.393H43.484z"/>
+            <path style="fill:#010002;" d="M143.758,122.002v71.388c0,9.197,7.457,16.654,16.654,16.654s16.654-7.457,16.654-16.654v-71.388
+                c0-9.197-7.457-16.654-16.654-16.654C151.215,105.347,143.758,112.804,143.758,122.002z"/>
+            <circle style="fill:#010002;" cx="160.244" cy="234.906" r="16.486"/>
+        </g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    </svg></span>`
 
     imagefile.onchange = (e) => {
-
+    
+    
         formData.delete('image');
         let files = [...e.target.files];
+        console.log(files.length);
+        files.length > 0  ? thumbInfo.classList.remove("thumbzz_hidden") : thumbInfo.classList.add("thumbzz_hidden");
         for (let item of files) {
             formData.append('image', item)
         }
@@ -253,9 +320,9 @@
                 imgContainer.classList.add("card")
                 imgContainer.appendChild(imga)
                 imgContainer.addEventListener("click", (e) => {
+                    thumbInfo.classList.add("thumbzz_hidden");
                     document.querySelectorAll(".card").forEach((item) => item.classList.remove("border"))
                     e.currentTarget.classList.add("border")
-                    console.log(file.name);
                     formData.delete("thumbnail");
                     formData.append("thumbnail", file.name);
                 })
@@ -272,7 +339,6 @@
         formData.append('price', price.value)
     }
     desc.onchange = (e) => {
-        console.log("Desc change");
         formData.delete('description');
         formData.append('description', description.value)
     }
@@ -311,7 +377,34 @@
 
     button.addEventListener("click", (e) => {
         e.preventDefault();
-        if (imagefile.files.length > 0) {
+        const isTitle = formData.getAll("title")[0] ? /^\s*$/.test(formData.getAll("title")[0]) ? false : true : false
+        const isPrice = formData.getAll("price")[0] ? true : false
+        const isDesc = formData.getAll("description")[0] ? /^\s*$/.test(formData.getAll("description")[0]) ? false : true : false
+        const isImage = formData.getAll("image").length > 0 ? true : false
+        const imagesCount = formData.getAll("image").length
+        const checklist = () => {
+            const items = [isTitle,isPrice,isDesc,isImage,imagesCount];
+            let response = "";
+            items.forEach((item,i) => {
+                if (!item && i  === 2) {
+                    return response =  "Wpisz opis ogłoszenia"
+                }
+                if (!item && i  === 1) {
+                    return response =  "Wpisz cenę"
+                }
+                if (!item && i  === 0) {
+                    return response =  "Wpisz tytuł ogłoszenia"
+                }
+                if (!item && i  === 3) {
+                    return response =  "Wybierz zdjęcia"
+                }
+                if (imagesCount > 6 && i === 4) {
+                    return response = "Wybierz maksymalnie 6 zdjęć"
+                }
+            })
+            return response
+        }
+        if (isTitle && isPrice && isDesc && isImage) {
             response.innerText = ""
             progress.value = "0"
             button.setAttribute("disabled", true)
@@ -327,7 +420,7 @@
                     'Content-Type': 'multipart/form-data'
                 }
             }).then((res) => {
-                response.innerText = res.data
+                response.innerHTML = `${checkmark}  ${res.data}`
                 totalSize = 0;
                 button.removeAttribute("disabled")
                 imagefile.removeAttribute("disabled")
@@ -336,13 +429,15 @@
                 desc.removeAttribute("disabled")
             }).catch(err => {
                 console.log(err)
-                response.innerText = "Błąd. Spróbuj ponownie."
+                response.innerHTML = `${warning} Błąd. Spróbuj ponownie.`
                 button.removeAttribute("disabled")
                 imagefile.removeAttribute("disabled")
                 title.removeAttribute("disabled")
                 price.removeAttribute("disabled")
                 desc.removeAttribute("disabled")
             })
+        } else {
+            response.innerHTML = `${warning}<span class="alertzz">${checklist()}</span>`;
         }
     })
     </script>
