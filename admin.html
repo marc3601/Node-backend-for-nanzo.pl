@@ -294,7 +294,6 @@
     
         formData.delete('image');
         let files = [...e.target.files];
-        console.log(files.length);
         files.length > 0  ? thumbInfo.classList.remove("thumbzz_hidden") : thumbInfo.classList.add("thumbzz_hidden");
         for (let item of files) {
             formData.append('image', item)
@@ -380,7 +379,6 @@
         const isDesc = formData.getAll("description")[0] ? /^\s*$/.test(formData.getAll("description")[0]) ? false : true : false
         const isImage = formData.getAll("image").length > 0 ? true : false
         const imagesCount = formData.getAll("image").length
-        console.log(imagesCount);
         const checklist = () => {
             const items = [isTitle,isPrice,isDesc,isImage,imagesCount];
             let response = "";
@@ -403,8 +401,7 @@
             })
             return response
         }
-        if (isTitle && isPrice && isDesc && imagesCount <= 8) {
-          
+        if (isTitle && isPrice && isDesc && isImage && imagesCount <= 8) {
                 response.innerText = ""
                 progress.value = "0"
                 button.setAttribute("disabled", true)
