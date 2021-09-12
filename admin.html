@@ -31,10 +31,9 @@
         main {
             background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
             background-repeat: no-repeat;
+            padding: 30px 0;
         }
-        center {
-            padding-top: 25px;
-        }
+        
         
         progress::-webkit-progress-bar {background-color: rgb(255, 255, 255); width: 100%;}
         progress {
@@ -91,9 +90,6 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
             display: grid;
             grid-template-columns: repeat(auto-fill,100px);
             grid-auto-rows: 10px;
@@ -173,6 +169,9 @@
         .thumbzz_hidden {
             display: none;
         }
+        footer {
+            height: 25px;
+        }
         @media screen and (max-width: 550px) {
             .form {
                 max-width: 90vw;
@@ -205,9 +204,8 @@
         <div class="response"></div>
         <!-- <a href="http://localhost:8080/logout" class="logout">Wyloguj</a> -->
         <div class="thumbzz thumbzz_hidden">Kliknij na zdjęcie, które ma być miniaturką.</div>
-        <div class="images">
-            
-        </div>
+        <div class="images"></div>
+        <footer></footer>
     </center>
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -382,6 +380,7 @@
         const isDesc = formData.getAll("description")[0] ? /^\s*$/.test(formData.getAll("description")[0]) ? false : true : false
         const isImage = formData.getAll("image").length > 0 ? true : false
         const imagesCount = formData.getAll("image").length
+        console.log(imagesCount);
         const checklist = () => {
             const items = [isTitle,isPrice,isDesc,isImage,imagesCount];
             let response = "";
@@ -398,21 +397,22 @@
                 if (!item && i  === 3) {
                     return response =  "Wybierz zdjęcia"
                 }
-                if (imagesCount > 6 && i === 4) {
-                    return response = "Wybierz maksymalnie 6 zdjęć"
+                if (item > 8 && i === 4) {
+                    return response = "Wybierz maksymalnie 8 zdjęć"
                 }
             })
             return response
         }
-        if (isTitle && isPrice && isDesc && isImage) {
-            response.innerText = ""
-            progress.value = "0"
-            button.setAttribute("disabled", true)
-            imagefile.setAttribute("disabled", true)
-            title.setAttribute("disabled", true)
-            price.setAttribute("disabled", true)
-            desc.setAttribute("disabled", true)
-            formData.getAll("image")?.forEach(element => {
+        if (isTitle && isPrice && isDesc && imagesCount <= 8) {
+          
+                response.innerText = ""
+                progress.value = "0"
+                button.setAttribute("disabled", true)
+                imagefile.setAttribute("disabled", true)
+                title.setAttribute("disabled", true)
+                price.setAttribute("disabled", true)
+                desc.setAttribute("disabled", true)
+                formData.getAll("image")?.forEach(element => {
                 totalSize += element.size;
             });
             axios.post('/upload', formData, config, {
@@ -435,7 +435,8 @@
                 title.removeAttribute("disabled")
                 price.removeAttribute("disabled")
                 desc.removeAttribute("disabled")
-            })
+            })  
+
         } else {
             response.innerHTML = `${warning}<span class="alertzz">${checklist()}</span>`;
         }

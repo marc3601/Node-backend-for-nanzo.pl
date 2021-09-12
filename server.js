@@ -179,8 +179,8 @@ app.get("/favicon.ico", (req, res) => {
     res.sendFile(path.join(__dirname, "/favicon.ico"))
 })
 
-app.post('/upload', upload.array("image", 6), async (req, res, next) => {
-    if (req.files.length <= 6) {
+app.post('/upload', upload.array("image", 8), async (req, res, next) => {
+    if (req.files.length <= 8) {
         const title = req.body.title
         const description = req.body.description
         const price = req.body.price
@@ -215,7 +215,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
                     console.log("Saved: " + auction)
                 });
                 image = [];
-                res.send("Pliki zostały przesłane.")
+                res.send("Ogłoszenie zostało dodane.")
 
             }).catch((err) => {
                 res.send("Blad przesylania")
@@ -223,7 +223,7 @@ app.post('/upload', upload.array("image", 6), async (req, res, next) => {
         }
         handleImageResizing(req)
     } else {
-        res.send("Wybierz max 6 plików")
+        res.send("Wybierz max 8 plików")
     }
 })
 app.listen(port, () => {
