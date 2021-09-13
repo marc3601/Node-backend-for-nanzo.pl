@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link rel="shortcut icon" href="/favicon.ico">
     <meta name="theme-color" content="#d27303">
-    <title>Nowe ogłoszenie</title>
+    <title>Nowe ogłoszenie - admin.noanzo.pl</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -24,7 +24,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-
             color: white;
             font-family: 'Poppins', sans-serif;
         }
@@ -32,6 +31,8 @@
             background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
             background-repeat: no-repeat;
             padding: 30px 0;
+            position: relative;
+            overflow-x: hidden;
         }
         
         
@@ -172,6 +173,60 @@
         footer {
             height: 25px;
         }
+        .gif_background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(40, 40, 40, 0.8);
+            transition: .2s ease;
+        }
+        .background_hidden {
+            display: none;
+        }
+        .gif_menu {
+            position:absolute;
+            width: 100vw;
+            height: 200px;
+            padding: 20px 0;
+            background-color: #d27303;
+            top: 98px;
+            right: -100vw;
+            border-bottom-left-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            transition: .3s ease-out;
+        }
+        .gif_menu_show {
+            right: -50vw;
+        }
+        .gif_icon_show, .gif_icon_hide {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #ad3100;
+            left: -48px;
+            top: 0;
+            border-bottom-left-radius: 10px;
+            border-top-left-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .gif_icon_hide {
+           left: 0;
+           background-color: #d27303;
+           border-radius: 0;
+        }
+        .gif_lebel {
+            text-align: left;
+            margin-left: 60px;
+        }
+        #gif {
+            margin-top:25px;
+        }
         @media screen and (max-width: 550px) {
             .form {
                 max-width: 90vw;
@@ -182,6 +237,10 @@
             .images {
                 max-width: 90vw;
             }
+            .gif_menu_show {
+                right: 0;
+            }
+            
         }
 
 
@@ -193,7 +252,7 @@
         <h1>Dodaj ogłoszenie</h1>
         <form  class="form" action="/upload" method="post" enctype="multipart/form-data">
             <label for="image">Wybierz zdjęcia</label>
-            <input type="file" name="image" multiple required id="files" />
+            <input type="file" name="image" accept="image/*" multiple required id="files" />
             <input placeholder="Podaj tytuł" type="text" maxlength="100" name="title" id="title" required>
             <input placeholder="Podaj cenę" type="number" min="0" max="50000" maxlength="5" name="price" id="price" required>
             <textarea placeholder="Wpisz opis" type="text" maxlength="300" name="description" id="description" cols="30" rows="10" required></textarea>
@@ -205,6 +264,60 @@
         <!-- <a href="http://localhost:8080/logout" class="logout">Wyloguj</a> -->
         <div class="thumbzz thumbzz_hidden">Kliknij na zdjęcie, które ma być miniaturką.</div>
         <div class="images"></div>
+        <div class="gif_background background_hidden"></div>
+        <section class="gif_menu">
+            <label class="gif_lebel" for="gif">Wybierz GIF-a</label>
+            <input type="file" accept="image/gif" name="gif" id="gif" />
+            <div class="gif_icon_show">
+                <?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" x="0px" y="0px" viewBox="0 0 115.28 122.88" style="enable-background:new 0 0 115.28 122.88" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style><g><path class="st0" fill="white" d="M25.38,57h64.88V37.34H69.59c-2.17,0-5.19-1.17-6.62-2.6c-1.43-1.43-2.3-4.01-2.3-6.17V7.64l0,0H8.15 c-0.18,0-0.32,0.09-0.41,0.18C7.59,7.92,7.55,8.05,7.55,8.24v106.45c0,0.14,0.09,0.32,0.18,0.41c0.09,0.14,0.28,0.18,0.41,0.18 c22.78,0,58.09,0,81.51,0c0.18,0,0.17-0.09,0.27-0.18c0.14-0.09,0.33-0.28,0.33-0.41v-11.16H25.38c-4.14,0-7.56-3.4-7.56-7.56 V64.55C17.82,60.4,21.22,57,25.38,57L25.38,57z M45.38,83.83v-5.35h12.28v10.94c-2.35,1.6-4.43,2.7-6.23,3.28 c-1.81,0.58-3.95,0.87-6.43,0.87c-3.05,0-5.54-0.52-7.46-1.56c-1.92-1.04-3.41-2.59-4.47-4.64c-1.06-2.05-1.59-4.42-1.59-7.08 c0-2.81,0.58-5.24,1.74-7.32c1.16-2.07,2.85-3.65,5.08-4.72c1.74-0.83,4.09-1.24,7.03-1.24c2.84,0,4.96,0.26,6.37,0.77 c1.41,0.51,2.58,1.31,3.51,2.39c0.93,1.08,1.63,2.45,2.09,4.11l-7.65,1.38c-0.32-0.98-0.85-1.72-1.6-2.24 c-0.75-0.52-1.71-0.78-2.89-0.78c-1.74,0-3.12,0.6-4.16,1.81c-1.04,1.21-1.55,3.12-1.55,5.74c0,2.78,0.52,4.76,1.57,5.96 c1.04,1.19,2.5,1.79,4.37,1.79c0.89,0,1.73-0.13,2.54-0.38c0.8-0.26,1.72-0.69,2.77-1.31v-2.41H45.38L45.38,83.83z M63.95,67.41 h7.97v25.71h-7.97V67.41L63.95,67.41z M78.9,67.41h19.64v5.53H86.87v4.49h9.98v5.21h-9.98v10.49H78.9V67.41L78.9,67.41z M97.79,57 h9.93c4.16,0,7.56,3.41,7.56,7.56v31.42c0,4.15-3.41,7.56-7.56,7.56h-9.93v13.55c0,1.61-0.65,3.04-1.7,4.1 c-1.06,1.06-2.49,1.7-4.1,1.7c-29.44,0-56.59,0-86.18,0c-1.61,0-3.04-0.64-4.1-1.7c-1.06-1.06-1.7-2.49-1.7-4.1V5.85 c0-1.61,0.65-3.04,1.7-4.1c1.06-1.06,2.53-1.7,4.1-1.7h58.72C64.66,0,64.8,0,64.94,0c0.64,0,1.29,0.28,1.75,0.69h0.09 c0.09,0.05,0.14,0.09,0.23,0.18l29.99,30.36c0.51,0.51,0.88,1.2,0.88,1.98c0,0.23-0.05,0.41-0.09,0.65V57L97.79,57z M67.52,27.97 V8.94l21.43,21.7H70.19c-0.74,0-1.38-0.32-1.89-0.78C67.84,29.4,67.52,28.71,67.52,27.97L67.52,27.97z"/></g></svg>
+            </div>
+            <div class="gif_icon_hide">
+                <?xml version="1.0" encoding="iso-8859-1"?>
+            <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="white" width="20px" height="20px" x="0px" y="0px"
+            	 viewBox="0 0 492.004 492.004"  xml:space="preserve">
+            <g>
+        	<g>
+		<path d="M484.14,226.886L306.46,49.202c-5.072-5.072-11.832-7.856-19.04-7.856c-7.216,0-13.972,2.788-19.044,7.856l-16.132,16.136
+			c-5.068,5.064-7.86,11.828-7.86,19.04c0,7.208,2.792,14.2,7.86,19.264L355.9,207.526H26.58C11.732,207.526,0,219.15,0,234.002
+			v22.812c0,14.852,11.732,27.648,26.58,27.648h330.496L252.248,388.926c-5.068,5.072-7.86,11.652-7.86,18.864
+			c0,7.204,2.792,13.88,7.86,18.948l16.132,16.084c5.072,5.072,11.828,7.836,19.044,7.836c7.208,0,13.968-2.8,19.04-7.872
+			l177.68-177.68c5.084-5.088,7.88-11.88,7.86-19.1C492.02,238.762,489.228,231.966,484.14,226.886z"/>
+        	</g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            </svg>
+            </div>
+        </section>
         <footer></footer>
     </center>
     </main>
@@ -222,6 +335,10 @@
     const images = document.getElementsByTagName("img")
     const characters = document.querySelector(".characters");
     const thumbInfo = document.querySelector(".thumbzz")
+    const gifMenu = document.querySelector(".gif_menu")
+    const gifShow = document.querySelector(".gif_icon_show")
+    const gifHide = document.querySelector(".gif_icon_hide")
+    const gifBcg = document.querySelector(".gif_background")
     const formData = new FormData();
     let progressValue = 0;
     let totalSize = 0;
@@ -231,15 +348,27 @@
             progress.value = isFinite(progressValue) ? progressValue : 0;
             response.innerText = `Przesłano ${progressValue} %`
             if (document.hidden && progressValue > 0) {
-                document.title = `Przesłano ${progressValue} %`
+                document.title = `Przesłano ${progressValue} % - admin.noanzo.pl`
             } else {
-                document.title = "Nowe ogloszenie"
+                document.title = "Nowe ogloszenie - admin.noanzo.pl"
             }
             if (progressValue >= 100) {
                 response.innerText = "Trwa przetwarzanie..."
             }
         }
     }
+    gifShow.addEventListener("click", () => {
+        if (!gifMenu.classList.contains("gif_menu_show")) {
+            gifMenu.classList.add("gif_menu_show")
+            gifBcg.classList.remove("background_hidden")
+        }
+    })
+    gifHide.addEventListener("click", () => {
+        if(gifMenu.classList.contains("gif_menu_show")) {
+            gifMenu.classList.remove("gif_menu_show")
+            gifBcg.classList.add("background_hidden")
+        }
+    })
     const checkmark = `<span style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24"><path style="fill:green;" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.393 7.5l-5.643 5.784-2.644-2.506-1.856 1.858 4.5 4.364 7.5-7.643-1.857-1.857z"/></svg></span>`
 
     const warning =  `<span><?xml version="1.0" encoding="iso-8859-1"?>
@@ -290,8 +419,6 @@
     </svg></span>`
 
     imagefile.onchange = (e) => {
-    
-    
         formData.delete('image');
         let files = [...e.target.files];
         files.length > 0  ? thumbInfo.classList.remove("thumbzz_hidden") : thumbInfo.classList.add("thumbzz_hidden");
@@ -340,6 +467,7 @@
         formData.append('description', description.value)
     }
 
+
     desc.addEventListener("input", () => {
         let length = desc.value.length
         characters.innerText = length;
@@ -362,7 +490,7 @@
         if (document.hidden && progressValue > 0 && progressValue < 100) {
             document.title = `Przesłano ${progressValue} %`
         } else {
-            document.title = "Nowe ogloszenie"
+            document.title = "Nowe ogloszenie - admin.noanzo.pl"
         }
     })
 
@@ -384,19 +512,19 @@
             let response = "";
             items.forEach((item,i) => {
                 if (!item && i  === 2) {
-                    return response =  "Wpisz opis ogłoszenia"
+                    response =  "Wpisz opis ogłoszenia"
                 }
                 if (!item && i  === 1) {
-                    return response =  "Wpisz cenę"
+                    response =  "Wpisz cenę"
                 }
                 if (!item && i  === 0) {
-                    return response =  "Wpisz tytuł ogłoszenia"
+                    response =  "Wpisz tytuł ogłoszenia"
                 }
                 if (!item && i  === 3) {
-                    return response =  "Wybierz zdjęcia"
+                    response =  "Wybierz zdjęcia"
                 }
                 if (item > 8 && i === 4) {
-                    return response = "Wybierz maksymalnie 8 zdjęć"
+                    response = "Wybierz maksymalnie 8 zdjęć"
                 }
             })
             return response
