@@ -335,6 +335,7 @@
     const images = document.getElementsByTagName("img")
     const characters = document.querySelector(".characters");
     const thumbInfo = document.querySelector(".thumbzz")
+    const gifFile = document.querySelector('#gif');
     const gifMenu = document.querySelector(".gif_menu")
     const gifShow = document.querySelector(".gif_icon_show")
     const gifHide = document.querySelector(".gif_icon_hide")
@@ -431,7 +432,6 @@
         Array.from(images).forEach(image => {
             image.remove();
         })
-
         if (files) {
             Array.from(files).forEach((file, i) => {
                 const imgContainer = document.createElement("div");
@@ -452,6 +452,11 @@
                 })
             })
         }
+    }
+    gifFile.onchange = (e) => {
+        formData.delete('gif');
+        let file = [...e.target.files][0];
+        formData.append('gif', file)
     }
 
     title.onchange = (e) => {

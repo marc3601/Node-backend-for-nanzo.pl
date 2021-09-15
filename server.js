@@ -14,8 +14,11 @@ const sharp = require('sharp');
 const cors = require('cors');
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
+const probe = require('probe-image-size');
+
 require('dotenv').config()
-const DIR = '/upload';
+const IMAGES = '/upload';
+const GIF = '/gif';
 app.use(cors());
 app.options('*', cors());
 app.use(express.json())
@@ -51,6 +54,11 @@ const auctionSchema = new mongoose.Schema({
             thumbnail: { type: Boolean, default: false }
         }
     ],
+    gif: {
+        width: { type: Number, default: 0 },
+        height: { type: Number, default: 0 },
+        url: String
+    },
     description: String,
     title: String,
     price: Number,
@@ -61,18 +69,27 @@ const Auction = mongoose.model('Auction', auctionSchema);
 //Multer configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, DIR);
+        if (file.fieldname === "image") {
+            cb(null, IMAGES)
+        } else if (file.fieldname === "gif") {
+            cb(null, GIF);
+        }
+
     },
     filename: (req, file, cb) => {
-        const fileName = req.body.title;
-        cb(null, fileName)
+        if (file.fieldname === "image") {
+            const fileName = req.body.title;
+            cb(null, fileName)
+        } else if (file.fieldname === "gif") {
+            cb(null, "giffy" + Date.now());
+        }
     }
 });
 // Auction.deleteMany((err, auctions) => {
 //     if (err) return console.error(err);
 //     console.log(auctions)
 // })
-const { uploadFile, getFileStream, deleteFiles } = require("./s3");
+const { uploadFile, getFileStream, uploadGif, deleteFiles } = require("./s3");
 
 const authenticateToken = (req, res, next) => {
     let reqToken = null;
@@ -179,8 +196,24 @@ app.get("/favicon.ico", (req, res) => {
     res.sendFile(path.join(__dirname, "/favicon.ico"))
 })
 
-app.post('/upload', upload.array("image", 8), async (req, res, next) => {
-    if (req.files.length <= 8) {
+const cpUpload = upload.fields([{ name: 'image', maxCount: 8 }, { name: 'gif', maxCount: 1 }])
+app.post('/upload', cpUpload, async (req, res, next) => {
+    if (req.files['image'].length <= 9) {
+        let gif = { width: 0, height: 0, url: "" };
+        const handleGif = async () => {
+            if (req.files["gif"] !== undefined) {
+                let gifFile = req.files["gif"][0];
+                await probe(fs.createReadStream(gifFile.path)).then(async (data) => {
+                    let name = "gif" + Date.now();
+                    await uploadGif(gifFile.path, name).catch((err) => console.log(err))
+                    const url = `https://admin.noanzo.pl/images/${name}`;
+                    gif.width = data.width;
+                    gif.height = data.height;
+                    gif.url = url;
+                })
+            }
+        }
+        handleGif().catch(e => console.log(e.message));
         const title = req.body.title
         const description = req.body.description
         const price = req.body.price
@@ -189,14 +222,14 @@ app.post('/upload', upload.array("image", 8), async (req, res, next) => {
         const handleImageResizing = async (req) => {
             if (!req.files) return next();
             await Promise.all(
-                req.files.map(async (item, id) => {
+                req.files['image'].map(async (item, id) => {
                     await sharp(item.path, { failOnError: false })
                         .rotate()
                         .resize(550)
                         .jpeg({ mozjpeg: true })
                         .toFile(`upload/result${id}.jpeg`)
                         .then(async (data) => {
-                            const result = await uploadFile(`upload/result${id}.jpeg`, item).catch((err) => console.log(err))
+                            await uploadFile(`upload/result${id}.jpeg`, item).catch((err) => console.log(err))
                             const url = `https://admin.noanzo.pl/images/${item.filename}`;
                             image.push({
                                 width: data.width,
@@ -209,7 +242,7 @@ app.post('/upload', upload.array("image", 8), async (req, res, next) => {
                         })
                 })
             ).then(() => {
-                const auction = new Auction({ image: image, description: description, price: price, title: title, id: uuidv4() });
+                const auction = new Auction({ image: image, gif: gif, description: description, price: price, title: title, id: uuidv4() });
                 auction.save((err, auction) => {
                     if (err) return console.error(err);
                     console.log("Saved: " + auction)
@@ -218,12 +251,12 @@ app.post('/upload', upload.array("image", 8), async (req, res, next) => {
                 res.send("Ogłoszenie zostało dodane.")
 
             }).catch((err) => {
-                res.send("Blad przesylania")
+                res.status(404).send("Bład przesyłania")
             })
         }
         handleImageResizing(req)
     } else {
-        res.send("Wybierz max 8 plików")
+        res.status(404).send("Wybierz max 8 plików")
     }
 })
 app.listen(port, () => {
