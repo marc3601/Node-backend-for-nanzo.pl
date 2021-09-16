@@ -15,6 +15,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
 const probe = require('probe-image-size');
+const gifResize = require('@gumlet/gif-resize');
 
 require('dotenv').config()
 const IMAGES = '/upload';
@@ -55,8 +56,8 @@ const auctionSchema = new mongoose.Schema({
         }
     ],
     gif: {
-        width: { type: Number, default: 0 },
-        height: { type: Number, default: 0 },
+        width: Number,
+        height: Number,
         url: String
     },
     description: String,
@@ -199,26 +200,13 @@ app.get("/favicon.ico", (req, res) => {
 const cpUpload = upload.fields([{ name: 'image', maxCount: 8 }, { name: 'gif', maxCount: 1 }])
 app.post('/upload', cpUpload, async (req, res, next) => {
     if (req.files['image'].length <= 9) {
-        let gif = { width: 0, height: 0, url: "" };
-        const handleGif = async () => {
-            if (req.files["gif"] !== undefined) {
-                let gifFile = req.files["gif"][0];
-                await probe(fs.createReadStream(gifFile.path)).then(async (data) => {
-                    let name = "gif" + Date.now();
-                    await uploadGif(gifFile.path, name).catch((err) => console.log(err))
-                    const url = `https://admin.noanzo.pl/images/${name}`;
-                    gif.width = data.width;
-                    gif.height = data.height;
-                    gif.url = url;
-                })
-            }
-        }
-        handleGif().catch(e => console.log(e.message));
+        let gif = null;
         const title = req.body.title
         const description = req.body.description
         const price = req.body.price
         const thumbnail = req.body.thumbnail
         let image = [];
+        let auction = null;
         const handleImageResizing = async (req) => {
             if (!req.files) return next();
             await Promise.all(
@@ -242,19 +230,54 @@ app.post('/upload', cpUpload, async (req, res, next) => {
                         })
                 })
             ).then(() => {
-                const auction = new Auction({ image: image, gif: gif, description: description, price: price, title: title, id: uuidv4() });
-                auction.save((err, auction) => {
-                    if (err) return console.error(err);
-                    console.log("Saved: " + auction)
-                });
+                auction = new Auction({ image: image, description: description, price: price, title: title, id: uuidv4() });
+
                 image = [];
-                res.send("Ogłoszenie zostało dodane.")
+
 
             }).catch((err) => {
                 res.status(404).send("Bład przesyłania")
             })
         }
         handleImageResizing(req)
+
+        const handleGif = () => {
+            if (req.files["gif"] !== undefined) {
+                let gifPath = req.files["gif"][0].path;
+                const buf = fs.readFileSync(gifPath);
+                gifResize({
+                    width: 300
+                })(buf).then(data => {
+                    gif = {};
+                    const path = "gif/giffy.gif"
+                    fs.writeFile(path, data, async (err) => {
+                        console.log(data);
+                        if (err) return console.log(err)
+                        let name = "gif" + Date.now();
+                        await uploadGif(path, name).then(async () => {
+                            await probe(fs.createReadStream(path)).then(data => {
+                                const url = `https://admin.noanzo.pl/images/${name}`;
+                                gif.width = data.width;
+                                gif.height = data.height;
+                                gif.url = url;
+                                console.log(gif);
+                                auction.gif = gif;
+                                auction.save((err, auction) => {
+                                    if (err) return console.error(err);
+                                    console.log("Saved: " + auction)
+                                });
+                                res.send("Ogłoszenie zostało dodane.")
+                            }).finally(async () => {
+                                await unlinkFile(gifPath);
+                                await unlinkFile(path);
+                            })
+                        }).catch((err) => console.log(err.message))
+                    })
+
+                }).catch(err => console.log(err.message));
+            }
+        }
+        handleGif()
     } else {
         res.status(404).send("Wybierz max 8 plików")
     }
