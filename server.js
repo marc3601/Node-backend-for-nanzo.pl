@@ -199,7 +199,8 @@ app.get("/favicon.ico", (req, res) => {
 
 const cpUpload = upload.fields([{ name: 'image', maxCount: 8 }, { name: 'gif', maxCount: 1 }])
 app.post('/upload', cpUpload, async (req, res, next) => {
-    if (req.files['image'].length <= 9) {
+
+    if (req.files['image'].length <= 8) {
         let gif = null;
         const title = req.body.title
         const description = req.body.description
@@ -232,9 +233,14 @@ app.post('/upload', cpUpload, async (req, res, next) => {
             ).then(() => {
                 auction = new Auction({ image: image, description: description, price: price, title: title, id: uuidv4() });
 
-                image = [];
-
-
+                if (req.files["gif"] === undefined) {
+                    auction.save((err, auction) => {
+                        if (err) return console.error(err);
+                        console.log("Saved: " + auction)
+                        image = [];
+                        res.send("Ogłoszenie zostało dodane bez GIF.")
+                    });
+                }
             }).catch((err) => {
                 res.status(404).send("Bład przesyłania")
             })
@@ -246,12 +252,13 @@ app.post('/upload', cpUpload, async (req, res, next) => {
                 let gifPath = req.files["gif"][0].path;
                 const buf = fs.readFileSync(gifPath);
                 gifResize({
-                    width: 300
+                    width: 200,
+                    optimizationLevel: 3,
+                    resize_method: "catrom"
                 })(buf).then(data => {
                     gif = {};
-                    const path = "gif/giffy.gif"
+                    const path = `gif/giffy${Date.now()}.gif`;
                     fs.writeFile(path, data, async (err) => {
-                        console.log(data);
                         if (err) return console.log(err)
                         let name = "gif" + Date.now();
                         await uploadGif(path, name).then(async () => {
@@ -260,13 +267,13 @@ app.post('/upload', cpUpload, async (req, res, next) => {
                                 gif.width = data.width;
                                 gif.height = data.height;
                                 gif.url = url;
-                                console.log(gif);
                                 auction.gif = gif;
                                 auction.save((err, auction) => {
                                     if (err) return console.error(err);
                                     console.log("Saved: " + auction)
+                                    gif = null;
                                 });
-                                res.send("Ogłoszenie zostało dodane.")
+                                res.send("Ogłoszenie zostało dodane z GIF-em.")
                             }).finally(async () => {
                                 await unlinkFile(gifPath);
                                 await unlinkFile(path);
