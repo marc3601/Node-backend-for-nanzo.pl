@@ -358,7 +358,7 @@
         onUploadProgress: progressEvent => {
             progressValue = Math.round((progressEvent.loaded / totalSize) * 100)
             progress.value = isFinite(progressValue) ? progressValue : 0;
-            response.innerText = `Przesłano ${progressValue} %`
+            response.innerText = `Przesłano ${progressValue} % - admin.noanzo.pl`
             if (document.hidden && progressValue > 0) {
                 document.title = `Przesłano ${progressValue} % - admin.noanzo.pl`
             } else {
