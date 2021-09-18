@@ -130,13 +130,13 @@ app.post("/login", async (req, res) => {
                 res.cookie("auth", accessToken, { httpOnly: true, maxAge: 3600000 })
                     .redirect(301, '/admin')
             } else {
-                res.status(401).send("Login failed")
+                res.status(401).send("Błędne hasło")
             }
         } catch {
-            res.status(404).send("Server error")
+            res.status(404).send("Błąd serwera")
         }
     } else {
-        res.status(404).send("User not found")
+        res.status(404).send("Błędny email")
     }
 })
 
@@ -238,7 +238,7 @@ app.post('/upload', cpUpload, async (req, res, next) => {
                         if (err) return console.error(err);
                         console.log("Saved: " + auction)
                         image = [];
-                        res.send("Ogłoszenie zostało dodane bez GIF.")
+                        res.send("Ogłoszenie zostało dodane.")
                     });
                 }
             }).catch((err) => {
@@ -267,13 +267,16 @@ app.post('/upload', cpUpload, async (req, res, next) => {
                                 gif.width = data.width;
                                 gif.height = data.height;
                                 gif.url = url;
+                                if (auction === null) {
+                                    auction = {}
+                                }
                                 auction.gif = gif;
                                 auction.save((err, auction) => {
                                     if (err) return console.error(err);
                                     console.log("Saved: " + auction)
                                     gif = null;
                                 });
-                                res.send("Ogłoszenie zostało dodane z GIF-em.")
+                                res.send("Ogłoszenie zostało dodane. (GIF)")
                             }).finally(async () => {
                                 await unlinkFile(gifPath);
                                 await unlinkFile(path);
