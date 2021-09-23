@@ -75,6 +75,9 @@
         #title, #price {
             height: 25px;
         }
+        #title {
+            margin-top: 20px;
+        }
         input[type=file]::-webkit-input-placeholder {
             color: white;
             padding: 5px;
@@ -195,7 +198,7 @@
         .background_hidden {
             display: none;
         }
-        .gif_menu {
+        .gif_menu, .delete_menu {
             position:absolute;
             width: 100vw;
             height: 200px;
@@ -208,10 +211,10 @@
             flex-direction: column;
             transition: .3s ease-out;
         }
-        .gif_menu_show {
+        .gif_menu_show, .delete_menu_show {
             right: -50vw;
         }
-        .gif_icon_show, .gif_icon_hide {
+        .gif_icon_show, .gif_icon_hide, .delete_icon_show, .delete_icon_hide {
             position: absolute;
             width: 50px;
             height: 50px;
@@ -225,17 +228,50 @@
             align-items: center;
             cursor: pointer;
         }
-        .gif_icon_hide {
+        .gif_icon_hide, .delete_icon_hide {
            left: 0;
            background-color: #d27303;
            border-radius: 0;
         }
-        .gif_lebel {
+        .gif_lebel, .delete_title {
             text-align: left;
             margin-left: 60px;
         }
         #gif {
             margin-top:25px;
+        }
+        .delete_menu {
+            top: 150px;
+            padding-top: 12px;
+            height: 70vh;
+        }
+        .delete_title {
+            font-size: 1.2rem;
+        }
+        .delete_icon_show {
+            background-color: #810000
+        }
+        .delete_container {
+            margin: 10px 0 0 40px;
+            text-align: left;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            background-color: #9b5707;
+            -webkit-box-shadow: inset 1px 0px 7px -2px #000000; 
+            box-shadow: inset 1px 0px 7px -2px #000000;
+            border-radius: 10px;
+            width: 45%;
+        }
+        .light_item, .dark_item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+        .dark_item {
+            background-color: #6f3e05;
+        }
+        .delete_item {
+            cursor: pointer;
         }
         @media screen and (max-width: 550px) {
             .form {
@@ -247,8 +283,15 @@
             .images {
                 max-width: 90vw;
             }
-            .gif_menu_show {
+            .gif_menu_show, .delete_menu_show {
                 right: 0;
+            }
+            .delete_title {
+                margin-left: 0;
+                text-align: center;
+            }
+            .delete_container {
+                width: auto;
             }
             
         }
@@ -328,6 +371,61 @@
             </svg>
             </div>
         </section>
+        <section class="delete_menu">
+            <h1 class="delete_title">Usuwanie ogłoszeń</h1>
+            <div class="delete_container">
+                <p class="loading_alert">Ładowanie ogłoszeń...</p>
+            </div>
+            <div class="delete_icon_show">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"/></svg>
+            </div>
+            <div class="delete_icon_hide">
+                <?xml version="1.0" encoding="iso-8859-1"?>
+            <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="white" width="20px" height="20px" x="0px" y="0px"
+            	 viewBox="0 0 492.004 492.004"  xml:space="preserve">
+            <g>
+        	<g>
+		<path d="M484.14,226.886L306.46,49.202c-5.072-5.072-11.832-7.856-19.04-7.856c-7.216,0-13.972,2.788-19.044,7.856l-16.132,16.136
+			c-5.068,5.064-7.86,11.828-7.86,19.04c0,7.208,2.792,14.2,7.86,19.264L355.9,207.526H26.58C11.732,207.526,0,219.15,0,234.002
+			v22.812c0,14.852,11.732,27.648,26.58,27.648h330.496L252.248,388.926c-5.068,5.072-7.86,11.652-7.86,18.864
+			c0,7.204,2.792,13.88,7.86,18.948l16.132,16.084c5.072,5.072,11.828,7.836,19.044,7.836c7.208,0,13.968-2.8,19.04-7.872
+			l177.68-177.68c5.084-5.088,7.88-11.88,7.86-19.1C492.02,238.762,489.228,231.966,484.14,226.886z"/>
+        	</g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            <g>
+            </g>
+            </svg>
+            </div>
+        </section>
         <footer></footer>
     </center>
     </main>
@@ -343,22 +441,28 @@
     const progress = document.getElementById("progress")
     // const logout = document.querySelector(".logout");
     const cards = document.getElementsByClassName("card")
-    const images = document.getElementsByTagName("img")
+    const images = document.getElementsByTagName("img");
     const characters = document.querySelector(".characters");
-    const thumbInfo = document.querySelector(".thumbzz")
+    const thumbInfo = document.querySelector(".thumbzz");
     const gifFile = document.querySelector('#gif');
-    const gifMenu = document.querySelector(".gif_menu")
-    const gifShow = document.querySelector(".gif_icon_show")
-    const gifHide = document.querySelector(".gif_icon_hide")
+    const gifMenu = document.querySelector(".gif_menu");
+    const gifShow = document.querySelector(".gif_icon_show");
+    const gifHide = document.querySelector(".gif_icon_hide");
+    const deleteMenu = document.querySelector(".delete_menu");
+    const deleteShow = document.querySelector(".delete_icon_show");
+    const deleteHide = document.querySelector(".delete_icon_hide");
+    const deleteContainer = document.querySelector(".delete_container");
+    const loadingAlert = document.querySelector(".loading_alert")
     const gifBcg = document.querySelector(".gif_background")
     const formData = new FormData();
     let progressValue = 0;
     let totalSize = 0;
+    let auctionsData = []
     const config = {
         onUploadProgress: progressEvent => {
             progressValue = Math.round((progressEvent.loaded / totalSize) * 100)
             progress.value = isFinite(progressValue) ? progressValue : 0;
-            response.innerText = `Przesłano ${progressValue} % - admin.noanzo.pl`
+            response.innerText = `Przesłano ${progressValue} %`
             if (document.hidden && progressValue > 0) {
                 document.title = `Przesłano ${progressValue} % - admin.noanzo.pl`
             } else {
@@ -369,7 +473,27 @@
             }
         }
     }
+
+    const handleAuctionsDataFetch = () => {
+        axios.get("https://admin.noanzo.pl/api/auctions")
+        .then(res => auctionsData = res.data)
+        .finally(() => {
+            deleteContainer.removeChild(loadingAlert)
+            deleteContainer.innerHTML = `<ul>${auctionsData.map((auction, i) => {
+                return `<li class=${i%2 === 0 ? "light_item" : "dark_item"} id=${auction.id}><p>${auction.title}</p><div class="delete_item">${deleteIcon}</div><li>`;
+            }).join('')}<ul>`;
+        })
+        .catch(err => console.log(err))
+ 
+    }
+
+    // Gif menu handler
     gifShow.addEventListener("click", () => {
+        if(deleteMenu.classList.contains("delete_menu_show")) {
+            main.style = "overflow-x: hidden"
+            deleteMenu.classList.remove("delete_menu_show")
+            gifBcg.classList.add("background_hidden")
+        }
         if (!gifMenu.classList.contains("gif_menu_show")) {
             main.style = "overflow:hidden"
             gifMenu.classList.add("gif_menu_show")
@@ -378,11 +502,37 @@
     })
     gifHide.addEventListener("click", () => {
         if(gifMenu.classList.contains("gif_menu_show")) {
-            main.style = "overflow:auto"
+            main.style = "overflow-x: hidden"
             gifMenu.classList.remove("gif_menu_show")
             gifBcg.classList.add("background_hidden")
         }
     })
+
+    deleteShow.addEventListener("click", () => {
+        if(gifMenu.classList.contains("gif_menu_show")) {
+            main.style = "overflow-x: hidden"
+            gifMenu.classList.remove("gif_menu_show")
+            gifBcg.classList.add("background_hidden")
+        }
+        if (!deleteMenu.classList.contains("delete_menu_show")) {
+            if (auctionsData.length === 0) {
+                handleAuctionsDataFetch()
+            }
+            main.style = "overflow:hidden"
+            deleteMenu.classList.add("delete_menu_show")
+            gifBcg.classList.remove("background_hidden")
+        }
+    })
+    deleteHide.addEventListener("click", () => {
+        if(deleteMenu.classList.contains("delete_menu_show")) {
+            main.style = "overflow-x: hidden"
+            deleteMenu.classList.remove("delete_menu_show")
+            gifBcg.classList.add("background_hidden")
+        }
+    })
+
+
+
     const checkmark = `<span style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24"><path style="fill:green;" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.393 7.5l-5.643 5.784-2.644-2.506-1.856 1.858 4.5 4.364 7.5-7.643-1.857-1.857z"/></svg></span>`
 
     const warning =  `<span><?xml version="1.0" encoding="iso-8859-1"?>
@@ -432,6 +582,9 @@
     </g>
     </svg></span>`
 
+    const deleteIcon = `
+    <svg  viewBox="0 0 512 512" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m256 0c-141.164062 0-256 114.835938-256 256s114.835938 256 256 256 256-114.835938 256-256-114.835938-256-256-256zm0 0" fill="#f44336"/><path d="m350.273438 320.105469c8.339843 8.34375 8.339843 21.824219 0 30.167969-4.160157 4.160156-9.621094 6.25-15.085938 6.25-5.460938 0-10.921875-2.089844-15.082031-6.25l-64.105469-64.109376-64.105469 64.109376c-4.160156 4.160156-9.621093 6.25-15.082031 6.25-5.464844 0-10.925781-2.089844-15.085938-6.25-8.339843-8.34375-8.339843-21.824219 0-30.167969l64.109376-64.105469-64.109376-64.105469c-8.339843-8.34375-8.339843-21.824219 0-30.167969 8.34375-8.339843 21.824219-8.339843 30.167969 0l64.105469 64.109376 64.105469-64.109376c8.34375-8.339843 21.824219-8.339843 30.167969 0 8.339843 8.34375 8.339843 21.824219 0 30.167969l-64.109376 64.105469zm0 0" fill="#fafafa"/></svg>        
+    `
     imagefile.onchange = (e) => {
         formData.delete('image');
         let files = [...e.target.files];

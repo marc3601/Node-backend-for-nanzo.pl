@@ -252,7 +252,7 @@ app.post('/upload', cpUpload, async (req, res, next) => {
                 let gifPath = req.files["gif"][0].path;
                 const buf = fs.readFileSync(gifPath);
                 gifResize({
-                    width: 200,
+                    width: 550,
                     optimizationLevel: 3,
                     resize_method: "catrom"
                 })(buf).then(data => {
