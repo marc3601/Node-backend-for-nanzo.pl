@@ -91,6 +91,7 @@ const storage = multer.diskStorage({
 //     console.log(auctions)
 // })
 const { uploadFile, getFileStream, uploadGif, deleteFiles } = require("./s3");
+const { STATUS_CODES } = require('http');
 
 const authenticateToken = (req, res, next) => {
     let reqToken = null;
@@ -195,6 +196,16 @@ app.get("/api/latest", (req, res) => {
 })
 app.get("/favicon.ico", (req, res) => {
     res.sendFile(path.join(__dirname, "/favicon.ico"))
+})
+
+app.get('/delete', async (req, res) => {
+    const id = req.query.id
+    Auction.deleteOne({ id: id }).exec((err, item) => {
+        if (err) return console.err
+        res.status(200).send(item)
+    })
+    await deleteFiles(id).then((stat) => console.log(stat)).catch((err) => console.log(err))
+
 })
 
 const cpUpload = upload.fields([{ name: 'image', maxCount: 8 }, { name: 'gif', maxCount: 1 }])
