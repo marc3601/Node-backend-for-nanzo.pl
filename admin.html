@@ -191,7 +191,7 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
+            bottom: -200px;
             background-color: rgba(40, 40, 40, 0.8);
             transition: .2s ease;
         }
@@ -286,6 +286,11 @@
             display: flex;
             align-items: center;
             cursor: pointer;
+        }
+        .user_count {
+            text-align: center;
+            color: black;
+            font-size: .8rem;
         }
         @media screen and (max-width: 550px) {
             .form {
@@ -440,8 +445,10 @@
             </svg>
             </div>
         </section>
-        <footer></footer>
+        <footer>
+        </footer>
     </center>
+    <p class="user_count">Liczba wyświetleń strony: <span class="data_count"></span></p>
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
@@ -466,9 +473,9 @@
     const deleteShow = document.querySelector(".delete_icon_show");
     const deleteHide = document.querySelector(".delete_icon_hide");
     const deleteContainer = document.querySelector(".delete_container");
-    const loadingAlert = document.querySelector(".loading_alert")
-  
-    const gifBcg = document.querySelector(".gif_background")
+    const loadingAlert = document.querySelector(".loading_alert");
+    const gifBcg = document.querySelector(".gif_background");
+    const userCount = document.querySelector(".data_count");
     const formData = new FormData();
     let progressValue = 0;
     let totalSize = 0;
@@ -802,6 +809,16 @@
             response.innerHTML = `${warning}<span class="alertzz">${checklist()}</span>`;
         }
     })
+
+    const setUserCount = () => {
+        let count = 0;
+        axios.get('https://admin.noanzo.pl/users')
+            .then(res => {
+                count = res.data;
+                userCount.innerText = count;
+            })
+        } 
+        setUserCount();      
     </script>
 </body>
 </html>
