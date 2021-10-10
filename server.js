@@ -46,6 +46,8 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.log("Database connected");
 });
+
+//auction schema
 const auctionSchema = new mongoose.Schema({
     image: [
         {
@@ -67,6 +69,13 @@ const auctionSchema = new mongoose.Schema({
 });
 auctionSchema.plugin(mongoosePaginate);
 const Auction = mongoose.model('Auction', auctionSchema);
+//user schema
+
+const userSchema = new mongoose.Schema({
+    userIp: String
+})
+const User = mongoose.model("User", userSchema);
+
 //Multer configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -206,6 +215,37 @@ app.get('/delete', async (req, res) => {
     })
     await deleteFiles(id).then((stat) => console.log(stat)).catch((err) => console.log(err))
 
+})
+
+app.post("/analitics", async (req, res) => {
+    let ip = req.ip;
+    User.findOne({ userIp: ip }, (err, user) => {
+        if (err) return console.error(err);
+        if (user) {
+            User.find((err, data) => {
+                if (err) return console.error(err)
+            })
+        } else {
+            const user = new User({ userIp: ip })
+            user.save((err, user) => {
+                if (err) return console.error(err);
+            });
+
+        }
+    });
+})
+
+
+app.get("/users", async (req, res) => {
+    User.find((err, data) => {
+        if (err) return console.error(err)
+        let userCount = data.length
+        res.send(JSON.stringify(userCount))
+    })
+
+    // User.deleteMany({}, (err, data) => {
+    //     console.log(data);
+    // })
 })
 
 const cpUpload = upload.fields([{ name: 'image', maxCount: 8 }, { name: 'gif', maxCount: 1 }])
