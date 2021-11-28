@@ -5,6 +5,6 @@ Posiada ona prosty interfejs umożliwiający zalogowanie się i dodawanie/usuwan
 
 ## Prosty widok CMS do zarządzania treścią
 
-![CMS1](/github_img/fff1.png)
+![CMS1](/github_img/fff2.png)
 
 ![CMS2](/github_img/fff1.png)
