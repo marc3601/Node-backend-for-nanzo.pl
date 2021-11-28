@@ -16,14 +16,18 @@ const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
 const probe = require('probe-image-size');
 const gifResize = require('@gumlet/gif-resize');
-
+const requestIp = require('request-ip');
 require('dotenv').config()
 const IMAGES = '/upload';
 const GIF = '/gif';
 app.use(cors());
 app.options('*', cors());
 app.use(express.json())
-
+app.use(requestIp.mw())
+app.use(function (req, res, next) {
+    const ip = req.clientIp;
+    next()
+});
 process.on('uncaughtException', (error, origin) => {
     console.log('----- Uncaught exception -----')
     console.log(error)
@@ -218,7 +222,7 @@ app.get('/delete', async (req, res) => {
 })
 
 app.post("/analitics", async (req, res) => {
-    let ip = req.ip;
+    let ip = req.clientIp;
     User.findOne({ userIp: ip }, (err, user) => {
         if (err) return console.error(err);
         if (user) {
@@ -233,6 +237,7 @@ app.post("/analitics", async (req, res) => {
 
         }
     });
+    res.sendStatus(200);
 })
 
 
@@ -240,7 +245,7 @@ app.get("/users", async (req, res) => {
     User.find((err, data) => {
         if (err) return console.error(err)
         let userCount = data.length
-        res.send(JSON.stringify(userCount))
+        res.send(userCount.toString())
     })
 
     // User.deleteMany({}, (err, data) => {
