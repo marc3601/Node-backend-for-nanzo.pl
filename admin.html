@@ -412,7 +412,7 @@
         </form>
         <progress id="progress" max="100"></progress>
         <div class="response"></div>
-        <!-- <a href="http://localhost:8080/logout" class="logout">Wyloguj</a> -->
+        <!-- <a href="https://webdev-online.pl//logout" class="logout">Wyloguj</a> -->
         <div class="thumbzz thumbzz_hidden">
           Kliknij na zdjęcie, które ma być miniaturką.
         </div>
@@ -638,7 +638,7 @@
       const handleDelete = (e) => {
         let id = e.currentTarget.parentElement.id;
         axios
-          .get(`http://localhost:8080/delete?id=${id}`)
+          .get(`https://webdev-online.pl//delete?id=${id}`)
           .then((res) => {
             console.log(res);
             handleAuctionsDataFetch();
@@ -649,7 +649,7 @@
       const handleAuctionsDataFetch = () => {
         deleteContainer.innerHTML = `<p style="padding-left:10px">Ładowanie ogłoszeń</p>`;
         axios
-          .get("http://localhost:8080/api/auctions")
+          .get("https://webdev-online.pl//api/auctions")
           .then((res) => (auctionsData = res.data))
           .finally(() => {
             if (auctionsData.length > 0) {
@@ -945,7 +945,7 @@
 
       const setUserCount = () => {
         let count = 0;
-        axios.get("http://localhost:8080/users").then((res) => {
+        axios.get("https://webdev-online.pl//users-count").then((res) => {
           count = res.data;
           userCount.innerText = count;
         });
