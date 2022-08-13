@@ -80,39 +80,62 @@ const Auction = mongoose.model("Auction", auctionSchema);
 
 const userSchema = new mongoose.Schema({
   userIp: String,
-  countryCode: { type: String, default: null },
+  countryName: { type: String, default: null },
   countryFlag: { type: String, default: null },
   isp: { type: String, default: null },
   city: { type: String, default: null },
+  timestamp: { type: Number, default: null },
 });
 const User = mongoose.model("User", userSchema);
 
-const updateUsers = async () => {
+// Run only on first startup to update databse records
+const initialCreateUsers = async () => {
   User.find((err, data) => {
     if (err) return console.error(err);
     data.forEach(async (item, i) => {
-      // console.log(item.userIp);
-      // const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${item.userIp}`;
-      // const response = await fetch(link);
-      // const body = await response.json();
-      // const filter = { userIp: body.ip };
-      // const update = {
-      //   countryCode: body.ip ? body.ip : null,
-      //   countryFlag: body.country_flag ? body.country_flag : null,
-      //   isp: body.isp ? body.isp : null,
-      //   city: body.city ? body.city : null,
-      // };
-      // await User.findOneAndUpdate(filter, update, {
-      //   new: true,
-      //   useFindAndModify: false,
-      // });
-
-      console.log(item);
+      if (i < 1) {
+        const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${item.userIp}`;
+        const response = await fetch(link);
+        const body = await response.json();
+        const filter = { userIp: body.ip };
+        const update = {
+          countryName: body.country_name ? body.country_name : null,
+          countryFlag: body.country_flag ? body.country_flag : null,
+          isp: body.isp ? body.isp : null,
+          city: body.city ? body.city : null,
+        };
+        await User.findOneAndUpdate(filter, update, {
+          new: true,
+          useFindAndModify: false,
+        });
+        console.log(item);
+      }
     });
   }).sort({ _id: -1 });
 };
 
-updateUsers();
+// initialCreateUsers();
+
+const saveUserInfo = async (ip) => {
+  const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${ip}`;
+  const timestamp = Date.now();
+  const response = await fetch(link);
+  const body = await response.json();
+  const newUser = new User({
+    userIp: ip ? ip : null,
+    countryName: body.country_name ? body.country_name : null,
+    countryFlag: body.country_flag ? body.country_flag : null,
+    isp: body.isp ? body.isp : null,
+    city: body.city ? body.city : null,
+    timestamp: timestamp ? timestamp : null,
+  });
+
+  newUser.save((err, user) => {
+    if (err) return console.error(err);
+  });
+};
+
+// saveUserInfo("80.92.32.0");
 
 //Multer configuration
 const storage = multer.diskStorage({
@@ -283,16 +306,13 @@ app.post("/analitics", async (req, res) => {
         if (err) return console.error(err);
       });
     } else {
-      const user = new User({ userIp: ip });
-      user.save((err, user) => {
-        if (err) return console.error(err);
-      });
+      saveUserInfo(ip);
     }
   });
   res.sendStatus(200);
 });
 
-app.get("/users", authenticateToken, async (req, res) => {
+app.get("/users-count", authenticateToken, async (req, res) => {
   User.find((err, data) => {
     if (err) return console.error(err);
     let userCount = data.length;
@@ -302,6 +322,13 @@ app.get("/users", authenticateToken, async (req, res) => {
   // User.deleteMany({}, (err, data) => {
   //     console.log(data);
   // })
+});
+
+app.get("/users-info", authenticateToken, async (req, res) => {
+  User.find((err, data) => {
+    if (err) return res.statusCode(500);
+    res.send(data);
+  }).sort({ _id: -1 });
 });
 
 const cpUpload = upload.fields([
@@ -334,7 +361,7 @@ app.post(
                 await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
                   console.log(err)
                 );
-                const url = `http://localhost:8080/images/${item.filename}`;
+                const url = `https://webdev-online.pl//images/${item.filename}`;
                 image.push({
                   width: data.width,
                   height: data.height,
@@ -389,7 +416,7 @@ app.post(
                   .then(async () => {
                     await probe(fs.createReadStream(path))
                       .then((data) => {
-                        const url = `http://localhost:8080/images/${name}`;
+                        const url = `https://webdev-online.pl//images/${name}`;
                         gif.width = data.width;
                         gif.height = data.height;
                         gif.url = url;
