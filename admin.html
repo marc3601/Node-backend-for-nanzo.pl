@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -334,6 +334,11 @@
         text-align: center;
         color: black;
         font-size: 0.8rem;
+        line-height: 2rem;
+      }
+      .users_link {
+        color: #ad3100;
+        font-weight: bold;
       }
       @media screen and (max-width: 550px) {
         .form {
@@ -412,7 +417,7 @@
         </form>
         <progress id="progress" max="100"></progress>
         <div class="response"></div>
-        <!-- <a href="https://webdev-online.pl//logout" class="logout">Wyloguj</a> -->
+        <!-- <a href="https://webdev-online.pl/logout" class="logout">Wyloguj</a> -->
         <div class="thumbzz thumbzz_hidden">
           Kliknij na zdjęcie, które ma być miniaturką.
         </div>
@@ -559,7 +564,10 @@
         <footer></footer>
       </center>
       <p class="user_count">
-        Liczba wyświetleń strony: <span class="data_count"></span>
+        Liczba wyświetleń strony: <span class="data_count"></span><br />
+        <a class="user_count users_link" href="/users-data"
+          >Informacje o odwiedzających</a
+        >
       </p>
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -638,7 +646,7 @@
       const handleDelete = (e) => {
         let id = e.currentTarget.parentElement.id;
         axios
-          .get(`https://webdev-online.pl//delete?id=${id}`)
+          .get(`https://webdev-online.pl/delete?id=${id}`)
           .then((res) => {
             console.log(res);
             handleAuctionsDataFetch();
@@ -649,7 +657,7 @@
       const handleAuctionsDataFetch = () => {
         deleteContainer.innerHTML = `<p style="padding-left:10px">Ładowanie ogłoszeń</p>`;
         axios
-          .get("https://webdev-online.pl//api/auctions")
+          .get("https://webdev-online.pl/api/auctions")
           .then((res) => (auctionsData = res.data))
           .finally(() => {
             if (auctionsData.length > 0) {
@@ -945,7 +953,7 @@
 
       const setUserCount = () => {
         let count = 0;
-        axios.get("https://webdev-online.pl//users-count").then((res) => {
+        axios.get("https://webdev-online.pl/users-count").then((res) => {
           count = res.data;
           userCount.innerText = count;
         });

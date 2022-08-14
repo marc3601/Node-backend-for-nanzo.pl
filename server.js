@@ -135,8 +135,6 @@ const saveUserInfo = async (ip) => {
   });
 };
 
-// saveUserInfo("80.92.32.0");
-
 //Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -228,6 +226,10 @@ app.get("/logout", (reg, res) => {
 
 app.get("/admin", authenticateToken, (req, res) => {
   res.sendFile(__dirname + "/admin.html");
+});
+
+app.get("/users-data", authenticateToken, (req, res) => {
+  res.sendFile(__dirname + "/users-data.html");
 });
 app.get("/api/auctions", (req, res) => {
   if (req.query.page && req.query.limit) {
@@ -361,7 +363,7 @@ app.post(
                 await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
                   console.log(err)
                 );
-                const url = `https://webdev-online.pl//images/${item.filename}`;
+                const url = `https://webdev-online.pl/images/${item.filename}`;
                 image.push({
                   width: data.width,
                   height: data.height,
@@ -416,7 +418,7 @@ app.post(
                   .then(async () => {
                     await probe(fs.createReadStream(path))
                       .then((data) => {
-                        const url = `https://webdev-online.pl//images/${name}`;
+                        const url = `https://webdev-online.pl/images/${name}`;
                         gif.width = data.width;
                         gif.height = data.height;
                         gif.url = url;
