@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#d27303" />
+    <title>Informacje o odwiedzających - admin.noanzo.pl</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body,
+      main {
+        min-height: 100vh;
+        height: 100vh;
+      }
+      body {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        color: white;
+        font-family: "Poppins", sans-serif;
+      }
+      main {
+        background: linear-gradient(
+          360deg,
+          rgba(255, 255, 255, 1) 0%,
+          #d27303 100%
+        );
+        background-repeat: no-repeat;
+        padding: 30px 0;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .container {
+        width: 95vw;
+        margin: 2rem auto;
+        text-align: center;
+      }
+      .user_badge {
+        background-color: #e6cba8;
+        color: black;
+        margin: 1rem auto;
+        width: 90vw;
+        display: flex;
+        border-radius: 5px;
+        -webkit-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+        box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+      }
+      @media (min-width: 800px) {
+        .user_badge {
+          width: 50vw;
+        }
+      }
+      .flag_section {
+        padding: 1rem;
+        display: flex;
+        justify-items: center;
+        align-items: center;
+      }
+      .data_section {
+        padding: 0.8rem;
+        text-align: left;
+        line-height: 1.2rem;
+        font-size: 0.8rem;
+      }
+      .loader,
+      .loader:before,
+      .loader:after {
+        border-radius: 50%;
+        width: 2.5em;
+        height: 2.5em;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        -webkit-animation: load7 1.8s infinite ease-in-out;
+        animation: load7 1.8s infinite ease-in-out;
+      }
+      .loader {
+        color: #ffffff;
+        font-size: 10px;
+        margin: 80px auto;
+        position: relative;
+        text-indent: -9999em;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation-delay: -0.16s;
+        animation-delay: -0.16s;
+      }
+      .loader:before,
+      .loader:after {
+        content: "";
+        position: absolute;
+        top: 0;
+      }
+      .loader:before {
+        left: -3.5em;
+        -webkit-animation-delay: -0.32s;
+        animation-delay: -0.32s;
+      }
+      .loader:after {
+        left: 3.5em;
+      }
+      @-webkit-keyframes load7 {
+        0%,
+        80%,
+        100% {
+          box-shadow: 0 2.5em 0 -1.3em;
+        }
+        40% {
+          box-shadow: 0 2.5em 0 0;
+        }
+      }
+      @keyframes load7 {
+        0%,
+        80%,
+        100% {
+          box-shadow: 0 2.5em 0 -1.3em;
+        }
+        40% {
+          box-shadow: 0 2.5em 0 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <center>
+        <h1>Odwiedzający stronę.</h1>
+      </center>
+      <div class="container">
+        <div class="loader">Loading...</div>
+      </div>
+    </main>
+    <template>
+      <div class="user_badge">
+        <div class="flag_section">
+          <div class="flag_image">
+            <img
+              src="https://ipgeolocation.io/static/flags/de_64.png"
+              alt="russia"
+              width="50px"
+            />
+          </div>
+        </div>
+        <div class="data_section">
+          <p class="country"><b>Kraj:</b> Russia</p>
+          <p class="country"><b>Miasto:</b> Russia</p>
+          <p class="country"><b>Data:</b> Russia</p>
+          <p class="country"><b>IP</b> Russia</p>
+        </div>
+      </div>
+    </template>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const container = document.querySelector(".container");
+      const badge = document.getElementsByTagName("template")[0];
+      const loader = document.querySelector(".loader");
+      const getUsersData = async () => {
+        axios.get("https://webdev-online.pl/users-info").then((res) => {
+          const info = res.data;
+          loader.remove();
+          info.forEach((element, i) => {
+            const time = element.timestamp;
+            const date = new Date(time);
+            const dateForDisplay =
+              date.getDate() +
+              "/" +
+              (date.getMonth() + 1) +
+              "/" +
+              date.getFullYear();
+            const hourToDisplay = date.getHours() + ":" + date.getMinutes();
+            const template = `  <div class="user_badge">
+        <div class="flag_section">
+          <div class="flag_image">
+            <img
+              src=${element.countryFlag !== null ? element.countryFlag : ""}
+              alt="russia"
+              width="50px"
+            />
+          </div>
+        </div>
+        <div class="data_section">
+          <p class="country"><b>Kraj:</b> ${
+            element.countryName !== null ? element.countryName : "Kraj nieznany"
+          }</p>
+          <p class="city"><b>Miasto:</b> ${
+            element.city !== null ? element.city : "Miasto nieznane"
+          }</p>
+          <p class="date"><b>Data:</b> ${
+            dateForDisplay != "1/1/1970" ? dateForDisplay : "Data nieznana"
+          }</p>
+          <p class="hour"><b>
+            Godzina:</b> ${
+              hourToDisplay != "1:0" ? hourToDisplay : "Godzina nieznana"
+            }</p>
+          <p class="isp"><b>Dostawca internetu:</b> ${
+            element.isp != null ? element.isp : "Dostawca internetu nieznany"
+          }</p>
+          <p class="ip"><b>IP:</b> ${element.userIp}</p>
+        </div>
+      </div>`;
+
+            const el = document.createElement("html");
+            el.innerHTML = template;
+            const node = el.getElementsByTagName("div")[0];
+            container.appendChild(node);
+          });
+        });
+      };
+      getUsersData();
+    </script>
+  </body>
+</html>
