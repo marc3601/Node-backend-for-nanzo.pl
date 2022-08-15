@@ -211,7 +211,7 @@
       };
 
       const getUsersData = async () => {
-        axios.get("http://localhost:8080/users-info").then((res) => {
+        axios.get("https://webdev-online.pl/users-info").then((res) => {
           const info = res.data;
           loader.remove();
           info.forEach((element, i) => {
@@ -266,7 +266,7 @@
       getUsersData();
       const setUserCount = () => {
         let count = 0;
-        axios.get("http://localhost:8080/users-count").then((res) => {
+        axios.get("https://webdev-online.pl/users-count").then((res) => {
           count = res.data;
           userCount.innerText = count;
         });
