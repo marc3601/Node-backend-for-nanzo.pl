@@ -188,7 +188,7 @@ const authenticateTokenForUpload = (req, res, next) => {
   });
 };
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   if (req.headers.cookie !== undefined) {
     res.redirect("/admin");
   } else {
@@ -220,18 +220,18 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/logout", (reg, res) => {
+app.get("/logout", async (reg, res) => {
   res.clearCookie("auth").redirect(301, "/");
 });
 
-app.get("/admin", authenticateToken, (req, res) => {
+app.get("/admin", authenticateToken, async (req, res) => {
   res.sendFile(__dirname + "/admin.html");
 });
 
-app.get("/users-data", authenticateToken, (req, res) => {
+app.get("/users-data", authenticateToken, async (req, res) => {
   res.sendFile(__dirname + "/users-data.html");
 });
-app.get("/api/auctions", (req, res) => {
+app.get("/api/auctions", async (req, res) => {
   if (req.query.page && req.query.limit) {
     let page, limit;
     try {
@@ -266,7 +266,7 @@ app.get("/api/auctions", (req, res) => {
     }
   }
 });
-app.get("/images/:key", (req, res) => {
+app.get("/images/:key", async (req, res) => {
   const key = req.params.key;
   try {
     const readStream = getFileStream(key);
@@ -275,7 +275,7 @@ app.get("/images/:key", (req, res) => {
     res.sendStatus(404);
   }
 });
-app.get("/api/latest", (req, res) => {
+app.get("/api/latest", async (req, res) => {
   Auction.findOne()
     .sort({ _id: -1 })
     .limit(1)
@@ -284,7 +284,7 @@ app.get("/api/latest", (req, res) => {
       res.send(auction);
     });
 });
-app.get("/favicon.ico", (req, res) => {
+app.get("/favicon.ico", async (req, res) => {
   res.sendFile(path.join(__dirname, "/favicon.ico"));
 });
 
@@ -363,7 +363,7 @@ app.post(
                 await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
                   console.log(err)
                 );
-                const url = `https://webdev-online.pl/images/${item.filename}`;
+                const url = `http://localhost:8080/images/${item.filename}`;
                 image.push({
                   width: data.width,
                   height: data.height,
@@ -418,7 +418,7 @@ app.post(
                   .then(async () => {
                     await probe(fs.createReadStream(path))
                       .then((data) => {
-                        const url = `https://webdev-online.pl/images/${name}`;
+                        const url = `http://localhost:8080/images/${name}`;
                         gif.width = data.width;
                         gif.height = data.height;
                         gif.url = url;
