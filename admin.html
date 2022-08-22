@@ -417,7 +417,7 @@
         </form>
         <progress id="progress" max="100"></progress>
         <div class="response"></div>
-        <!-- <a href="https://admin2.noanzo.pl/logout" class="logout">Wyloguj</a> -->
+        <!-- <a href="https://admin.noanzo.pl/logout" class="logout">Wyloguj</a> -->
         <div class="thumbzz thumbzz_hidden">
           Kliknij na zdjęcie, które ma być miniaturką.
         </div>
@@ -646,7 +646,7 @@
       const handleDelete = (e) => {
         let id = e.currentTarget.parentElement.id;
         axios
-          .get(`https://admin2.noanzo.pl/delete?id=${id}`)
+          .get(`https://admin.noanzo.pl/delete?id=${id}`)
           .then((res) => {
             console.log(res);
             handleAuctionsDataFetch();
@@ -657,7 +657,7 @@
       const handleAuctionsDataFetch = () => {
         deleteContainer.innerHTML = `<p style="padding-left:10px">Ładowanie ogłoszeń</p>`;
         axios
-          .get("https://admin2.noanzo.pl/api/auctions")
+          .get("https://admin.noanzo.pl/api/auctions")
           .then((res) => (auctionsData = res.data))
           .finally(() => {
             if (auctionsData.length > 0) {
@@ -953,7 +953,7 @@
 
       const setUserCount = () => {
         let count = 0;
-        axios.get("https://admin2.noanzo.pl/users-count").then((res) => {
+        axios.get("https://admin.noanzo.pl/users-count").then((res) => {
           count = res.data;
           userCount.innerText = count;
         });
