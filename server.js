@@ -363,7 +363,7 @@ app.post(
                 await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
                   console.log(err)
                 );
-                const url = `https://admin2.noanzo.pl/images/${item.filename}`;
+                const url = `https://admin.noanzo.pl/images/${item.filename}`;
                 image.push({
                   width: data.width,
                   height: data.height,
@@ -418,7 +418,7 @@ app.post(
                   .then(async () => {
                     await probe(fs.createReadStream(path))
                       .then((data) => {
-                        const url = `https://admin2.noanzo.pl/images/${name}`;
+                        const url = `https://admin.noanzo.pl/images/${name}`;
                         gif.width = data.width;
                         gif.height = data.height;
                         gif.url = url;
