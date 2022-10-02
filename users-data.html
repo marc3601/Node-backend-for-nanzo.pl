@@ -154,7 +154,7 @@
           <div class="flag_image">
             <img
               src="https://ipgeolocation.io/static/flags/de_64.png"
-              alt="russia"
+              alt="flag"
               width="50px"
             />
           </div>
@@ -178,10 +178,13 @@
 
         switch (number) {
           case "m":
-            return (fixedNumber =
+            fixedNumber =
               date.getMonth().toString().length === 1
-                ? "0" + (date.getMonth() + 1)
-                : date.getMonth() + 1);
+                ? date.getMonth() + 1 !== 10
+                  ? "0" + (date.getMonth() + 1)
+                  : 10
+                : date.getMonth() + 1;
+            return fixedNumber.toString();
             break;
           case "d":
             return (fixedNumber =
@@ -230,7 +233,7 @@
           <div class="flag_image">
             <img
               src=${element.countryFlag !== null ? element.countryFlag : ""}
-              alt="russia"
+              alt="flag"
               width="50px"
             />
           </div>
@@ -263,6 +266,7 @@
           });
         });
       };
+
       getUsersData();
       const setUserCount = () => {
         let count = 0;
