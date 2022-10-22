@@ -17,6 +17,7 @@ const jwt = require("jsonwebtoken");
 const probe = require("probe-image-size");
 const gifResize = require("@gumlet/gif-resize");
 const requestIp = require("request-ip");
+const DeviceDetector = require("node-device-detector");
 require("dotenv").config();
 const IMAGES = "/upload";
 const GIF = "/gif";
@@ -85,6 +86,9 @@ const userSchema = new mongoose.Schema({
   isp: { type: String, default: null },
   city: { type: String, default: null },
   timestamp: { type: Number, default: null },
+  visitSource: { type: String, default: null },
+  entryPage: { type: String, default: null },
+  device: { type: mongoose.SchemaTypes.Mixed, default: null },
 });
 const User = mongoose.model("User", userSchema);
 
@@ -116,7 +120,7 @@ const initialCreateUsers = async () => {
 
 // initialCreateUsers();
 
-const saveUserInfo = async (ip) => {
+const saveUserInfo = async (ip, userData, device) => {
   const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${ip}`;
   const timestamp = Date.now();
   const response = await fetch(link);
@@ -128,12 +132,21 @@ const saveUserInfo = async (ip) => {
     isp: body.isp ? body.isp : null,
     city: body.city ? body.city : null,
     timestamp: timestamp ? timestamp : null,
+    visitSource: userData?.ref ? userData.ref : null,
+    entryPage: userData?.loc ? userData.loc : null,
+    device: device ? device : null,
   });
 
   newUser.save((err, user) => {
     if (err) return console.error(err);
   });
 };
+//Device detector
+const detector = new DeviceDetector({
+  clientIndexes: true,
+  deviceIndexes: true,
+  deviceAliasCode: false,
+});
 
 //Multer configuration
 const storage = multer.diskStorage({
@@ -301,6 +314,9 @@ app.get("/delete", authenticateToken, async (req, res) => {
 
 app.post("/analitics", async (req, res) => {
   let ip = req.clientIp;
+  let userData = req.body;
+  const userAgent = req.headers["user-agent"];
+  const device = detector.detect(userAgent);
   User.findOne({ userIp: ip }, (err, user) => {
     if (err) return console.error(err);
     if (user) {
@@ -308,7 +324,7 @@ app.post("/analitics", async (req, res) => {
         if (err) return console.error(err);
       });
     } else {
-      saveUserInfo(ip);
+      saveUserInfo(ip, userData, device);
     }
   });
   res.sendStatus(200);
