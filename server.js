@@ -22,14 +22,17 @@ require("dotenv").config();
 const IMAGES = "/upload";
 const GIF = "/gif";
 const fetch = require("node-fetch");
+const parseTimestamp = require("./functions/parseTimestamp");
 app.use(cors());
 app.options("*", cors());
+app.set("view engine", "ejs");
 app.use(express.json());
 app.use(requestIp.mw());
 app.use(function (req, res, next) {
   const ip = req.clientIp;
   next();
 });
+app.locals.parseTimestamp = parseTimestamp;
 process.on("uncaughtException", (error, origin) => {
   console.log("----- Uncaught exception -----");
   console.log(error);
@@ -90,6 +93,7 @@ const userSchema = new mongoose.Schema({
   entryPage: { type: String, default: null },
   device: { type: mongoose.SchemaTypes.Mixed, default: null },
 });
+userSchema.plugin(mongoosePaginate);
 const User = mongoose.model("User", userSchema);
 
 // Run only on first startup to update databse records
@@ -242,7 +246,32 @@ app.get("/admin", authenticateToken, async (req, res) => {
 });
 
 app.get("/users-data", authenticateToken, async (req, res) => {
-  res.sendFile(__dirname + "/users-data.html");
+  if (req.query.page && req.query.limit) {
+    let page, limit;
+    try {
+      page = parseInt(req.query.page);
+      limit = parseInt(req.query.limit);
+    } catch (error) {
+      console.error(error);
+    }
+    User.paginate(
+      {},
+      { offset: page, limit: limit, sort: { _id: -1 } },
+      (err, data) => {
+        if (err) return console.error(err);
+        res.render("users", { data: data });
+      }
+    );
+  } else {
+    User.paginate(
+      {},
+      { offset: 0, limit: 50, sort: { _id: -1 } },
+      (err, data) => {
+        if (err) return console.error(err);
+        res.render("users", { data: data });
+      }
+    );
+  }
 });
 app.get("/api/auctions", async (req, res) => {
   if (req.query.page && req.query.limit) {
@@ -340,13 +369,6 @@ app.get("/users-count", authenticateToken, async (req, res) => {
   // User.deleteMany({}, (err, data) => {
   //     console.log(data);
   // })
-});
-
-app.get("/users-info", authenticateToken, async (req, res) => {
-  User.find((err, data) => {
-    if (err) return res.statusCode(500);
-    res.send(data);
-  }).sort({ _id: -1 });
 });
 
 const cpUpload = upload.fields([
