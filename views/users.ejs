@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#d27303" />
+    <title>Informacje o odwiedzających - admin.noanzo.pl</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body,
+      main {
+        min-height: 100vh;
+        height: 100vh;
+      }
+      body {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        color: white;
+        font-family: "Poppins", sans-serif;
+      }
+      main {
+        background: linear-gradient(
+          360deg,
+          rgba(255, 255, 255, 1) 0%,
+          #d27303 100%
+        );
+        background-repeat: no-repeat;
+        padding: 30px 0;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .container {
+        width: 95vw;
+        margin: 2rem auto;
+        text-align: center;
+      }
+      .user_badge {
+        background-color: #e6cba8;
+        color: black;
+        margin: 1rem auto;
+        width: 90vw;
+        display: flex;
+        border-radius: 5px;
+        -webkit-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+        box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+      }
+      @media (min-width: 800px) {
+        .user_badge {
+          width: 50vw;
+        }
+      }
+      .flag_section {
+        padding: 1rem;
+        display: flex;
+        justify-items: center;
+        align-items: center;
+      }
+      .data_section {
+        padding: 0.8rem;
+        text-align: left;
+        line-height: 1.2rem;
+        font-size: 0.8rem;
+      }
+      .user_count {
+        text-align: center;
+        color: rgb(255, 255, 255);
+        font-size: 0.8rem;
+        line-height: 2rem;
+      }
+      .navigation {
+        color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        font-weight: bold;
+        font-size: 26px;
+      }
+      .btn_l,
+      .btn_r {
+        cursor: pointer;
+        padding: 5px;
+        background-color: #e6cba8;
+        border-radius: 10px;
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <center>
+        <h1>Odwiedzający stronę</h1>
+        <p class="user_count">
+          Liczba wyświetleń strony:
+          <span class="data_count"><%= data.total; %></span>
+        </p>
+      </center>
+      <div class="container">
+        <% for(const item of data.docs) { %>
+        <div class="user_badge">
+          <div class="flag_section">
+            <div class="flag_image">
+              <img src="<%= item.countryFlag; %>" alt="flag" width="50px" />
+            </div>
+          </div>
+          <div class="data_section">
+            <p class="country">
+              <b>Kraj:</b> <%= item.countryName ? item.countryName : "nieznany";
+              %>
+            </p>
+            <p class="city">
+              <b>Miasto:</b> <%= item.city ? item.city : "nieznane"; %>
+            </p>
+            <p class="date">
+              <b>Data:</b> <%= parseTimestamp(item.timestamp, 'y') !== 1970 ?
+              parseTimestamp(item.timestamp, 'd') + "/" +
+              parseTimestamp(item.timestamp, 'm')+ "/" +
+              parseTimestamp(item.timestamp, 'y') : "nieznana" ; %>
+            </p>
+            <p class="hour">
+              <b>Godzina:</b> <%= parseTimestamp(item.timestamp, 'h') + ":" +
+              parseTimestamp(item.timestamp, 'min'); %>
+            </p>
+            <p class="isp">
+              <b>Dostawca internetu:</b> <%= item.isp ? item.isp : "nieznany";
+              %>
+            </p>
+            <p class="ip"><b>IP:</b> <%= item.userIp; %></p>
+          </div>
+        </div>
+        <% } %>
+      </div>
+      <div class="navigation">
+        <div class="btn_l">
+            <%if (data.offset -49 > 0) { %>
+            <a href="/users-data?page=<%=data.offset-50;%>&limit=50">&#8592</a>
+            <% } %>
+        </div>
+        <div class="page">
+          <%=((data.offset / 50)+1).toString() +"/" +
+          Math.ceil(data.total/50).toString(); %>
+        </div>
+        <div class="btn_r">
+            <%if (data.offset < (Math.ceil(data.total/50) * 50) - 50) { %>
+          <a href="/users-data?page=<%=data.offset+50;%>&limit=50">&#8594</a>
+            <% } %>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
