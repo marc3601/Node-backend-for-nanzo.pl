@@ -340,7 +340,7 @@ app.post(
                   .then(async () => {
                     await probe(fs.createReadStream(path))
                       .then((data) => {
-                        const url = `http://localhost:8080/images/${name}`;
+                        const url = `https://admin.noanzo.pl/images/${name}`;
                         gif.width = data.width;
                         gif.height = data.height;
                         gif.url = url;
