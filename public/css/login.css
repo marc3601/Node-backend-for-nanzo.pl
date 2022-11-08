@@ -1,0 +1,84 @@
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+  min-height: 150vh;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+center {
+  margin-top: 60px;
+}
+#username,
+#password {
+  margin: 10px;
+  padding: 5px;
+  height: 25px;
+  outline: none;
+  border: none;
+  color: #ad3100;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  max-width: 30vw;
+  margin: 0 auto;
+}
+input[type="button" i] input[type="submit" i] input[type="reset" i],
+input[type="file" i]::-webkit-file-upload-button,
+.button {
+  background-color: #ad3100;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  min-width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  margin: 10px;
+  position: relative;
+  font-family: "Roboto", "Noto", sans-serif;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+  border: none;
+}
+.message {
+  color: #000000;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@keyframes warning {
+  0% {
+    font-size: 1rem;
+  }
+  40% {
+    font-size: 1.2rem;
+  }
+  100% {
+    font-size: 1rem;
+  }
+}
+.alertzz {
+  font-size: 1rem;
+  animation: warning 0.3s ease-in-out;
+}
+
+@media screen and (max-width: 550px) {
+  .form {
+    max-width: 90vw;
+  }
+}

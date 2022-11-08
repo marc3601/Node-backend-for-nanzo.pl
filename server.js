@@ -7,10 +7,8 @@ const fs = require("fs");
 const util = require("util");
 const unlinkFile = util.promisify(fs.unlink);
 const app = express();
-const { v4: uuidv4 } = require("uuid");
 const port = 8080;
 const path = require("path");
-const sharp = require("sharp");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -18,15 +16,22 @@ const probe = require("probe-image-size");
 const gifResize = require("@gumlet/gif-resize");
 const requestIp = require("request-ip");
 const DeviceDetector = require("node-device-detector");
-require("dotenv").config();
 const IMAGES = "/upload";
 const GIF = "/gif";
 const fetch = require("node-fetch");
 const parseTimestamp = require("./functions/parseTimestamp");
+const handleImageResizing = require("./functions/handleImageResizing");
+const initialCreateUsers = require("./functions/initialCreateUsers");
+const Auction = require("./database/schemas/auctionSchema");
+const User = require("./database/schemas/userSchema");
+const connectDatabase = require("./database/database");
+
+require("dotenv").config();
 app.use(cors());
 app.options("*", cors());
 app.set("view engine", "ejs");
 app.use(express.json());
+app.use("/public", express.static("public"));
 app.use(requestIp.mw());
 app.use(function (req, res, next) {
   const ip = req.clientIp;
@@ -48,80 +53,8 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 // Database
-mongoose.connect("mongodb://localhost:27017/images", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
-  console.log("Database connected");
-});
-
-//auction schema
-const auctionSchema = new mongoose.Schema({
-  image: [
-    {
-      width: Number,
-      height: Number,
-      url: String,
-      thumbnail: { type: Boolean, default: false },
-    },
-  ],
-  gif: {
-    width: Number,
-    height: Number,
-    url: String,
-  },
-  description: String,
-  title: String,
-  price: Number,
-  id: String,
-});
-auctionSchema.plugin(mongoosePaginate);
-const Auction = mongoose.model("Auction", auctionSchema);
-//user schema
-
-const userSchema = new mongoose.Schema({
-  userIp: String,
-  countryName: { type: String, default: null },
-  countryFlag: { type: String, default: null },
-  isp: { type: String, default: null },
-  city: { type: String, default: null },
-  timestamp: { type: Number, default: null },
-  visitSource: { type: String, default: null },
-  entryPage: { type: String, default: null },
-  device: { type: mongoose.SchemaTypes.Mixed, default: null },
-});
-userSchema.plugin(mongoosePaginate);
-const User = mongoose.model("User", userSchema);
-
+connectDatabase();
 // Run only on first startup to update databse records
-const initialCreateUsers = async () => {
-  User.find((err, data) => {
-    if (err) return console.error(err);
-    data.forEach(async (item, i) => {
-      if (i < 1) {
-        const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${item.userIp}`;
-        const response = await fetch(link);
-        const body = await response.json();
-        const filter = { userIp: body.ip };
-        const update = {
-          countryName: body.country_name ? body.country_name : null,
-          countryFlag: body.country_flag ? body.country_flag : null,
-          isp: body.isp ? body.isp : null,
-          city: body.city ? body.city : null,
-        };
-        await User.findOneAndUpdate(filter, update, {
-          new: true,
-          useFindAndModify: false,
-        });
-        console.log(item);
-      }
-    });
-  }).sort({ _id: -1 });
-};
-
 // initialCreateUsers();
 
 const saveUserInfo = async (ip, userData, device) => {
@@ -174,7 +107,7 @@ const storage = multer.diskStorage({
 //     if (err) return console.error(err);
 //     console.log(auctions)
 // })
-const { uploadFile, getFileStream, uploadGif, deleteFiles } = require("./s3");
+const { getFileStream, uploadGif, deleteFiles } = require("./s3");
 const { STATUS_CODES } = require("http");
 
 const authenticateToken = (req, res, next) => {
@@ -242,7 +175,11 @@ app.get("/logout", async (reg, res) => {
 });
 
 app.get("/admin", authenticateToken, async (req, res) => {
-  res.sendFile(__dirname + "/admin.html");
+  User.find((err, data) => {
+    if (err) return console.error(err);
+    let userCount = data.length;
+    res.render("main", { count: userCount.toString() });
+  });
 });
 
 app.get("/users-data", authenticateToken, async (req, res) => {
@@ -382,61 +319,8 @@ app.post(
   async (req, res, next) => {
     if (req.files["image"].length <= 8) {
       let gif = null;
-      const title = req.body.title;
-      const description = req.body.description;
-      const price = req.body.price;
-      const thumbnail = req.body.thumbnail;
-      let image = [];
       let auction = null;
-      const handleImageResizing = async (req) => {
-        if (!req.files) return next();
-        await Promise.all(
-          req.files["image"].map(async (item, id) => {
-            await sharp(item.path, { failOnError: false })
-              .rotate()
-              .resize(550)
-              .jpeg({ mozjpeg: true })
-              .toFile(`upload/result${id}.jpeg`)
-              .then(async (data) => {
-                await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
-                  console.log(err)
-                );
-                const url = `https://admin.noanzo.pl/images/${item.filename}`;
-                image.push({
-                  width: data.width,
-                  height: data.height,
-                  url: url,
-                  thumbnail: item.originalname === thumbnail ? true : false,
-                });
-                await unlinkFile(item.path);
-                await unlinkFile(`upload/result${id}.jpeg`);
-              });
-          })
-        )
-          .then(() => {
-            auction = new Auction({
-              image: image,
-              description: description,
-              price: price,
-              title: title,
-              id: uuidv4(),
-            });
-
-            if (req.files["gif"] === undefined) {
-              auction.save((err, auction) => {
-                if (err) return console.error(err);
-                console.log("Saved: " + auction);
-                image = [];
-                res.send("Ogłoszenie zostało dodane.");
-              });
-            }
-          })
-          .catch((err) => {
-            res.status(404).send("Bład przesyłania");
-          });
-      };
-      handleImageResizing(req);
-
+      handleImageResizing(req, res);
       const handleGif = () => {
         if (req.files["gif"] !== undefined) {
           let gifPath = req.files["gif"][0].path;
@@ -456,7 +340,7 @@ app.post(
                   .then(async () => {
                     await probe(fs.createReadStream(path))
                       .then((data) => {
-                        const url = `https://admin.noanzo.pl/images/${name}`;
+                        const url = `http://localhost:8080/images/${name}`;
                         gif.width = data.width;
                         gif.height = data.height;
                         gif.url = url;
