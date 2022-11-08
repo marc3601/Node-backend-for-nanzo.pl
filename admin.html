@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#d27303" />
+    <title>Nowe ogłoszenie - admin.noanzo.pl</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body,
+      main {
+        min-height: 100vh;
+        height: 100vh;
+      }
+      body {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        color: white;
+        font-family: "Poppins", sans-serif;
+      }
+      main {
+        background: linear-gradient(
+          360deg,
+          rgba(255, 255, 255, 1) 0%,
+          #d27303 100%
+        );
+        background-repeat: no-repeat;
+        padding: 30px 0;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      progress::-webkit-progress-bar {
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+      }
+      progress {
+        background-color: rgb(255, 255, 255);
+        text-align: left;
+        width: 50vw;
+        margin: 10px 0;
+      }
+
+      /* value: */
+      progress::-webkit-progress-value {
+        background-color: #d27303 !important;
+      }
+      progress::-moz-progress-bar {
+        background-color: #d27303 !important;
+      }
+      progress {
+        color: #d27303;
+      }
+
+      .form {
+        display: flex;
+        flex-direction: column;
+        max-width: 50vw;
+        margin: 0 auto;
+        position: relative;
+      }
+      #files,
+      #title,
+      #price,
+      #description {
+        margin-top: 10px;
+        padding: 5px;
+        outline: none;
+        border: none;
+      }
+
+      #title,
+      #price,
+      #description {
+        color: #ad3100;
+      }
+      #title:focus,
+      #price:focus,
+      #description:focus {
+        outline: 2px solid #ad3100;
+      }
+      #description {
+        resize: none;
+      }
+      #title,
+      #price {
+        height: 25px;
+      }
+      #title {
+        margin-top: 20px;
+      }
+      input[type="file"]::-webkit-input-placeholder {
+        color: white;
+        padding: 5px;
+      }
+      @keyframes warning {
+        0% {
+          font-size: 1rem;
+        }
+        40% {
+          font-size: 1.2rem;
+        }
+        100% {
+          font-size: 1rem;
+        }
+      }
+      .alertzz {
+        font-size: 1rem;
+        animation: warning 0.3s ease-in-out;
+      }
+
+      .response {
+        color: #ad3100;
+        margin: 10px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .images {
+        max-width: 50vw;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 100px);
+        grid-auto-rows: 10px;
+        justify-content: center;
+      }
+
+      input[type="button" i] input[type="submit" i] input[type="reset" i],
+      input[type="file" i]::-webkit-file-upload-button,
+      .button {
+        background-color: #ad3100;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        border-radius: 4px;
+        min-width: 36px;
+        height: 36px;
+        box-sizing: border-box;
+        padding: 0 8px;
+        margin: 15px;
+        position: relative;
+        font-family: "Roboto", "Noto", sans-serif;
+        font-weight: 500;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        letter-spacing: 0.01em;
+        font-size: 14px;
+        line-height: 20px;
+        outline: none;
+        border: none;
+      }
+      .characters_left {
+        position: absolute;
+        right: 0;
+        bottom: 51px;
+        color: green;
+      }
+      .characters {
+        margin: 0;
+        padding-right: 5px;
+        padding-bottom: 5px;
+        font-size: 0.9rem;
+        -webkit-transition: color 0.3s, font-size 0.3s;
+        -moz-transition: color 0.3s, font-size 0.3s;
+        -o-transition: color 0.3s, font-size 0.3s;
+        transition: color 0.3s, font-size 0.3s;
+      }
+      .alert_char {
+        color: red;
+        font-size: 1rem;
+      }
+      .button {
+        width: 100%;
+        margin: 15px auto 0;
+      }
+
+      .card {
+        display: flex;
+        justify-content: center;
+        margin: 5px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+        grid-row-end: span 11;
+      }
+      .border {
+        border: 5px solid rgb(255, 0, 0);
+        border-style: inset;
+        border-radius: 5%;
+      }
+      .thumbzz {
+        color: #ad3100;
+        font-size: 0.8rem;
+        width: 100%;
+      }
+      .thumbzz_hidden {
+        display: none;
+      }
+      footer {
+        height: 25px;
+      }
+      .gif_background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: -200px;
+        background-color: rgba(40, 40, 40, 0.8);
+        transition: 0.2s ease;
+      }
+      .background_hidden {
+        display: none;
+      }
+      .gif_menu,
+      .delete_menu {
+        position: absolute;
+        width: 100vw;
+        height: 200px;
+        padding: 20px 0;
+        background-color: #d27303;
+        top: 98px;
+        right: -100vw;
+        border-bottom-left-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        transition: 0.3s ease-out;
+      }
+      .gif_menu_show,
+      .delete_menu_show {
+        right: -50vw;
+      }
+      .gif_icon_show,
+      .gif_icon_hide,
+      .delete_icon_show,
+      .delete_icon_hide {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: #ad3100;
+        left: -48px;
+        top: 0;
+        border-bottom-left-radius: 10px;
+        border-top-left-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+      .gif_icon_hide,
+      .delete_icon_hide {
+        left: 0;
+        background-color: #d27303;
+        border-radius: 0;
+      }
+      .gif_lebel,
+      .delete_title {
+        text-align: left;
+        margin-left: 60px;
+      }
+      #gif {
+        margin-top: 25px;
+      }
+      .delete_menu {
+        top: 150px;
+        padding-top: 12px;
+        height: 65vh;
+      }
+      .delete_title {
+        font-size: 1.2rem;
+      }
+      .delete_icon_show {
+        background-color: #810000;
+      }
+      .delete_container {
+        margin: 10px 0;
+        text-align: left;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        background-color: #9b5707;
+        -webkit-box-shadow: inset 1px 0px 7px -2px #000000;
+        box-shadow: inset 1px 0px 7px -2px #000000;
+        border-radius: 10px;
+        width: 45%;
+      }
+      .delete_container::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .delete_container {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+      .light_item,
+      .dark_item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+      }
+      .light_item > p,
+      .dark_item > p {
+        font-size: 0.9rem;
+      }
+      .dark_item {
+        background-color: #6f3e05;
+      }
+      .delete_item {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .user_count {
+        text-align: center;
+        color: black;
+        font-size: 0.8rem;
+        line-height: 2rem;
+      }
+      .users_link {
+        color: #ad3100;
+        font-weight: bold;
+      }
+      @media screen and (max-width: 550px) {
+        .form {
+          max-width: 90vw;
+        }
+        progress {
+          width: 90vw;
+        }
+        .images {
+          max-width: 90vw;
+        }
+        .gif_menu_show,
+        .delete_menu_show {
+          right: 0;
+        }
+        .delete_title {
+          margin-left: 0;
+          text-align: center;
+        }
+        .delete_container {
+          margin: 10px auto;
+          width: 90%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <center>
+        <h1>Dodaj ogłoszenie</h1>
+        <form
+          class="form"
+          action="/upload"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <label for="image">Wybierz zdjęcia</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            multiple
+            required
+            id="files"
+          />
+          <input
+            placeholder="Podaj tytuł"
+            type="text"
+            maxlength="100"
+            name="title"
+            id="title"
+            required
+          />
+          <input
+            placeholder="Podaj cenę"
+            type="number"
+            min="0"
+            max="50000"
+            maxlength="5"
+            name="price"
+            id="price"
+            required
+          />
+          <textarea
+            placeholder="Wpisz opis"
+            type="text"
+            maxlength="300"
+            name="description"
+            id="description"
+            cols="30"
+            rows="10"
+            required
+          ></textarea>
+          <div class="characters_left"><p class="characters">0</p></div>
+          <button class="button" type="submit">Prześlij</button>
+        </form>
+        <progress id="progress" max="100"></progress>
+        <div class="response"></div>
+        <!-- <a href="https://admin.noanzo.pl/logout" class="logout">Wyloguj</a> -->
+        <div class="thumbzz thumbzz_hidden">
+          Kliknij na zdjęcie, które ma być miniaturką.
+        </div>
+        <div class="images"></div>
+        <div class="gif_background background_hidden"></div>
+        <section class="gif_menu">
+          <label class="gif_lebel" for="gif">Wybierz GIF-a</label>
+          <input type="file" accept="image/gif" name="gif" id="gif" />
+          <div class="gif_icon_show">
+            <?xml version="1.0" encoding="utf-8"?><svg
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="30px"
+              height="30px"
+              x="0px"
+              y="0px"
+              viewBox="0 0 115.28 122.88"
+              style="enable-background: new 0 0 115.28 122.88"
+              xml:space="preserve"
+            >
+              <style type="text/css">
+                .st0 {
+                  fill-rule: evenodd;
+                  clip-rule: evenodd;
+                }
+              </style>
+              <g>
+                <path
+                  class="st0"
+                  fill="white"
+                  d="M25.38,57h64.88V37.34H69.59c-2.17,0-5.19-1.17-6.62-2.6c-1.43-1.43-2.3-4.01-2.3-6.17V7.64l0,0H8.15 c-0.18,0-0.32,0.09-0.41,0.18C7.59,7.92,7.55,8.05,7.55,8.24v106.45c0,0.14,0.09,0.32,0.18,0.41c0.09,0.14,0.28,0.18,0.41,0.18 c22.78,0,58.09,0,81.51,0c0.18,0,0.17-0.09,0.27-0.18c0.14-0.09,0.33-0.28,0.33-0.41v-11.16H25.38c-4.14,0-7.56-3.4-7.56-7.56 V64.55C17.82,60.4,21.22,57,25.38,57L25.38,57z M45.38,83.83v-5.35h12.28v10.94c-2.35,1.6-4.43,2.7-6.23,3.28 c-1.81,0.58-3.95,0.87-6.43,0.87c-3.05,0-5.54-0.52-7.46-1.56c-1.92-1.04-3.41-2.59-4.47-4.64c-1.06-2.05-1.59-4.42-1.59-7.08 c0-2.81,0.58-5.24,1.74-7.32c1.16-2.07,2.85-3.65,5.08-4.72c1.74-0.83,4.09-1.24,7.03-1.24c2.84,0,4.96,0.26,6.37,0.77 c1.41,0.51,2.58,1.31,3.51,2.39c0.93,1.08,1.63,2.45,2.09,4.11l-7.65,1.38c-0.32-0.98-0.85-1.72-1.6-2.24 c-0.75-0.52-1.71-0.78-2.89-0.78c-1.74,0-3.12,0.6-4.16,1.81c-1.04,1.21-1.55,3.12-1.55,5.74c0,2.78,0.52,4.76,1.57,5.96 c1.04,1.19,2.5,1.79,4.37,1.79c0.89,0,1.73-0.13,2.54-0.38c0.8-0.26,1.72-0.69,2.77-1.31v-2.41H45.38L45.38,83.83z M63.95,67.41 h7.97v25.71h-7.97V67.41L63.95,67.41z M78.9,67.41h19.64v5.53H86.87v4.49h9.98v5.21h-9.98v10.49H78.9V67.41L78.9,67.41z M97.79,57 h9.93c4.16,0,7.56,3.41,7.56,7.56v31.42c0,4.15-3.41,7.56-7.56,7.56h-9.93v13.55c0,1.61-0.65,3.04-1.7,4.1 c-1.06,1.06-2.49,1.7-4.1,1.7c-29.44,0-56.59,0-86.18,0c-1.61,0-3.04-0.64-4.1-1.7c-1.06-1.06-1.7-2.49-1.7-4.1V5.85 c0-1.61,0.65-3.04,1.7-4.1c1.06-1.06,2.53-1.7,4.1-1.7h58.72C64.66,0,64.8,0,64.94,0c0.64,0,1.29,0.28,1.75,0.69h0.09 c0.09,0.05,0.14,0.09,0.23,0.18l29.99,30.36c0.51,0.51,0.88,1.2,0.88,1.98c0,0.23-0.05,0.41-0.09,0.65V57L97.79,57z M67.52,27.97 V8.94l21.43,21.7H70.19c-0.74,0-1.38-0.32-1.89-0.78C67.84,29.4,67.52,28.71,67.52,27.97L67.52,27.97z"
+                />
+              </g>
+            </svg>
+          </div>
+          <div class="gif_icon_hide">
+            <?xml version="1.0" encoding="iso-8859-1"?>
+            <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+            <svg
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="white"
+              width="20px"
+              height="20px"
+              x="0px"
+              y="0px"
+              viewBox="0 0 492.004 492.004"
+              xml:space="preserve"
+            >
+              <g>
+                <g>
+                  <path
+                    d="M484.14,226.886L306.46,49.202c-5.072-5.072-11.832-7.856-19.04-7.856c-7.216,0-13.972,2.788-19.044,7.856l-16.132,16.136
+			c-5.068,5.064-7.86,11.828-7.86,19.04c0,7.208,2.792,14.2,7.86,19.264L355.9,207.526H26.58C11.732,207.526,0,219.15,0,234.002
+			v22.812c0,14.852,11.732,27.648,26.58,27.648h330.496L252.248,388.926c-5.068,5.072-7.86,11.652-7.86,18.864
+			c0,7.204,2.792,13.88,7.86,18.948l16.132,16.084c5.072,5.072,11.828,7.836,19.044,7.836c7.208,0,13.968-2.8,19.04-7.872
+			l177.68-177.68c5.084-5.088,7.88-11.88,7.86-19.1C492.02,238.762,489.228,231.966,484.14,226.886z"
+                  />
+                </g>
+              </g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+            </svg>
+          </div>
+        </section>
+        <section class="delete_menu">
+          <h1 class="delete_title">Usuwanie ogłoszeń</h1>
+          <div class="delete_container"></div>
+          <div class="delete_icon_show">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="white"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"
+              />
+            </svg>
+          </div>
+          <div class="delete_icon_hide">
+            <?xml version="1.0" encoding="iso-8859-1"?>
+            <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+            <svg
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="white"
+              width="20px"
+              height="20px"
+              x="0px"
+              y="0px"
+              viewBox="0 0 492.004 492.004"
+              xml:space="preserve"
+            >
+              <g>
+                <g>
+                  <path
+                    d="M484.14,226.886L306.46,49.202c-5.072-5.072-11.832-7.856-19.04-7.856c-7.216,0-13.972,2.788-19.044,7.856l-16.132,16.136
+			c-5.068,5.064-7.86,11.828-7.86,19.04c0,7.208,2.792,14.2,7.86,19.264L355.9,207.526H26.58C11.732,207.526,0,219.15,0,234.002
+			v22.812c0,14.852,11.732,27.648,26.58,27.648h330.496L252.248,388.926c-5.068,5.072-7.86,11.652-7.86,18.864
+			c0,7.204,2.792,13.88,7.86,18.948l16.132,16.084c5.072,5.072,11.828,7.836,19.044,7.836c7.208,0,13.968-2.8,19.04-7.872
+			l177.68-177.68c5.084-5.088,7.88-11.88,7.86-19.1C492.02,238.762,489.228,231.966,484.14,226.886z"
+                  />
+                </g>
+              </g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+              <g></g>
+            </svg>
+          </div>
+        </section>
+        <footer></footer>
+      </center>
+      <p class="user_count">
+        Liczba wyświetleń strony: <span class="data_count"></span><br />
+        <a class="user_count users_link" href="/users-data"
+          >Informacje o odwiedzających</a
+        >
+      </p>
+    </main>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const main = document.querySelector("main");
+      const button = document.querySelector(".button");
+      const imagefile = document.querySelector("#files");
+      const title = document.querySelector("#title");
+      const price = document.querySelector("#price");
+      const desc = document.querySelector("#description");
+      const response = document.querySelector(".response");
+      const progress = document.getElementById("progress");
+      // const logout = document.querySelector(".logout");
+      const cards = document.getElementsByClassName("card");
+      const images = document.getElementsByTagName("img");
+      const characters = document.querySelector(".characters");
+      const thumbInfo = document.querySelector(".thumbzz");
+      const gifFile = document.querySelector("#gif");
+      const gifMenu = document.querySelector(".gif_menu");
+      const gifShow = document.querySelector(".gif_icon_show");
+      const gifHide = document.querySelector(".gif_icon_hide");
+      const deleteMenu = document.querySelector(".delete_menu");
+      const deleteShow = document.querySelector(".delete_icon_show");
+      const deleteHide = document.querySelector(".delete_icon_hide");
+      const deleteContainer = document.querySelector(".delete_container");
+      const loadingAlert = document.querySelector(".loading_alert");
+      const gifBcg = document.querySelector(".gif_background");
+      const userCount = document.querySelector(".data_count");
+      const formData = new FormData();
+      let progressValue = 0;
+      let totalSize = 0;
+      let auctionsData = [];
+      const config = {
+        onUploadProgress: (progressEvent) => {
+          progressValue = Math.round((progressEvent.loaded / totalSize) * 100);
+          progress.value = isFinite(progressValue) ? progressValue : 0;
+          response.innerText = `Przesłano ${progressValue} %`;
+          if (document.hidden && progressValue > 0) {
+            document.title = `Przesłano ${progressValue} % - admin.noanzo.pl`;
+          } else {
+            document.title = "Nowe ogloszenie - admin.noanzo.pl";
+          }
+          if (progressValue >= 100) {
+            response.innerText = "Trwa przetwarzanie...";
+          }
+        },
+      };
+
+      const calculateMargin = () => {
+        let widthParent = deleteMenu.offsetWidth / 2;
+        let widthChild = deleteContainer.offsetWidth;
+        let margin = (widthParent - widthChild) / 2;
+        return margin.toFixed();
+      };
+      if (window.innerWidth > 550) {
+        deleteContainer.style = `margin-left: ${calculateMargin()}px`;
+      }
+
+      window.onresize = (e) => {
+        if (window.innerWidth > 550) {
+          deleteContainer.style = `margin-left: ${calculateMargin()}px`;
+        } else {
+          deleteContainer.removeAttribute("style");
+        }
+      };
+      // Pass auction.image into that function
+      const handleDeleteThumbnail = (data) => {
+        const filtered = data.filter((item) => item.thumbnail === true);
+        if (filtered?.length > 0) {
+          return filtered[0]?.url;
+        } else {
+          return data[0]?.url;
+        }
+      };
+
+      const handleDelete = (e) => {
+        let id = e.currentTarget.parentElement.id;
+        axios
+          .get(`https://admin.noanzo.pl/delete?id=${id}`)
+          .then((res) => {
+            console.log(res);
+            handleAuctionsDataFetch();
+          })
+          .catch((err) => console.log(err));
+      };
+
+      const handleAuctionsDataFetch = () => {
+        deleteContainer.innerHTML = `<p style="padding-left:10px">Ładowanie ogłoszeń</p>`;
+        axios
+          .get("https://admin.noanzo.pl/api/auctions")
+          .then((res) => (auctionsData = res.data))
+          .finally(() => {
+            if (auctionsData.length > 0) {
+              deleteContainer.innerHTML = `<ul>${auctionsData
+                .map((auction, i) => {
+                  return `<li class=${
+                    i % 2 === 0 ? "light_item" : "dark_item"
+                  } id=${
+                    auction.id
+                  }><div><img width="50px" src=${handleDeleteThumbnail(
+                    auction.image
+                  )}/><p>${
+                    auction.title
+                  }</p></div><div class="delete_item">${deleteIcon}</div><li>`;
+                })
+                .join("")}<ul>`;
+              const deleteHandler = document.querySelectorAll(".delete_item");
+              const arr = Array.from(deleteHandler);
+              arr.forEach((item) =>
+                item.addEventListener("click", handleDelete)
+              );
+            } else {
+              deleteContainer.innerHTML = `<p style="padding-left:10px">Nic tu nie ma!</p>`;
+            }
+          })
+          .catch((err) => console.log(err));
+      };
+
+      // Gif menu handler
+      gifShow.addEventListener("click", () => {
+        if (deleteMenu.classList.contains("delete_menu_show")) {
+          main.style = "overflow-x: hidden";
+          deleteMenu.classList.remove("delete_menu_show");
+          gifBcg.classList.add("background_hidden");
+        }
+        if (!gifMenu.classList.contains("gif_menu_show")) {
+          main.style = "overflow:hidden";
+          gifMenu.classList.add("gif_menu_show");
+          gifBcg.classList.remove("background_hidden");
+        }
+      });
+      gifHide.addEventListener("click", () => {
+        if (gifMenu.classList.contains("gif_menu_show")) {
+          main.style = "overflow-x: hidden";
+          gifMenu.classList.remove("gif_menu_show");
+          gifBcg.classList.add("background_hidden");
+        }
+      });
+
+      deleteShow.addEventListener("click", () => {
+        if (gifMenu.classList.contains("gif_menu_show")) {
+          main.style = "overflow-x: hidden";
+          gifMenu.classList.remove("gif_menu_show");
+          gifBcg.classList.add("background_hidden");
+        }
+        if (!deleteMenu.classList.contains("delete_menu_show")) {
+          if (auctionsData.length === 0) {
+            handleAuctionsDataFetch();
+          }
+
+          main.style = "overflow:hidden";
+          deleteMenu.classList.add("delete_menu_show");
+          gifBcg.classList.remove("background_hidden");
+        }
+      });
+      deleteHide.addEventListener("click", () => {
+        if (deleteMenu.classList.contains("delete_menu_show")) {
+          main.style = "overflow-x: hidden";
+          deleteMenu.classList.remove("delete_menu_show");
+          gifBcg.classList.add("background_hidden");
+        }
+      });
+
+      const checkmark = `<span style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24"><path style="fill:green;" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.393 7.5l-5.643 5.784-2.644-2.506-1.856 1.858 4.5 4.364 7.5-7.643-1.857-1.857z"/></svg></span>`;
+
+      const warning = `<span><?xml version="1.0" encoding="iso-8859-1"?>
+    <!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40px" height="30px" x="30px" y="20px"
+         viewBox="0 0 320.83 320.83" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+    <g>
+        <g>
+            <path style="fill:red;" d="M180.494,39.687l-1.333-1.327c-5.009-5.015-11.667-7.772-18.754-7.772
+                c-7.082,0-13.739,2.758-18.748,7.767l-1.333,1.333L5.551,256.847c-5.466,6.413-7.016,14.196-4.112,21.207
+                c3.16,7.631,10.704,12.189,20.173,12.189h277.604c9.475,0,17.013-4.558,20.173-12.189c2.904-7.011,1.354-14.8-4.112-21.207
+                L180.494,39.687z M43.484,257.614L160.413,69.221l116.934,188.393H43.484z"/>
+            <path style="fill:#010002;" d="M143.758,122.002v71.388c0,9.197,7.457,16.654,16.654,16.654s16.654-7.457,16.654-16.654v-71.388
+                c0-9.197-7.457-16.654-16.654-16.654C151.215,105.347,143.758,112.804,143.758,122.002z"/>
+            <circle style="fill:#010002;" cx="160.244" cy="234.906" r="16.486"/>
+        </g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    </svg></span>`;
+
+      const deleteIcon = `
+    <svg  viewBox="0 0 512 512" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m256 0c-141.164062 0-256 114.835938-256 256s114.835938 256 256 256 256-114.835938 256-256-114.835938-256-256-256zm0 0" fill="#f44336"/><path d="m350.273438 320.105469c8.339843 8.34375 8.339843 21.824219 0 30.167969-4.160157 4.160156-9.621094 6.25-15.085938 6.25-5.460938 0-10.921875-2.089844-15.082031-6.25l-64.105469-64.109376-64.105469 64.109376c-4.160156 4.160156-9.621093 6.25-15.082031 6.25-5.464844 0-10.925781-2.089844-15.085938-6.25-8.339843-8.34375-8.339843-21.824219 0-30.167969l64.109376-64.105469-64.109376-64.105469c-8.339843-8.34375-8.339843-21.824219 0-30.167969 8.34375-8.339843 21.824219-8.339843 30.167969 0l64.105469 64.109376 64.105469-64.109376c8.34375-8.339843 21.824219-8.339843 30.167969 0 8.339843 8.34375 8.339843 21.824219 0 30.167969l-64.109376 64.105469zm0 0" fill="#fafafa"/></svg>        
+    `;
+      imagefile.onchange = (e) => {
+        formData.delete("image");
+        let files = [...e.target.files];
+        files.length > 0
+          ? thumbInfo.classList.remove("thumbzz_hidden")
+          : thumbInfo.classList.add("thumbzz_hidden");
+        for (let item of files) {
+          formData.append("image", item);
+        }
+        Array.from(cards).forEach((card) => {
+          card.remove();
+        });
+        Array.from(images).forEach((image) => {
+          image.remove();
+        });
+        if (files) {
+          Array.from(files).forEach((file, i) => {
+            const imgContainer = document.createElement("div");
+            const imga = document.createElement("img");
+            const url = URL.createObjectURL(file);
+            imga.setAttribute("src", url);
+            imga.classList.add("preview");
+            document.querySelector(".images").appendChild(imgContainer);
+            imgContainer.setAttribute("id", i);
+            imgContainer.classList.add("card");
+            imgContainer.appendChild(imga);
+            imgContainer.addEventListener("click", (e) => {
+              thumbInfo.classList.add("thumbzz_hidden");
+              document
+                .querySelectorAll(".card")
+                .forEach((item) => item.classList.remove("border"));
+              e.currentTarget.classList.add("border");
+              formData.delete("thumbnail");
+              formData.append("thumbnail", file.name);
+            });
+          });
+        }
+      };
+      gifFile.onchange = (e) => {
+        formData.delete("gif");
+        let file = [...e.target.files][0];
+        formData.append("gif", file);
+      };
+
+      title.onchange = (e) => {
+        formData.delete("title");
+        formData.append("title", title.value);
+      };
+      price.onchange = (e) => {
+        formData.delete("price");
+        formData.append("price", price.value);
+      };
+      desc.onchange = (e) => {
+        formData.delete("description");
+        formData.append("description", description.value);
+      };
+
+      desc.addEventListener("input", () => {
+        let length = desc.value.length;
+        characters.innerText = length;
+        if (length > 170) {
+          if (!characters.classList.contains("alert_char")) {
+            characters.classList.add("alert_char");
+          }
+        } else if (characters.classList.contains("alert_char")) {
+          characters.classList.remove("alert_char");
+        }
+      });
+      price.addEventListener("input", () => {
+        if (price.value > 50000) {
+          price.value = 50000;
+        }
+      });
+
+      document.addEventListener("visibilitychange", (e) => {
+        if (document.hidden && progressValue > 0 && progressValue < 100) {
+          document.title = `Przesłano ${progressValue} %`;
+        } else {
+          document.title = "Nowe ogloszenie - admin.noanzo.pl";
+        }
+      });
+
+      // logout.addEventListener("click", (e) => {
+      //     e.preventDefault();
+      //     axios.get("/logout",{withCredentials: true}).then((res) =>  window.location=`/`).catch(err => console.log(err));
+      // })
+
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isTitle = formData.getAll("title")[0]
+          ? /^\s*$/.test(formData.getAll("title")[0])
+            ? false
+            : true
+          : false;
+        const isPrice = formData.getAll("price")[0] ? true : false;
+        const isDesc = formData.getAll("description")[0]
+          ? /^\s*$/.test(formData.getAll("description")[0])
+            ? false
+            : true
+          : false;
+        const isImage = formData.getAll("image").length > 0 ? true : false;
+        const imagesCount = formData.getAll("image").length;
+        const checklist = () => {
+          const items = [isTitle, isPrice, isDesc, isImage, imagesCount];
+          let response = "";
+          items.forEach((item, i) => {
+            if (!item && i === 2) {
+              response = "Wpisz opis ogłoszenia";
+            }
+            if (!item && i === 1) {
+              response = "Wpisz cenę";
+            }
+            if (!item && i === 0) {
+              response = "Wpisz tytuł ogłoszenia";
+            }
+            if (!item && i === 3) {
+              response = "Wybierz zdjęcia";
+            }
+            if (item > 8 && i === 4) {
+              response = "Wybierz maksymalnie 8 zdjęć";
+            }
+          });
+          return response;
+        };
+        if (isTitle && isPrice && isDesc && isImage && imagesCount <= 8) {
+          response.innerText = "";
+          progress.value = "0";
+          button.setAttribute("disabled", true);
+          imagefile.setAttribute("disabled", true);
+          title.setAttribute("disabled", true);
+          price.setAttribute("disabled", true);
+          desc.setAttribute("disabled", true);
+          formData.getAll("image")?.forEach((element) => {
+            totalSize += element.size;
+          });
+          axios
+            .post("/upload", formData, config, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((res) => {
+              response.innerHTML =
+                res.data !== "Jesteś niezalogowany"
+                  ? `${checkmark}  ${res.data}`
+                  : `${warning}  ${res.data}`;
+              totalSize = 0;
+              button.removeAttribute("disabled");
+              imagefile.removeAttribute("disabled");
+              title.removeAttribute("disabled");
+              price.removeAttribute("disabled");
+              desc.removeAttribute("disabled");
+              handleAuctionsDataFetch();
+            })
+            .catch((err) => {
+              console.log(err);
+              response.innerHTML = `${warning} Błąd. Spróbuj ponownie.`;
+              button.removeAttribute("disabled");
+              imagefile.removeAttribute("disabled");
+              title.removeAttribute("disabled");
+              price.removeAttribute("disabled");
+              desc.removeAttribute("disabled");
+            });
+        } else {
+          response.innerHTML = `${warning}<span class="alertzz">${checklist()}</span>`;
+        }
+      });
+
+      const setUserCount = () => {
+        let count = 0;
+        axios.get("https://admin.noanzo.pl/users-count").then((res) => {
+          count = res.data;
+          userCount.innerText = count;
+        });
+      };
+      setUserCount();
+    </script>
+  </body>
+</html>
