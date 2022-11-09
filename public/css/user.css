@@ -1,0 +1,117 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+main {
+  min-height: 100vh;
+  height: 100vh;
+}
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+main {
+  background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+  background-repeat: no-repeat;
+  padding: 30px 0;
+  position: relative;
+  overflow-x: hidden;
+  z-index: 0;
+}
+.container {
+  position: relative;
+  width: 95vw;
+  margin: 2rem auto;
+  z-index: 0;
+}
+.user_badge {
+  background-color: #e6cba8;
+  color: black;
+  margin: 1rem auto;
+  width: 90vw;
+  display: flex;
+  border-radius: 5px;
+  position: relative;
+  /* transition: 0.3s ease-out; */
+  -webkit-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+  box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
+  margin-bottom: 0px; /* initial*/
+  transition: margin-bottom 0.3s;
+}
+.device-data {
+  position: absolute;
+  background-color: #e6cba8;
+  width: 95%;
+  left: 50%;
+  bottom: 0px; /* initial*/
+  transform: translateX(-50%);
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  overflow-wrap: anywhere;
+  z-index: -1;
+  line-height: 1.2rem;
+  /* -webkit-transition: -webkit-transform 0.3s; */
+  transition: margin-bottom 0.3s;
+}
+.btn_expand {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  width: 20px;
+  height: 20px;
+  /* -webkit-transition: -webkit-transform 0.3s; */
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+@media (min-width: 800px) {
+  .user_badge {
+    width: 50vw;
+  }
+}
+.flag_section {
+  padding: 1rem;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
+.data_section {
+  position: relative;
+  padding: 0.8rem;
+  text-align: left;
+  line-height: 1.2rem;
+  font-size: 0.8rem;
+}
+.user_count {
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-size: 0.8rem;
+  line-height: 2rem;
+}
+.navigation {
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-weight: bold;
+  font-size: 26px;
+}
+.btn_l,
+.btn_r {
+  cursor: pointer;
+  padding: 5px;
+  background-color: #e6cba8;
+  border-radius: 10px;
+}
+a {
+  text-decoration: none;
+}
