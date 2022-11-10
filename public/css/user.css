@@ -7,7 +7,6 @@ html,
 body,
 main {
   min-height: 100vh;
-  height: 100vh;
 }
 body {
   overflow-x: hidden;
@@ -18,8 +17,7 @@ body {
   font-family: "Poppins", sans-serif;
 }
 main {
-  background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
-  background-repeat: no-repeat;
+  background-size: 100% auto;
   padding: 30px 0;
   position: relative;
   overflow-x: hidden;
@@ -39,7 +37,6 @@ main {
   display: flex;
   border-radius: 5px;
   position: relative;
-  /* transition: 0.3s ease-out; */
   -webkit-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
   box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
@@ -58,7 +55,6 @@ main {
   overflow-wrap: anywhere;
   z-index: -1;
   line-height: 1.2rem;
-  /* -webkit-transition: -webkit-transform 0.3s; */
   transition: margin-bottom 0.3s;
 }
 .btn_expand {
@@ -67,9 +63,29 @@ main {
   bottom: 4px;
   width: 20px;
   height: 20px;
-  /* -webkit-transition: -webkit-transform 0.3s; */
   transition: transform 0.3s;
   cursor: pointer;
+}
+.back_btn {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  bottom: 50px;
+  right: -50px;
+  position: fixed;
+  transition: right 0.3s;
+}
+
+.main_bckg {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+  background-repeat: no-repeat;
+  background-size: auto 100vh;
+  z-index: -1;
 }
 
 @media (min-width: 800px) {

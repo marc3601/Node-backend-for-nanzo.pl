@@ -54,10 +54,17 @@
           
           <div class="device-data">
             <div class="data_section">
-            <p class="os"><b>System:</b> <%= item.device.os ? item.device.os.name : "nieznany" %></p>
-            <p class="device"><b>Urządzenie:</b> <%= item.device.device.brand ? item.device.device.brand + " " + item.device.device.model : "nieznane" %></p>
-            <p class="source"><b>Źródło wizyty:</b> <%= item.visitSource ? item.visitSource.substring(0,50) : "nieznane" %></p>
-            <p class="target"><b>Odwiedzona strona:</b> <%= item.entryPage ? item.entryPage.substring(0,50) : "nieznane" %></p>
+            <p class="os"><b>System:</b> <%= item?.device?.os ? item.device.os.name : "nieznany" %></p>
+            <p class="device"><b>Urządzenie:</b> <%= item?.device?.device.brand ? item.device.device.brand + " " + item.device.device.model : "nieznane" %></p>
+            <p class="source"><b>Źródło wizyty:</b>
+               <%= item?.visitSource ?  item.visitSource.substring(0,50) : "nieznane" %></p>
+            <p class="target"><b>Odwiedzona strona:</b> 
+              <% if (item?.entryPage) {  %>
+                <a href="<%= item.entryPage.substring(0,60); %>" target="_blank"><%= item.entryPage.substring(0,60); %></a>
+              <% } else {%>
+              nieznana
+              <% } %>
+            </p>
             </div>
           </div>
           <div class="btn_expand">
@@ -82,7 +89,13 @@
             <% } %>
         </div>
       </div>
+      <div class="back_btn">
+        <a href="/admin">
+          <img src="/public/assets/back.svg"/>
+        </a>
+      </div>
+      <div class="main_bckg"></div>
     </main>
-    <script src="/public/js/user.dev.js"></script>
+    <script src="/public/js/user.production.min.js"></script>
   </body>
 </html>
