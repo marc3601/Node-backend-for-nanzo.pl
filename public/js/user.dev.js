@@ -59,7 +59,7 @@ let graphData = {
   data: [],
 };
 axios
-  .get(`http://localhost:8080/dates`)
+  .get(`https://admin.noanzo.pl/dates`)
   .then((res) => {
     const graphDataRaw = res.data.filter(
       (item) => delete item._id && delete item.__v
