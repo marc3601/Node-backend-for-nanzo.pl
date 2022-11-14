@@ -6,18 +6,25 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="theme-color" content="#d27303" />
-    <title>Informacje o odwiedzających - admin.noanzo.pl</title>
+    <title>Statystyki strony - admin.noanzo.pl</title>
     <link rel="stylesheet" href="/public/css/user.css">
   </head>
   <body>
     <main>
       <center>
-        <h1>Odwiedzający stronę</h1>
+        <h2>Statystyki strony noanzo.pl</h2>
         <p class="user_count">
           Liczba wyświetleń strony:
           <span class="data_count"><%= data.total; %></span>
         </p>
+        <h3>Ostatni tydzień</h3>
       </center>
+      <div class="chart_container">
+        <div class="placeholder">
+       
+        </div>
+      </div>
+      <h3>Odwiedzający stronę</h3>
       <div class="container">
         <% let id = 1  %>
         <% for(const item of data.docs) { %>
@@ -96,6 +103,9 @@
       </div>
       <div class="main_bckg"></div>
     </main>
-    <script src="/public/js/user.production.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="/public/js/user.dev.js"></script>
+    
   </body>
 </html>

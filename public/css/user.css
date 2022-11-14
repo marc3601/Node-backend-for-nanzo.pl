@@ -23,10 +23,38 @@ main {
   overflow-x: hidden;
   z-index: 0;
 }
+h2 {
+  font-size: 1.5rem;
+  /* padding-bottom: 2rem; */
+}
+h3 {
+  text-align: center;
+  padding-bottom: 0.5rem;
+}
+.chart_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: 10px; */
+  margin-bottom: 1rem;
+}
+.placeholder {
+  width: 90vw;
+  height: 150px;
+  background-color: #f1c99c;
+  border-radius: 10px;
+}
+.chart {
+  position: relative;
+  width: 90vw;
+  background-color: #f1c99c;
+  padding: 20px;
+  border-radius: 10px;
+}
 .container {
   position: relative;
   width: 95vw;
-  margin: 2rem auto;
+  margin: 1rem auto;
   z-index: 0;
 }
 .user_badge {
@@ -89,8 +117,13 @@ main {
 }
 
 @media (min-width: 800px) {
-  .user_badge {
+  .user_badge,
+  .chart,
+  .placeholder {
     width: 50vw;
+  }
+  .placeholder {
+    height: 300px;
   }
 }
 .flag_section {
@@ -111,6 +144,7 @@ main {
   color: rgb(255, 255, 255);
   font-size: 0.8rem;
   line-height: 2rem;
+  margin-bottom: 1rem;
 }
 .navigation {
   color: black;
