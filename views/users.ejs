@@ -6,110 +6,29 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="theme-color" content="#d27303" />
-    <title>Informacje o odwiedzających - admin.noanzo.pl</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body,
-      main {
-        min-height: 100vh;
-        height: 100vh;
-      }
-      body {
-        overflow-x: hidden;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        color: white;
-        font-family: "Poppins", sans-serif;
-      }
-      main {
-        background: linear-gradient(
-          360deg,
-          rgba(255, 255, 255, 1) 0%,
-          #d27303 100%
-        );
-        background-repeat: no-repeat;
-        padding: 30px 0;
-        position: relative;
-        overflow-x: hidden;
-      }
-      .container {
-        width: 95vw;
-        margin: 2rem auto;
-        text-align: center;
-      }
-      .user_badge {
-        background-color: #e6cba8;
-        color: black;
-        margin: 1rem auto;
-        width: 90vw;
-        display: flex;
-        border-radius: 5px;
-        -webkit-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
-        -moz-box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
-        box-shadow: 6px 6px 20px -8px rgba(0, 0, 0, 0.75);
-      }
-      @media (min-width: 800px) {
-        .user_badge {
-          width: 50vw;
-        }
-      }
-      .flag_section {
-        padding: 1rem;
-        display: flex;
-        justify-items: center;
-        align-items: center;
-      }
-      .data_section {
-        padding: 0.8rem;
-        text-align: left;
-        line-height: 1.2rem;
-        font-size: 0.8rem;
-      }
-      .user_count {
-        text-align: center;
-        color: rgb(255, 255, 255);
-        font-size: 0.8rem;
-        line-height: 2rem;
-      }
-      .navigation {
-        color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        font-weight: bold;
-        font-size: 26px;
-      }
-      .btn_l,
-      .btn_r {
-        cursor: pointer;
-        padding: 5px;
-        background-color: #e6cba8;
-        border-radius: 10px;
-      }
-      a {
-        text-decoration: none;
-      }
-    </style>
+    <title>Statystyki strony - admin.noanzo.pl</title>
+    <link rel="stylesheet" href="/public/css/user.css">
   </head>
   <body>
     <main>
       <center>
-        <h1>Odwiedzający stronę</h1>
+        <h2>Statystyki strony noanzo.pl</h2>
         <p class="user_count">
           Liczba wyświetleń strony:
           <span class="data_count"><%= data.total; %></span>
         </p>
+        <h3>Ostatni tydzień</h3>
       </center>
+      <div class="chart_container">
+        <div class="placeholder">
+       
+        </div>
+      </div>
+      <h3>Odwiedzający stronę</h3>
       <div class="container">
+        <% let id = 1  %>
         <% for(const item of data.docs) { %>
-        <div class="user_badge">
+          <div id="<%="ID" + "_" + id++;%>" class="user_badge">
           <div class="flag_section">
             <div class="flag_image">
               <img src="<%= item.countryFlag; %>" alt="flag" width="50px" />
@@ -139,6 +58,25 @@
             </p>
             <p class="ip"><b>IP:</b> <%= item.userIp; %></p>
           </div>
+          
+          <div class="device-data">
+            <div class="data_section">
+            <p class="os"><b>System:</b> <%= item?.device?.os ? item.device.os.name : "nieznany" %></p>
+            <p class="device"><b>Urządzenie:</b> <%= item?.device?.device.brand ? item.device.device.brand + " " + item.device.device.model : "nieznane" %></p>
+            <p class="source"><b>Źródło wizyty:</b>
+               <%= item?.visitSource ?  item.visitSource.substring(0,50) : "nieznane" %></p>
+            <p class="target"><b>Odwiedzona strona:</b> 
+              <% if (item?.entryPage) {  %>
+                <a href="<%= item.entryPage.substring(0,60); %>" target="_blank"><%= item.entryPage.substring(0,60); %></a>
+              <% } else {%>
+              nieznana
+              <% } %>
+            </p>
+            </div>
+          </div>
+          <div class="btn_expand">
+            <img src="/public/assets/expand.svg"/>
+          </div>
         </div>
         <% } %>
       </div>
@@ -158,6 +96,16 @@
             <% } %>
         </div>
       </div>
+      <div class="back_btn">
+        <a href="/admin">
+          <img src="/public/assets/back.svg"/>
+        </a>
+      </div>
+      <div class="main_bckg"></div>
     </main>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="/public/js/user.dev.js"></script>
+    
   </body>
 </html>

@@ -24,6 +24,11 @@ const handleImageResizing = require("./functions/handleImageResizing");
 const initialCreateUsers = require("./functions/initialCreateUsers");
 const Auction = require("./database/schemas/auctionSchema");
 const User = require("./database/schemas/userSchema");
+const Dates = require("./database/schemas/dateSchema");
+const insertMultipleData = require("./database/utils/insertMultipleData");
+const createGraphData = require("./functions/createGraphData");
+const runAtSpecificTimeOfDay = require("./functions/runAtSpecificTimeOfDay");
+const addLastDayToDates = require("./functions/addLastDayToDates");
 const connectDatabase = require("./database/database");
 
 require("dotenv").config();
@@ -56,6 +61,41 @@ process.on("unhandledRejection", (reason, promise) => {
 connectDatabase();
 // Run only on first startup to update databse records
 // initialCreateUsers();
+
+// Use this initially to insert all dates data. After first server startup!!!
+//##################################################
+// User.find(async (err, data) => {
+//   const dates = createGraphData(data);
+//   insertMultipleData(dates);
+//   console.log(dates);
+// });
+//##################################################
+
+runAtSpecificTimeOfDay(0, 10, () => {
+  User.find(async (err, data) => {
+    if (err) return console.error(err);
+    addLastDayToDates(data);
+    //for debugging
+    const now = Date.now();
+    console.log(`Periodic function run timestamp: ${now}`);
+  });
+});
+
+// For debugging - keep for now
+//##################################################
+// Dates.findOneAndDelete({ x: "13/11/2022" }, function (err, docs) {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("Deleted User : ", docs);
+//   }
+// });
+
+// Dates.deleteMany((err, auctions) => {
+//   if (err) return console.error(err);
+//   console.log(auctions);
+// });
+//##################################################
 
 const saveUserInfo = async (ip, userData, device) => {
   const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${ip}`;
@@ -210,6 +250,11 @@ app.get("/users-data", authenticateToken, async (req, res) => {
     );
   }
 });
+app.get("/dates", authenticateToken, async (req, res) => {
+  Dates.find((err, dates) => {
+    res.send(dates);
+  });
+});
 app.get("/api/auctions", async (req, res) => {
   if (req.query.page && req.query.limit) {
     let page, limit;
@@ -294,18 +339,6 @@ app.post("/analitics", async (req, res) => {
     }
   });
   res.sendStatus(200);
-});
-
-app.get("/users-count", authenticateToken, async (req, res) => {
-  User.find((err, data) => {
-    if (err) return console.error(err);
-    let userCount = data.length;
-    res.send(userCount.toString());
-  });
-
-  // User.deleteMany({}, (err, data) => {
-  //     console.log(data);
-  // })
 });
 
 const cpUpload = upload.fields([
