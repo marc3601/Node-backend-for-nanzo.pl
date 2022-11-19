@@ -1,26 +1,22 @@
 const express = require("express");
 const multer = require("multer");
-const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate");
 const upload = multer({ dest: "upload/" });
-const fs = require("fs");
-const util = require("util");
-const unlinkFile = util.promisify(fs.unlink);
 const app = express();
 const port = 8080;
 const path = require("path");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const probe = require("probe-image-size");
-const gifResize = require("@gumlet/gif-resize");
 const requestIp = require("request-ip");
 const DeviceDetector = require("node-device-detector");
 const IMAGES = "/upload";
 const GIF = "/gif";
-const fetch = require("node-fetch");
+const { getFileStream, deleteFiles } = require("./s3");
+const authenticateToken = require("./authentication/authenticateToken");
+const authenticateTokenForUpload = require("./authentication/authenticateTokenForUpload");
+const saveUserInfo = require("./functions/saveUserInfo");
 const parseTimestamp = require("./functions/parseTimestamp");
-const handleImageResizing = require("./functions/handleImageResizing");
+const handleImageUpload = require("./functions/handleImageUpload");
 const initialCreateUsers = require("./functions/initialCreateUsers");
 const Auction = require("./database/schemas/auctionSchema");
 const User = require("./database/schemas/userSchema");
@@ -97,27 +93,6 @@ runAtSpecificTimeOfDay(0, 10, () => {
 // });
 //##################################################
 
-const saveUserInfo = async (ip, userData, device) => {
-  const link = `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEO_API_KEY}&ip=${ip}`;
-  const timestamp = Date.now();
-  const response = await fetch(link);
-  const body = await response.json();
-  const newUser = new User({
-    userIp: ip ? ip : null,
-    countryName: body.country_name ? body.country_name : null,
-    countryFlag: body.country_flag ? body.country_flag : null,
-    isp: body.isp ? body.isp : null,
-    city: body.city ? body.city : null,
-    timestamp: timestamp ? timestamp : null,
-    visitSource: userData?.ref ? userData.ref : null,
-    entryPage: userData?.loc ? userData.loc : null,
-    device: device ? device : null,
-  });
-
-  newUser.save((err, user) => {
-    if (err) return console.error(err);
-  });
-};
 //Device detector
 const detector = new DeviceDetector({
   clientIndexes: true,
@@ -147,36 +122,10 @@ const storage = multer.diskStorage({
 //     if (err) return console.error(err);
 //     console.log(auctions)
 // })
-const { getFileStream, uploadGif, deleteFiles } = require("./s3");
+
 const { STATUS_CODES } = require("http");
 
-const authenticateToken = (req, res, next) => {
-  let reqToken = null;
-  if (req.headers.cookie) {
-    reqToken = req.headers.cookie.split("=")[1];
-  }
-
-  if (reqToken == null) return res.redirect("/");
-  jwt.verify(reqToken, process.env.ACCES_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-};
-
-//temporary solution
-const authenticateTokenForUpload = (req, res, next) => {
-  let reqToken = null;
-  if (req.headers.cookie) {
-    reqToken = req.headers.cookie.split("=")[1];
-  }
-  if (reqToken == null) return res.send("Jesteś niezalogowany");
-  jwt.verify(reqToken, process.env.ACCES_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-};
+// API Routes
 
 app.get("/", async (req, res) => {
   if (req.headers.cookie !== undefined) {
@@ -223,17 +172,16 @@ app.get("/admin", authenticateToken, async (req, res) => {
 });
 
 app.get("/users-data", authenticateToken, async (req, res) => {
-  if (req.query.page && req.query.limit) {
-    let page, limit;
+  if (req.query.page) {
+    let page;
     try {
       page = parseInt(req.query.page);
-      limit = parseInt(req.query.limit);
     } catch (error) {
       console.error(error);
     }
     User.paginate(
       {},
-      { offset: page, limit: limit, sort: { _id: -1 } },
+      { offset: page, limit: 50, sort: { _id: -1 } },
       (err, data) => {
         if (err) return console.error(err);
         res.render("users", { data: data });
@@ -330,19 +278,17 @@ app.post("/analitics", async (req, res) => {
   const device = detector.detect(userAgent);
   User.findOne({ userIp: ip }, (err, user) => {
     if (err) return console.error(err);
-    if (user) {
-      User.find((err, data) => {
-        if (err) return console.error(err);
-      });
-    } else {
+    if (!user) {
       saveUserInfo(ip, userData, device);
+    } else {
+      return;
     }
   });
   res.sendStatus(200);
 });
 
 const cpUpload = upload.fields([
-  { name: "image", maxCount: 8 },
+  { name: "image", maxCount: 10 },
   { name: "gif", maxCount: 1 },
 ]);
 app.post(
@@ -350,61 +296,17 @@ app.post(
   authenticateTokenForUpload,
   cpUpload,
   async (req, res, next) => {
-    if (req.files["image"].length <= 8) {
-      let gif = null;
-      let auction = null;
-      handleImageResizing(req, res);
-      const handleGif = () => {
-        if (req.files["gif"] !== undefined) {
-          let gifPath = req.files["gif"][0].path;
-          const buf = fs.readFileSync(gifPath);
-          gifResize({
-            width: 550,
-            optimizationLevel: 3,
-            resize_method: "catrom",
-          })(buf)
-            .then((data) => {
-              gif = {};
-              const path = `gif/giffy${Date.now()}.gif`;
-              fs.writeFile(path, data, async (err) => {
-                if (err) return console.log(err);
-                let name = "gif" + Date.now();
-                await uploadGif(path, name)
-                  .then(async () => {
-                    await probe(fs.createReadStream(path))
-                      .then((data) => {
-                        const url = `https://admin.noanzo.pl/images/${name}`;
-                        gif.width = data.width;
-                        gif.height = data.height;
-                        gif.url = url;
-                        if (auction === null) {
-                          auction = {};
-                        }
-                        auction.gif = gif;
-                        auction.save((err, auction) => {
-                          if (err) return console.error(err);
-                          console.log("Saved: " + auction);
-                          gif = null;
-                        });
-                        res.send("Ogłoszenie zostało dodane. (GIF)");
-                      })
-                      .finally(async () => {
-                        await unlinkFile(gifPath);
-                        await unlinkFile(path);
-                      });
-                  })
-                  .catch((err) => console.log(err.message));
-              });
-            })
-            .catch((err) => console.log(err.message));
-        }
-      };
-      handleGif();
+    if (req.files["image"].length <= 10) {
+      handleImageUpload(req, res);
     } else {
-      res.status(404).send("Wybierz max 8 plików");
+      res.status(404).send("Wybierz max 10 plików");
     }
   }
 );
+
+app.get("*", async (req, res) => {
+  res.status(404).json({ error: "Podana strona nie istnieje." });
+});
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });

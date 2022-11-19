@@ -323,13 +323,13 @@ button.addEventListener("click", (e) => {
       if (!item && i === 3) {
         response = "Wybierz zdjęcia";
       }
-      if (item > 8 && i === 4) {
-        response = "Wybierz maksymalnie 8 zdjęć";
+      if (item > 10 && i === 4) {
+        response = "Wybierz maksymalnie 10 zdjęć";
       }
     });
     return response;
   };
-  if (isTitle && isPrice && isDesc && isImage && imagesCount <= 8) {
+  if (isTitle && isPrice && isDesc && isImage && imagesCount <= 10) {
     response.innerText = "";
     progress.value = "0";
     button.setAttribute("disabled", true);
