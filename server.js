@@ -240,6 +240,7 @@ app.get("/api/auctions", async (req, res) => {
 });
 app.get("/images/:key", async (req, res) => {
   const key = req.params.key;
+  res.set("Cache-Control", "public, max-age=86400");
   try {
     const readStream = getFileStream(key);
     readStream.pipe(res);
