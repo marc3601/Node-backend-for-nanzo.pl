@@ -5,12 +5,15 @@ const util = require("util");
 const fs = require("fs");
 const unlinkFile = util.promisify(fs.unlink);
 const Auction = require("../database/schemas/auctionSchema");
+const handleGif = require("./handleGif");
 let image = [];
-const handleImageResizing = async (req, res) => {
+const handleImageUpload = async (req, res) => {
   const title = req.body.title;
   const description = req.body.description;
   const price = req.body.price;
   const thumbnail = req.body.thumbnail;
+  let gif = null;
+  let auction = null;
   if (!req.files) return next();
   await Promise.all(
     req.files["image"].map(async (item, id) => {
@@ -43,7 +46,6 @@ const handleImageResizing = async (req, res) => {
         title: title,
         id: uuidv4(),
       });
-
       if (req.files["gif"] === undefined) {
         auction.save((err, auction) => {
           if (err) return console.error(err);
@@ -51,6 +53,8 @@ const handleImageResizing = async (req, res) => {
           image = [];
           res.send("Ogłoszenie zostało dodane.");
         });
+      } else {
+        handleGif(req, res, gif, auction);
       }
     })
     .catch((err) => {
@@ -59,4 +63,4 @@ const handleImageResizing = async (req, res) => {
     });
 };
 
-module.exports = handleImageResizing;
+module.exports = handleImageUpload;

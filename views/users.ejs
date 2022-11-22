@@ -83,7 +83,7 @@
       <div class="navigation">
         <div class="btn_l">
             <%if (data.offset -49 > 0) { %>
-            <a href="/users-data?page=<%=data.offset-50;%>&limit=50">&#8592</a>
+            <a href="/users-data?page=<%=data.offset-50;%>">&#8592</a>
             <% } %>
         </div>
         <div class="page">
@@ -92,7 +92,7 @@
         </div>
         <div class="btn_r">
             <%if (data.offset < (Math.ceil(data.total/50) * 50) - 50) { %>
-          <a href="/users-data?page=<%=data.offset+50;%>&limit=50">&#8594</a>
+          <a href="/users-data?page=<%=data.offset+50;%>">&#8594</a>
             <% } %>
         </div>
       </div>
@@ -105,7 +105,7 @@
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script src="/public/js/user.dev.js"></script>
+    <script src="/public/js/user.production.min.js"></script>
     
   </body>
 </html>

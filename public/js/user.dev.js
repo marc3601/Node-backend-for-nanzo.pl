@@ -1,6 +1,5 @@
 const btns = document.querySelectorAll(".btn_expand");
 const btn_b = document.querySelector(".back_btn");
-// const ctx = document.querySelector(".visitor_chart").getContext("2d");
 const chart_main = document.querySelector(".chart_container");
 const placeholder = document.querySelector(".placeholder");
 const body = document.querySelector("body");
@@ -49,11 +48,6 @@ const onScroll = throttle(() => {
 
 document.addEventListener("scroll", onScroll);
 
-const labels = [];
-function randomIntFromInterval(min, max) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
 let graphData = {
   labels: [],
   data: [],
@@ -65,7 +59,6 @@ axios
       (item) => delete item._id && delete item.__v
     );
     graphData.data = graphDataRaw.reverse().slice(0, 7);
-
     const labelsDataRaw = graphDataRaw.map((item) => item.x);
     graphData.labels = labelsDataRaw.slice(0, 7);
 
@@ -110,4 +103,4 @@ axios
     const ctx = document.querySelector(".visitor_chart").getContext("2d");
     const myChart = new Chart(ctx, config);
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.error(err.message));
