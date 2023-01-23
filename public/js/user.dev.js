@@ -2,7 +2,9 @@ const btns = document.querySelectorAll(".btn_expand");
 const btn_b = document.querySelector(".back_btn");
 const chart_main = document.querySelector(".chart_container");
 const placeholder = document.querySelector(".placeholder");
+const range = document.querySelector(".range");
 const body = document.querySelector("body");
+const range_title = document.querySelector(".range-title");
 btns.forEach((item) => {
   item.addEventListener("click", () => {
     const margin = `${item.previousElementSibling.offsetHeight + 10}px`;
@@ -52,55 +54,75 @@ let graphData = {
   labels: [],
   data: [],
 };
-axios
-  .get(`https://admin.noanzo.pl/dates`)
-  .then((res) => {
-    const graphDataRaw = res.data.filter(
-      (item) => delete item._id && delete item.__v
-    );
-    graphData.data = graphDataRaw.reverse().slice(0, 7);
-    const labelsDataRaw = graphDataRaw.map((item) => item.x);
-    graphData.labels = labelsDataRaw.slice(0, 7);
 
-    const data = {
-      labels: graphData.labels,
-      datasets: [
-        {
-          data: graphData.data,
-          label: "Wyświetlenia",
-          borderColor: "#d27303",
-          fill: true,
-        },
-      ],
-    };
+const testRun = (param) => {
+  axios
+    .get(`https://admin.noanzo.pl/dates?range=${param}`)
+    .then((res) => {
+      graphData.data = res.data.reverse();
+      const labelsDataRaw = res.data.map((item) => item.x);
+      graphData.labels = labelsDataRaw.slice(0, 7);
 
-    const config = {
-      type: "line",
-      data: data,
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false,
+      const data = {
+        labels: graphData.labels,
+        datasets: [
+          {
+            data: graphData.data,
+            label: "Wyświetlenia",
+            borderColor: "#d27303",
+            fill: true,
+          },
+        ],
+      };
+
+      const config = {
+        type: "line",
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            x: { reverse: true },
           },
         },
-        scales: {
-          x: { reverse: true },
-        },
-      },
-    };
+      };
 
-    //building the graph
-    placeholder.remove();
-    const chart_container = document.createElement("div");
-    const canvas_element = document.createElement("canvas");
-    chart_container.setAttribute("class", "chart");
-    canvas_element.setAttribute("class", "visitor_chart");
-    canvas_element.setAttribute("width", "600");
-    canvas_element.setAttribute("height", "200");
-    chart_main.appendChild(chart_container);
-    chart_container.appendChild(canvas_element);
-    const ctx = document.querySelector(".visitor_chart").getContext("2d");
-    const myChart = new Chart(ctx, config);
-  })
-  .catch((err) => console.error(err.message));
+      //building the graph
+      placeholder.remove();
+      const chart_container = document.createElement("div");
+      const canvas_element = document.createElement("canvas");
+      chart_container.setAttribute("class", "chart");
+      canvas_element.setAttribute("class", "visitor_chart");
+      canvas_element.setAttribute("width", "600");
+      canvas_element.setAttribute("height", "200");
+      chart_main.appendChild(chart_container);
+      chart_container.appendChild(canvas_element);
+      const ctx = document.querySelector(".visitor_chart").getContext("2d");
+      const myChart = new Chart(ctx, config);
+    })
+    .catch((err) => console.error(err.message));
+};
+
+let currentEvent = "week";
+range.addEventListener("click", (e) => {
+  if (currentEvent !== e.target.value) {
+    currentEvent = e.target.value;
+    while (chart_main.childElementCount > 1) {
+      chart_main.removeChild(chart_main.lastChild);
+    }
+    if (window.innerWidth > 800) {
+      chart_main.setAttribute("style", "min-height: 300px");
+    }
+    if (currentEvent === "week") {
+      range_title.innerText = "Ostatni tydzień";
+    } else if (currentEvent === "month") {
+      range_title.innerText = "Ostatni miesiąc";
+    }
+    testRun(currentEvent);
+  }
+});
+testRun("week");

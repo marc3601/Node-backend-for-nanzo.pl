@@ -32,25 +32,35 @@ h3 {
   padding-bottom: 0.5rem;
 }
 .chart_container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* padding: 10px; */
-  margin-bottom: 1rem;
-}
-.placeholder {
+  margin: 0 auto;
   width: 90vw;
+  margin-bottom: 1rem;
+  text-align: right;
+  padding: 20px;
+  background-color: #f1c99c;
+  border-radius: 10px;
+}
+
+.range {
+  padding: 5px;
+  border: none;
+  background-color: #f1c99c;
+  color: #d27303;
+  font-weight: bold;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.range:focus {
+  outline: none;
+}
+
+.placeholder {
+  margin: 0 auto;
   height: 150px;
   background-color: #f1c99c;
   border-radius: 10px;
 }
-.chart {
-  position: relative;
-  width: 90vw;
-  background-color: #f1c99c;
-  padding: 20px;
-  border-radius: 10px;
-}
+
 .container {
   position: relative;
   width: 95vw;
@@ -118,8 +128,19 @@ h3 {
 
 @media (min-width: 800px) {
   .user_badge,
-  .chart,
+  .chart_container {
+    width: 70vw;
+  }
   .placeholder {
+    height: 300px;
+  }
+  .range {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1150px) {
+  .user_badge,
+  .chart_container {
     width: 50vw;
   }
   .placeholder {

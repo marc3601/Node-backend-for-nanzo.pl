@@ -199,9 +199,20 @@ app.get("/users-data", authenticateToken, async (req, res) => {
   }
 });
 app.get("/dates", authenticateToken, async (req, res) => {
-  Dates.find((err, dates) => {
-    res.send(dates);
-  });
+  res.set("Cache-Control", "public, max-age=600");
+  if (req.query.range === "week") {
+    Dates.find((err, dates) => {
+      const result = dates.slice(dates.length - 7, dates.length);
+      res.send(result);
+    });
+  } else if (req.query.range === "month") {
+    Dates.find((err, dates) => {
+      const result = dates.slice(dates.length - 30, dates.length);
+      res.send(result);
+    });
+  } else {
+    res.send([]);
+  }
 });
 app.get("/api/auctions", async (req, res) => {
   if (req.query.page && req.query.limit) {
