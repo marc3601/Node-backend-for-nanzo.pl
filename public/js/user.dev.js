@@ -181,7 +181,7 @@ const fetchData = (link) => {
     .get(link)
     .then((res) => {
       dataToBuildGraph = res.data;
-
+      dataToBuildGraph.month.reverse();
       graphData.data = dataToBuildGraph.week.reverse();
       graphData.labels = dataToBuildGraph.week.map((item) => item.x);
 
@@ -200,13 +200,13 @@ range.addEventListener("click", (e) => {
       chart_main.removeChild(chart_main.lastChild);
     }
     if (currentEvent === "week") {
-      graphData.data = dataToBuildGraph.week.reverse();
+      graphData.data = dataToBuildGraph.week;
       graphData.labels = dataToBuildGraph.week.map((item) => item.x);
       graphBuilder();
       websitePerformance();
       range_title.innerText = "Ostatni tydzień";
     } else if (currentEvent === "month") {
-      graphData.data = dataToBuildGraph.month.reverse();
+      graphData.data = dataToBuildGraph.month;
       graphData.labels = dataToBuildGraph.month.map((item) => item.x);
       graphBuilder();
       websitePerformance();
