@@ -17,11 +17,21 @@
           Liczba wyświetleń strony:
           <span class="data_count"><%= data.total; %></span>
         </p>
-        <h3>Ostatni tydzień</h3>
+        <h3 class="range-title">Ostatni tydzień</h3>
       </center>
       <div class="chart_container">
+        <select name="range" class="range">
+          <option value="week">Tydzień</option>
+          <option value="month">Miesiąc</option>
+        </select>
         <div class="placeholder">
-       
+        </div>
+      </div>
+      <div class="summary">
+        <p class="summary_text">
+        </p>
+        <div class="summary_icon">
+          <img>
         </div>
       </div>
       <h3>Odwiedzający stronę</h3>
