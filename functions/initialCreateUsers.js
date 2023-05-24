@@ -1,3 +1,5 @@
+const User = require("../database/schemas/userSchema");
+
 const initialCreateUsers = async () => {
   User.find((err, data) => {
     if (err) return console.error(err);

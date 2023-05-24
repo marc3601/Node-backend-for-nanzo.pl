@@ -18,14 +18,15 @@ const saveUserInfo = require("./functions/saveUserInfo");
 const parseTimestamp = require("./functions/parseTimestamp");
 const handleImageUpload = require("./functions/handleImageUpload");
 const initialCreateUsers = require("./functions/initialCreateUsers");
+const createGraphData = require("./functions/createGraphData");
+const insertMultipleData = require("./database/utils/insertMultipleData");
 const Auction = require("./database/schemas/auctionSchema");
 const User = require("./database/schemas/userSchema");
 const Dates = require("./database/schemas/dateSchema");
-const insertMultipleData = require("./database/utils/insertMultipleData");
-const createGraphData = require("./functions/createGraphData");
 const runAtSpecificTimeOfDay = require("./functions/runAtSpecificTimeOfDay");
 const addLastDayToDates = require("./functions/addLastDayToDates");
 const connectDatabase = require("./database/database");
+const getMostPopularKeywords = require("./services/searchConsoleApi");
 
 require("dotenv").config();
 app.use(cors());
@@ -71,27 +72,8 @@ runAtSpecificTimeOfDay(0, 10, () => {
   User.find(async (err, data) => {
     if (err) return console.error(err);
     addLastDayToDates(data);
-    //for debugging
-    const now = Date.now();
-    console.log(`Periodic function run timestamp: ${now}`);
   });
 });
-
-// For debugging - keep for now
-//##################################################
-// Dates.findOneAndDelete({ x: "13/11/2022" }, function (err, docs) {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log("Deleted User : ", docs);
-//   }
-// });
-
-// Dates.deleteMany((err, auctions) => {
-//   if (err) return console.error(err);
-//   console.log(auctions);
-// });
-//##################################################
 
 //Device detector
 const detector = new DeviceDetector({
@@ -118,15 +100,8 @@ const storage = multer.diskStorage({
     }
   },
 });
-// Auction.deleteMany((err, auctions) => {
-//     if (err) return console.error(err);
-//     console.log(auctions)
-// })
-
-const { STATUS_CODES } = require("http");
 
 // API Routes
-
 app.get("/", async (req, res) => {
   if (req.headers.cookie !== undefined) {
     res.redirect("/admin");
@@ -316,6 +291,10 @@ app.post(
     }
   }
 );
+
+(async () => {
+  await getMostPopularKeywords();
+})();
 
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });

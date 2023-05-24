@@ -212,4 +212,4 @@ range.addEventListener("change", (e) => {
     range_title.innerText = "Ostatni miesiąc";
   }
 });
-fetchData(`https://admin.noanzo.pl/dates`);
+fetchData(`http://localhost:8080/dates`);

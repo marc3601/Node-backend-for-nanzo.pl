@@ -72,7 +72,7 @@ const handleDeleteThumbnail = (data) => {
 const handleDelete = (e) => {
   let id = e.currentTarget.parentElement.id;
   axios
-    .get(`https://admin.noanzo.pl/delete?id=${id}`)
+    .get(`http://localhost:8080/delete?id=${id}`)
     .then((res) => {
       console.log(res);
       handleAuctionsDataFetch();
@@ -83,7 +83,7 @@ const handleDelete = (e) => {
 const handleAuctionsDataFetch = () => {
   deleteContainer.innerHTML = `<p style="padding-left:10px">Ładowanie ogłoszeń</p>`;
   axios
-    .get("https://admin.noanzo.pl/api/auctions")
+    .get("http://localhost:8080/api/auctions")
     .then((res) => (auctionsData = res.data))
     .finally(() => {
       if (auctionsData.length > 0) {
