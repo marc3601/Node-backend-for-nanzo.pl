@@ -8,7 +8,6 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const requestIp = require("request-ip");
-const DeviceDetector = require("node-device-detector");
 const IMAGES = "/upload";
 const GIF = "/gif";
 const { getFileStream, deleteFiles } = require("./s3");
@@ -27,6 +26,19 @@ const runAtSpecificTimeOfDay = require("./functions/runAtSpecificTimeOfDay");
 const addLastDayToDates = require("./functions/addLastDayToDates");
 const connectDatabase = require("./database/database");
 const getMostPopularKeywords = require("./services/searchConsoleApi");
+const home = require("./routes/home");
+const login = require("./routes/login");
+const logout = require("./routes/logout");
+const admin = require("./routes/admin");
+const usersData = require("./routes/usersData");
+const dates = require("./routes/dates");
+const auctions = require("./routes/auctions");
+const image = require("./routes/image");
+const latestAuction = require("./routes/latestAuction");
+const favicon = require("./routes/favicon");
+const deleteAuction = require("./routes/deleteAuction");
+const analitics = require("./routes/analitics");
+const uploadImages = require("./routes/uploadImages");
 
 require("dotenv").config();
 app.use(cors());
@@ -75,13 +87,6 @@ runAtSpecificTimeOfDay(0, 10, () => {
   });
 });
 
-//Device detector
-const detector = new DeviceDetector({
-  clientIndexes: true,
-  deviceIndexes: true,
-  deviceAliasCode: false,
-});
-
 //Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -101,200 +106,30 @@ const storage = multer.diskStorage({
   },
 });
 
-// API Routes
-app.get("/", async (req, res) => {
-  if (req.headers.cookie !== undefined) {
-    res.redirect("/admin");
-  } else {
-    res.sendFile(__dirname + "/login.html");
-  }
-});
-app.post("/login", async (req, res) => {
-  const user = req.body.username;
-  const pass = req.body.password;
-  if (user === process.env.ADMIN_LOGIN) {
-    try {
-      if (await bcrypt.compare(pass, process.env.ADMIN_PASS)) {
-        const authUser = {
-          user: user,
-          password: pass,
-        };
-        const accessToken = jwt.sign(authUser, process.env.ACCES_TOKEN_SECRET);
-        res
-          .cookie("auth", accessToken, { httpOnly: true, maxAge: 3600000 })
-          .redirect(301, "/admin");
-      } else {
-        res.status(401).send("Błędne hasło");
-      }
-    } catch {
-      res.status(404).send("Błąd serwera");
-    }
-  } else {
-    res.status(404).send("Błędny email");
-  }
-});
-
-app.get("/logout", async (reg, res) => {
-  res.clearCookie("auth").redirect(301, "/");
-});
-
-app.get("/admin", authenticateToken, async (req, res) => {
-  User.find((err, data) => {
-    if (err) return console.error(err);
-    let userCount = data.length;
-    res.render("main", { count: userCount.toString() });
-  });
-});
-
-app.get("/users-data", authenticateToken, async (req, res) => {
-  if (req.query.page) {
-    let page;
-    try {
-      page = parseInt(req.query.page);
-    } catch (error) {
-      console.error(error);
-    }
-    User.paginate(
-      {},
-      { offset: page, limit: 50, sort: { _id: -1 } },
-      (err, data) => {
-        if (err) return console.error(err);
-        res.render("users", { data: data });
-      }
-    );
-  } else {
-    User.paginate(
-      {},
-      { offset: 0, limit: 50, sort: { _id: -1 } },
-      (err, data) => {
-        if (err) return console.error(err);
-        res.render("users", { data: data });
-      }
-    );
-  }
-});
-app.get("/dates", authenticateToken, async (req, res) => {
-  res.set("Cache-Control", "public, max-age=600");
-  Dates.find((err, dates) => {
-    const source = dates.slice(dates.length - 60, dates.length);
-    const week = source.slice(source.length - 7, source.length);
-    const last_week = source.slice(source.length - 14, source.length - 7);
-    const month = source.slice(source.length - 30, source.length);
-    const last_month = source.slice(source.length - 60, source.length - 30);
-    const result = {
-      week,
-      last_week,
-      month,
-      last_month,
-    };
-    res.send(result);
-  });
-});
-app.get("/api/auctions", async (req, res) => {
-  if (req.query.page && req.query.limit) {
-    let page, limit;
-    try {
-      page = parseInt(req.query.page);
-      limit = parseInt(req.query.limit);
-    } catch (error) {
-      console.error(error);
-    }
-    Auction.paginate(
-      {},
-      { offset: page, limit: limit, sort: { _id: -1 } },
-      (err, auctions) => {
-        if (err) return console.error(err);
-        res.send(auctions.docs);
-      }
-    );
-  } else {
-    if (req.query.id) {
-      const response = [];
-      Auction.findOne({ id: req.query.id }, (err, auction) => {
-        if (err) return console.error(err);
-        response.push(auction);
-        res.send(response);
-      });
-    } else {
-      Auction.find()
-        .sort({ _id: -1 })
-        .exec((err, auctions) => {
-          if (err) return console.error(err);
-          res.send(auctions);
-        });
-    }
-  }
-});
-app.get("/images/:key", async (req, res) => {
-  const key = req.params.key;
-  res.set("Cache-Control", "public, max-age=86400");
-  try {
-    const readStream = getFileStream(key);
-    readStream.pipe(res);
-  } catch (err) {
-    res.sendStatus(404);
-  }
-});
-app.get("/api/latest", async (req, res) => {
-  Auction.findOne()
-    .sort({ _id: -1 })
-    .limit(1)
-    .exec((err, auction) => {
-      if (err) return console.error(err);
-      res.send(auction);
-    });
-});
-app.get("/favicon.ico", async (req, res) => {
-  res.sendFile(path.join(__dirname, "/favicon.ico"));
-});
-
-app.get("/delete", authenticateToken, async (req, res) => {
-  const id = req.query.id;
-  Auction.deleteOne({ id: id }).exec((err, item) => {
-    if (err) return console.err;
-    res.status(200).send(item);
-  });
-  await deleteFiles(id)
-    .then((stat) => console.log(stat))
-    .catch((err) => console.log(err));
-});
-
-app.post("/analitics", async (req, res) => {
-  let ip = req.clientIp;
-  let userData = req.body;
-  const userAgent = req.headers["user-agent"];
-  const device = detector.detect(userAgent);
-  User.findOne({ userIp: ip }, (err, user) => {
-    if (err) return console.error(err);
-    if (!user) {
-      saveUserInfo(ip, userData, device);
-    } else {
-      return;
-    }
-  });
-  res.sendStatus(200);
-});
-
 const cpUpload = upload.fields([
   { name: "image", maxCount: 10 },
   { name: "gif", maxCount: 1 },
 ]);
-app.post(
-  "/upload",
-  authenticateTokenForUpload,
-  cpUpload,
-  async (req, res, next) => {
-    if (req.files["image"].length <= 10) {
-      handleImageUpload(req, res);
-    } else {
-      res.status(404).send("Wybierz max 10 plików");
-    }
-  }
-);
 
-(async () => {
-  await getMostPopularKeywords();
-})();
+// API Routes
+app.get("/", home);
+app.post("/login", login);
+app.get("/logout", logout);
+app.get("/admin", authenticateToken, admin);
+app.get("/users-data", authenticateToken, usersData);
+app.get("/dates", authenticateToken, dates);
+app.get("/api/auctions", auctions);
+app.get("/api/latest", latestAuction);
+app.get("/images/:key", image);
+app.get("/favicon.ico", favicon);
+app.get("/delete", authenticateToken, deleteAuction);
+app.post("/analitics", analitics);
+
+app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
+
+// (async () => {
+//   await getMostPopularKeywords();
+// })();
 
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });
