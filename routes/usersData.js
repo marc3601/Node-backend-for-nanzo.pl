@@ -1,5 +1,6 @@
 const User = require("../database/schemas/userSchema");
 const usersData = async (req, res) => {
+  res.set("Cache-Control", "no-store");
   if (req.query.page) {
     let page;
     page = parseInt(req.query.page);

@@ -19,7 +19,6 @@ const initialCreateUsers = async () => {
           new: true,
           useFindAndModify: false,
         });
-        console.log(item);
       }
     });
   }).sort({ _id: -1 });
