@@ -25,7 +25,7 @@ const Dates = require("./database/schemas/dateSchema");
 const runAtSpecificTimeOfDay = require("./functions/runAtSpecificTimeOfDay");
 const addLastDayToDates = require("./functions/addLastDayToDates");
 const connectDatabase = require("./database/database");
-const getMostPopularKeywords = require("./services/searchConsoleApi");
+const getMostPopularPagesLastMonth = require("./services/searchConsoleApi");
 const getAuctionTitleAndThumbnail = require("./functions/getAuctionTitleAndThumbnail");
 const home = require("./routes/home");
 const login = require("./routes/login");
@@ -125,19 +125,12 @@ app.get("/images/:key", image);
 app.get("/favicon.ico", favicon);
 app.get("/delete", authenticateToken, deleteAuction);
 app.post("/analitics", analitics);
-
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
 
-// (async () => {
-//   await getMostPopularKeywords();
-// })();
-
-(async () => {
-  const results = await getAuctionTitleAndThumbnail(
-    "https://noanzo.pl/ace9c7d9-42b9-4a24-8565-bd28fd2e6576"
-  ).catch((err) => console.error(err.message));
-  console.log(results);
-})();
+app.get("/most-popular-pages", authenticateToken, async (req, res) => {
+  const response = await getMostPopularPagesLastMonth();
+  res.send(response);
+});
 
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });

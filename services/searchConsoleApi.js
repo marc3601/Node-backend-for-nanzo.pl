@@ -1,16 +1,34 @@
 const searchConsole = require("@googleapis/searchconsole");
+const getAuctionTitleAndThumbnail = require("../functions/getAuctionTitleAndThumbnail");
 
-const getTheMostPopularPages = {
-  siteUrl: "sc-domain:noanzo.pl",
-  startDate: "2023-01-01",
-  endDate: "2023-05-22",
-  dimensions: ["page"],
-  rowLimit: 10, // Number of popular pages to retrieve
-  orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
-  searchType: ["web"],
+const timeRangeMonth = () => {
+  const currentDate = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(currentDate.getMonth() - 1);
+  return {
+    from: `${oneMonthAgo.getFullYear()}-${(oneMonthAgo.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${oneMonthAgo.getDate().toString().padStart(2, "0")}`,
+    to: `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`,
+  };
 };
 
-const getMostPopularKeywords = async () => {
+const { from, to } = timeRangeMonth();
+
+const queryMostPopularPages = {
+  siteUrl: "sc-domain:noanzo.pl",
+  startDate: from,
+  endDate: to,
+  dimensions: ["page"],
+  rowLimit: 20, // Number of popular pages to retrieve
+  orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
+  type: ["image"],
+};
+
+const getMostPopularPagesLastMonth = async () => {
+  const data = [];
   const auth = new searchConsole.auth.GoogleAuth({
     credentials: {
       private_key: process.env.PRIVATE_KEY.replaceAll("\\n", "\n"),
@@ -24,16 +42,21 @@ const getMostPopularKeywords = async () => {
     auth,
   });
 
-  client.searchanalytics
-    .query(getTheMostPopularPages)
-    .then((response) =>
-      response.data.rows.forEach((row) =>
-        console.log(
-          `${row.keys[0]} --> ${row.impressions} impressions and ${row.clicks} clicks`
-        )
-      )
-    )
-    .catch((err) => console.error(err.message));
+  try {
+    const response = await client.searchanalytics.query(queryMostPopularPages);
+    for (const row of response.data.rows) {
+      if (row.clicks > 0) {
+        const results = await getAuctionTitleAndThumbnail(row.keys[0]).catch(
+          (err) => console.error(err.message)
+        );
+        results.clicks = row.clicks;
+        data.push(results);
+      }
+    }
+    return data;
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
-module.exports = getMostPopularKeywords;
+module.exports = getMostPopularPagesLastMonth;

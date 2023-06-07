@@ -1,6 +1,16 @@
-const getData = async (url) => {
-  const response = await fetch(url);
-  const body = await response.json();
+const Auction = require("../database/schemas/auctionSchema");
+
+const getData = async (auctionID) => {
+  let body = {};
+  if (auctionID === "main") {
+    body = await Auction.findOne({}, {}, { sort: { _id: -1 } }, (err) => {
+      if (err) return console.error(err);
+    });
+  } else {
+    body = await Auction.findOne({ id: auctionID }, (err) => {
+      if (err) return console.error(err);
+    });
+  }
   return body;
 };
 
@@ -9,29 +19,26 @@ const createDataFromResponse = (body) => {
     title: "",
     thumbnail: "",
   };
-  const arrayOfImages = body[0]?.image || body.image;
+  const arrayOfImages = body.image;
   const thumbnail = arrayOfImages.filter((item) => item.thumbnail);
   if (thumbnail.length > 0) {
     results.thumbnail = thumbnail[0].url;
   } else {
     results.thumbnail = arrayOfImages[0].url;
   }
-  results.title = body[0]?.title || body.title;
+  results.title = body.title;
   return results;
 };
 
 const getAuctionTitleAndThumbnail = async (link) => {
   const baseUrl = "https://noanzo.pl/";
-
   if (link === baseUrl) {
-    const body = await getData(`http://localhost:8080/api/latest`);
+    const body = await getData(`main`);
     const results = createDataFromResponse(body);
     return results;
   }
   const auctionId = link.substring(baseUrl.length);
-  const body = await getData(
-    `http://localhost:8080/api/auctions?id=${auctionId}`
-  );
+  const body = await getData(auctionId);
   const results = createDataFromResponse(body);
   return results;
 };
