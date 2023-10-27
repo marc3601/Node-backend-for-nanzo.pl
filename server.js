@@ -126,7 +126,6 @@ app.get("/favicon.ico", favicon);
 app.get("/delete", authenticateToken, deleteAuction);
 app.post("/analitics", analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
-
 app.get("/most-popular-pages", authenticateToken, async (req, res) => {
   const response = await getMostPopularPagesLastMonth();
   res.send(response);
