@@ -25,14 +25,16 @@ main {
 }
 h2 {
   font-size: 1.5rem;
-  /* padding-bottom: 2rem; */
+  display: inline;
 }
 h3 {
   text-align: center;
   padding-bottom: 0.5rem;
 }
+
 .chart_container,
-.summary {
+.summary,
+.google {
   margin: 0 auto;
   width: 90vw;
   margin-bottom: 1rem;
@@ -40,6 +42,13 @@ h3 {
   padding: 20px;
   background-color: #f1c99c;
   border-radius: 10px;
+}
+.google {
+  text-align: center;
+  color: #7b4505;
+  -webkit-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
 }
 
 .range {
@@ -148,7 +157,8 @@ h3 {
 @media (min-width: 800px) {
   .user_badge,
   .chart_container,
-  .summary {
+  .summary,
+  .google {
     width: 70vw;
   }
   .summary_text {
@@ -164,7 +174,8 @@ h3 {
 @media (min-width: 1150px) {
   .user_badge,
   .chart_container,
-  .summary {
+  .summary,
+  .google {
     width: 50vw;
   }
   .summary_text {

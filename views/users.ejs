@@ -34,6 +34,9 @@
           <img>
         </div>
       </div>
+      <!-- <div class="google">
+        <h2>Google performance</h2>
+      </div> -->
       <h3>Odwiedzający stronę</h3>
       <div class="container">
         <% let id = 1  %>
@@ -92,17 +95,19 @@
       </div>
       <div class="navigation">
         <div class="btn_l">
-            <%if (data.offset -49 > 0) { %>
-            <a href="/users-data?page=<%=data.offset-50;%>">&#8592</a>
+            <%if (data.offset > 0 && data.offset !== 15) { %>
+            <a href="/users-data?page=<%=Math.ceil(data.offset/15)-1;%>">&#8592</a>
+            <% } else if (data.offset === 15) {%>
+            <a href="/users-data">&#8592</a>
             <% } %>
         </div>
         <div class="page">
-          <%=((data.offset / 50)+1).toString() +"/" +
-          Math.ceil(data.total/50).toString(); %>
+          <%=((data.offset/15)+1).toString() +"/" +
+          Math.ceil(data.total/15).toString(); %>
         </div>
         <div class="btn_r">
-            <%if (data.offset < (Math.ceil(data.total/50) * 50) - 50) { %>
-          <a href="/users-data?page=<%=data.offset+50;%>">&#8594</a>
+            <%if (data.offset < (Math.ceil(data.total/15) * 15) - 15) { %>
+          <a href="/users-data?page=<%=Math.ceil(data.offset/15)+1;%>">&#8594</a>
             <% } %>
         </div>
       </div>
@@ -115,7 +120,6 @@
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script src="/public/js/user.production.min.js"></script>
-    
+    <script src="/public/js/user.dev.js"></script>
   </body>
 </html>

@@ -8,7 +8,6 @@ const addLastDayToDates = (data) => {
     now,
     "m"
   )}/${parseTimestamp(now, "y")}`;
-
   const dataWithTimestamps = data.filter((item) => item.timestamp);
   const arrayOfDates = dataWithTimestamps.map((item) => {
     return `${parseTimestamp(item.timestamp, "d")}/${parseTimestamp(
