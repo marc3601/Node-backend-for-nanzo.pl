@@ -1,6 +1,5 @@
 const searchConsole = require("@googleapis/searchconsole");
 const getAuctionTitleAndThumbnail = require("../functions/getAuctionTitleAndThumbnail");
-
 const timeRangeMonth = () => {
   const currentDate = new Date();
   const oneMonthAgo = new Date();
@@ -24,14 +23,14 @@ const queryMostPopularPages = {
   dimensions: ["page"],
   rowLimit: 20, // Number of popular pages to retrieve
   orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
-  type: ["image"],
+  type: ["web"],
 };
 
 const getMostPopularPagesLastMonth = async () => {
   const data = [];
   const auth = new searchConsole.auth.GoogleAuth({
     credentials: {
-      private_key: process.env.PRIVATE_KEY.replaceAll("\\n", "\n"),
+      private_key: process.env.PRIVATE_KEY,
       client_email: process.env.CLIENT_EMAIL,
     },
     scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],

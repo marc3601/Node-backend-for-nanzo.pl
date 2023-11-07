@@ -3,44 +3,33 @@ const multer = require("multer");
 const upload = multer({ dest: "upload/" });
 const app = express();
 const port = 8080;
-const path = require("path");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const requestIp = require("request-ip");
 const IMAGES = "/upload";
 const GIF = "/gif";
-const { getFileStream, deleteFiles } = require("./s3");
 const authenticateToken = require("./authentication/authenticateToken");
 const authenticateTokenForUpload = require("./authentication/authenticateTokenForUpload");
-const saveUserInfo = require("./functions/saveUserInfo");
 const parseTimestamp = require("./functions/parseTimestamp");
-const handleImageUpload = require("./functions/handleImageUpload");
-const initialCreateUsers = require("./functions/initialCreateUsers");
-const createGraphData = require("./functions/createGraphData");
-const insertMultipleData = require("./database/utils/insertMultipleData");
-const Auction = require("./database/schemas/auctionSchema");
 const User = require("./database/schemas/userSchema");
-const Dates = require("./database/schemas/dateSchema");
+const Auction = require("./database/schemas/auctionSchema");
 const runAtSpecificTimeOfDay = require("./functions/runAtSpecificTimeOfDay");
 const addLastDayToDates = require("./functions/addLastDayToDates");
 const connectDatabase = require("./database/database");
-const getMostPopularPagesLastMonth = require("./services/searchConsoleApi");
-const getAuctionTitleAndThumbnail = require("./functions/getAuctionTitleAndThumbnail");
 const home = require("./routes/home");
 const login = require("./routes/login");
 const logout = require("./routes/logout");
 const admin = require("./routes/admin");
+const edit = require("./routes/edit");
 const usersData = require("./routes/usersData");
 const dates = require("./routes/dates");
 const auctions = require("./routes/auctions");
 const image = require("./routes/image");
 const latestAuction = require("./routes/latestAuction");
 const favicon = require("./routes/favicon");
-const deleteAuction = require("./routes/deleteAuction");
+const editAuction = require("./routes/editAuction");
 const analitics = require("./routes/analitics");
 const uploadImages = require("./routes/uploadImages");
-
+const mostPopularPages = require("./routes/mostPopularPages");
 require("dotenv").config();
 app.use(cors());
 app.options("*", cors());
@@ -117,19 +106,37 @@ app.get("/", home);
 app.post("/login", login);
 app.get("/logout", logout);
 app.get("/admin", authenticateToken, admin);
+app.get("/edit", authenticateToken, edit);
 app.get("/users-data", authenticateToken, usersData);
 app.get("/dates", authenticateToken, dates);
 app.get("/api/auctions", auctions);
 app.get("/api/latest", latestAuction);
 app.get("/images/:key", image);
 app.get("/favicon.ico", favicon);
-app.get("/delete", authenticateToken, deleteAuction);
+app.get("/edit-auction", authenticateToken, editAuction);
+app.post("/api/edit-price", authenticateToken, (req, res) => {
+  const updates = req.body.map((item) => {
+    return { _id: item.id, price: item.newPrice };
+  });
+
+  const updateOperations = updates.map((update) => ({
+    updateOne: {
+      filter: { _id: update._id },
+      update: { $set: { price: update.price } },
+    },
+  }));
+
+  Auction.bulkWrite(updateOperations)
+    .then((result) => {
+      res.send(`Liczba zaktualizowanych cen: ${result.modifiedCount}.`);
+    })
+    .catch((error) => {
+      res.sendStatus(500);
+    });
+});
 app.post("/analitics", analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
-app.get("/most-popular-pages", authenticateToken, async (req, res) => {
-  const response = await getMostPopularPagesLastMonth();
-  res.send(response);
-});
+app.get("/most-popular-pages", authenticateToken, mostPopularPages);
 
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });
