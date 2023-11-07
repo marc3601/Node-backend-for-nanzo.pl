@@ -32,7 +32,7 @@ progress::-webkit-progress-bar {
 progress {
   background-color: rgb(255, 255, 255);
   text-align: left;
-  width: 50vw;
+  width: 90vw;
   margin: 10px 0;
 }
 
@@ -50,7 +50,7 @@ progress {
 .form {
   display: flex;
   flex-direction: column;
-  max-width: 50vw;
+  max-width: 90vw;
   margin: 0 auto;
   position: relative;
 }
@@ -212,8 +212,7 @@ footer {
 .background_hidden {
   display: none;
 }
-.gif_menu,
-.delete_menu {
+.gif_menu {
   position: absolute;
   width: 100vw;
   height: 200px;
@@ -226,14 +225,11 @@ footer {
   flex-direction: column;
   transition: 0.3s ease-out;
 }
-.gif_menu_show,
-.delete_menu_show {
-  right: -50vw;
+.gif_menu_show {
+  right: 0;
 }
 .gif_icon_show,
-.gif_icon_hide,
-.delete_icon_show,
-.delete_icon_hide {
+.gif_icon_hide {
   position: absolute;
   width: 50px;
   height: 50px;
@@ -247,51 +243,41 @@ footer {
   align-items: center;
   cursor: pointer;
 }
-.gif_icon_hide,
-.delete_icon_hide {
+.gif_icon_hide {
   left: 0;
   background-color: #d27303;
   border-radius: 0;
 }
-.gif_lebel,
-.delete_title {
+.gif_lebel {
   text-align: left;
   margin-left: 60px;
 }
 #gif {
   margin-top: 25px;
 }
-.delete_menu {
-  top: 150px;
-  padding-top: 12px;
-  height: 65vh;
+.navigation {
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
 }
-.delete_title {
-  font-size: 1.2rem;
+.nav_button {
+  background-color: #ad3100;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
 }
-.delete_icon_show {
-  background-color: #810000;
+.nav_button:hover {
+  background-color: #c5572b;
 }
-.delete_container {
-  margin: 10px 0;
-  text-align: left;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  background-color: #9b5707;
-  -webkit-box-shadow: inset 1px 0px 7px -2px #000000;
-  box-shadow: inset 1px 0px 7px -2px #000000;
-  border-radius: 10px;
-  width: 45%;
-}
-.delete_container::-webkit-scrollbar {
-  display: none;
+.svg_edit,
+.stats {
+  padding-right: 5px;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.delete_container {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
 .light_item,
 .dark_item {
   display: flex;
@@ -317,29 +303,49 @@ footer {
   line-height: 2rem;
 }
 .users_link {
-  color: #ad3100;
-  font-weight: bold;
+  color: white;
+  text-decoration: none;
 }
-@media screen and (max-width: 550px) {
+
+@media screen and (min-width: 768px) {
   .form {
-    max-width: 90vw;
+    max-width: 70vw;
   }
   progress {
-    width: 90vw;
+    width: 70vw;
+  }
+  .navigation {
+    width: 70vw;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .nav_button {
+    width: 280px;
+    margin-left: 5px;
   }
   .images {
-    max-width: 90vw;
+    max-width: 50vw;
   }
-  .gif_menu_show,
-  .delete_menu_show {
-    right: 0;
+  .gif_menu_show {
+    right: -50vw;
   }
-  .delete_title {
-    margin-left: 0;
-    text-align: center;
+}
+@media screen and (min-width: 1280px) {
+  .form {
+    max-width: 50vw;
   }
-  .delete_container {
-    margin: 10px auto;
-    width: 90%;
+  progress {
+    width: 50vw;
+  }
+  .navigation {
+    width: 50vw;
+  }
+
+  .images {
+    max-width: 50vw;
+  }
+  .gif_menu_show {
+    right: -50vw;
   }
 }

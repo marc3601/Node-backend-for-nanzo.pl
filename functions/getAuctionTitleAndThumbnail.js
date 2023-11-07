@@ -14,9 +14,10 @@ const getData = async (auctionID) => {
   return body;
 };
 
-const createDataFromResponse = (body) => {
+const createDataFromResponse = (body, link) => {
   const results = {
     title: "",
+    link: "",
     thumbnail: "",
   };
   const arrayOfImages = body.image;
@@ -27,6 +28,7 @@ const createDataFromResponse = (body) => {
     results.thumbnail = arrayOfImages[0].url;
   }
   results.title = body.title;
+  results.link = link;
   return results;
 };
 
@@ -34,12 +36,12 @@ const getAuctionTitleAndThumbnail = async (link) => {
   const baseUrl = "https://noanzo.pl/";
   if (link === baseUrl) {
     const body = await getData(`main`);
-    const results = createDataFromResponse(body);
+    const results = createDataFromResponse(body, link);
     return results;
   }
   const auctionId = link.substring(baseUrl.length);
   const body = await getData(auctionId);
-  const results = createDataFromResponse(body);
+  const results = createDataFromResponse(body, link);
   return results;
 };
 

@@ -42,23 +42,6 @@ const config = {
   },
 };
 
-const calculateMargin = () => {
-  let widthParent = deleteMenu.offsetWidth / 2;
-  let widthChild = deleteContainer.offsetWidth;
-  let margin = (widthParent - widthChild) / 2;
-  return margin.toFixed();
-};
-if (window.innerWidth > 550) {
-  deleteContainer.style = `margin-left: ${calculateMargin()}px`;
-}
-
-window.onresize = (e) => {
-  if (window.innerWidth > 550) {
-    deleteContainer.style = `margin-left: ${calculateMargin()}px`;
-  } else {
-    deleteContainer.removeAttribute("style");
-  }
-};
 // Pass auction.image into that function
 const handleDeleteThumbnail = (data) => {
   const filtered = data.filter((item) => item.thumbnail === true);
@@ -110,11 +93,6 @@ const handleAuctionsDataFetch = () => {
 
 // Gif menu handler
 gifShow.addEventListener("click", () => {
-  if (deleteMenu.classList.contains("delete_menu_show")) {
-    main.style = "overflow-x: hidden";
-    deleteMenu.classList.remove("delete_menu_show");
-    gifBcg.classList.add("background_hidden");
-  }
   if (!gifMenu.classList.contains("gif_menu_show")) {
     main.style = "overflow:hidden";
     gifMenu.classList.add("gif_menu_show");
@@ -125,30 +103,6 @@ gifHide.addEventListener("click", () => {
   if (gifMenu.classList.contains("gif_menu_show")) {
     main.style = "overflow-x: hidden";
     gifMenu.classList.remove("gif_menu_show");
-    gifBcg.classList.add("background_hidden");
-  }
-});
-
-deleteShow.addEventListener("click", () => {
-  if (gifMenu.classList.contains("gif_menu_show")) {
-    main.style = "overflow-x: hidden";
-    gifMenu.classList.remove("gif_menu_show");
-    gifBcg.classList.add("background_hidden");
-  }
-  if (!deleteMenu.classList.contains("delete_menu_show")) {
-    if (auctionsData.length === 0) {
-      handleAuctionsDataFetch();
-    }
-
-    main.style = "overflow:hidden";
-    deleteMenu.classList.add("delete_menu_show");
-    gifBcg.classList.remove("background_hidden");
-  }
-});
-deleteHide.addEventListener("click", () => {
-  if (deleteMenu.classList.contains("delete_menu_show")) {
-    main.style = "overflow-x: hidden";
-    deleteMenu.classList.remove("delete_menu_show");
     gifBcg.classList.add("background_hidden");
   }
 });
@@ -357,7 +311,7 @@ button.addEventListener("click", (e) => {
         title.removeAttribute("disabled");
         price.removeAttribute("disabled");
         desc.removeAttribute("disabled");
-        handleAuctionsDataFetch();
+        // handleAuctionsDataFetch();
       })
       .catch((err) => {
         console.log(err);
