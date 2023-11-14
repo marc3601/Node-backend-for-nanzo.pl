@@ -11,7 +11,6 @@ const authenticateToken = require("./authentication/authenticateToken");
 const authenticateTokenForUpload = require("./authentication/authenticateTokenForUpload");
 const parseTimestamp = require("./functions/parseTimestamp");
 const User = require("./database/schemas/userSchema");
-const Auction = require("./database/schemas/auctionSchema");
 const runAtSpecificTimeOfDay = require("./functions/runAtSpecificTimeOfDay");
 const addLastDayToDates = require("./functions/addLastDayToDates");
 const connectDatabase = require("./database/database");
@@ -20,6 +19,7 @@ const login = require("./routes/login");
 const logout = require("./routes/logout");
 const admin = require("./routes/admin");
 const edit = require("./routes/edit");
+const auctionEditor = require("./routes/auctionEditor");
 const usersData = require("./routes/usersData");
 const dates = require("./routes/dates");
 const auctions = require("./routes/auctions");
@@ -29,7 +29,9 @@ const favicon = require("./routes/favicon");
 const editAuction = require("./routes/editAuction");
 const analitics = require("./routes/analitics");
 const uploadImages = require("./routes/uploadImages");
-const mostPopularPages = require("./routes/mostPopularPages");
+const fastPriceEditor = require("./routes/fastPriceEditor");
+const mostPopularKeywords = require("./routes/mostPopularKeywords");
+
 require("dotenv").config();
 app.use(cors());
 app.options("*", cors());
@@ -107,36 +109,18 @@ app.post("/login", login);
 app.get("/logout", logout);
 app.get("/admin", authenticateToken, admin);
 app.get("/edit", authenticateToken, edit);
+app.get("/edit/editor", authenticateToken, auctionEditor);
 app.get("/users-data", authenticateToken, usersData);
 app.get("/dates", authenticateToken, dates);
 app.get("/api/auctions", auctions);
 app.get("/api/latest", latestAuction);
 app.get("/images/:key", image);
 app.get("/favicon.ico", favicon);
-app.get("/edit-auction", authenticateToken, editAuction);
-app.post("/api/edit-price", authenticateToken, (req, res) => {
-  const updates = req.body.map((item) => {
-    return { _id: item.id, price: item.newPrice };
-  });
-
-  const updateOperations = updates.map((update) => ({
-    updateOne: {
-      filter: { _id: update._id },
-      update: { $set: { price: update.price } },
-    },
-  }));
-
-  Auction.bulkWrite(updateOperations)
-    .then((result) => {
-      res.send(`Liczba zaktualizowanych cen: ${result.modifiedCount}.`);
-    })
-    .catch((error) => {
-      res.sendStatus(500);
-    });
-});
+app.post("/api/edit-price", authenticateToken, fastPriceEditor);
+app.post("/api/edit", authenticateToken, editAuction);
 app.post("/analitics", analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
-app.get("/most-popular-pages", authenticateToken, mostPopularPages);
+app.get("/api/most-popular-keywords", authenticateToken, mostPopularKeywords);
 
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });

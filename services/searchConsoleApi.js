@@ -1,5 +1,5 @@
 const searchConsole = require("@googleapis/searchconsole");
-const getAuctionTitleAndThumbnail = require("../functions/getAuctionTitleAndThumbnail");
+const sortArrayOfObjects = require("../functions/sortArrayOfObjects");
 const timeRangeMonth = () => {
   const currentDate = new Date();
   const oneMonthAgo = new Date();
@@ -16,18 +16,26 @@ const timeRangeMonth = () => {
 
 const { from, to } = timeRangeMonth();
 
-const queryMostPopularPages = {
+const queryMostPopularPagesinWeb = {
   siteUrl: "sc-domain:noanzo.pl",
   startDate: from,
   endDate: to,
-  dimensions: ["page"],
-  rowLimit: 20, // Number of popular pages to retrieve
+  dimensions: ["query"],
+  rowLimit: 20,
   orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
   type: ["web"],
 };
+const queryMostPopularPagesinImage = {
+  siteUrl: "sc-domain:noanzo.pl",
+  startDate: from,
+  endDate: to,
+  dimensions: ["query"],
+  rowLimit: 20,
+  orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
+  type: ["image"],
+};
 
-const getMostPopularPagesLastMonth = async () => {
-  const data = [];
+const getMostPopularKeywordsLastMonth = async () => {
   const auth = new searchConsole.auth.GoogleAuth({
     credentials: {
       private_key: process.env.PRIVATE_KEY,
@@ -42,20 +50,36 @@ const getMostPopularPagesLastMonth = async () => {
   });
 
   try {
-    const response = await client.searchanalytics.query(queryMostPopularPages);
-    for (const row of response.data.rows) {
-      if (row.clicks > 0) {
-        const results = await getAuctionTitleAndThumbnail(row.keys[0]).catch(
-          (err) => console.error(err.message)
-        );
-        results.clicks = row.clicks;
-        data.push(results);
-      }
+    const responseWeb = await client.searchanalytics.query(
+      queryMostPopularPagesinWeb
+    );
+    const responseImage = await client.searchanalytics.query(
+      queryMostPopularPagesinImage
+    );
+    const result = [];
+    for (const row of responseWeb.data.rows) {
+      const keyword = {
+        keyword: row.keys[0],
+        clicks: row.clicks,
+        impressions: row.impressions,
+        domain: "web",
+      };
+      result.push(keyword);
     }
-    return data;
+    for (const row of responseImage.data.rows) {
+      const keyword = {
+        keyword: row.keys[0],
+        clicks: row.clicks,
+        impressions: row.impressions,
+        domain: "image",
+      };
+      result.push(keyword);
+    }
+    const sorted = sortArrayOfObjects(result, "clicks", (order = "descending"));
+    return sorted;
   } catch (error) {
     console.error(error.message);
   }
 };
 
-module.exports = getMostPopularPagesLastMonth;
+module.exports = getMostPopularKeywordsLastMonth;

@@ -42,7 +42,9 @@ function createAuctionBadge(image, title, price, id) {
   });
   const span = createElement("span", [], `${price} zł`);
   const auction_edit = createElement("div", ["auction_edit"]);
-  const button = createElement("button", ["edit_button"], "Edytuj");
+  const a = createElement("a", ["edit_button"], "Edytuj", {
+    href: `/edit/editor?id=${id}`,
+  });
   const parents = [
     auction,
     auction_content,
@@ -68,7 +70,7 @@ function createAuctionBadge(image, title, price, id) {
     p,
     span,
     auction_edit,
-    button,
+    a,
   ];
 
   parents.forEach((item, i) => {
@@ -116,7 +118,7 @@ function handleFastEditMode() {
     handlePriceUpdate();
   } else {
     axios
-      .post("https://admin.noanzo.pl/api/edit-price", changedPrices)
+      .post("/api/edit-price", changedPrices)
       .then(function (response) {
         changedPrices = [];
         btn_title.textContent = "Tryb szybkiej edycji cen";
@@ -126,7 +128,7 @@ function handleFastEditMode() {
 
         auction.appendChild(sucess);
         sucess.textContent = response.data;
-        getData("https://admin.noanzo.pl/api/auctions");
+        getData("/api/auctions");
       })
       .catch(function (error) {
         changedPrices = [];
@@ -166,7 +168,7 @@ async function getData(url) {
 }
 
 fastEditButton.addEventListener("click", handleFastEditMode);
-getData("https://admin.noanzo.pl/api/auctions");
+getData("/api/auctions");
 
 document.querySelector(".search_button").addEventListener("click", (e) => {
   e.preventDefault();
