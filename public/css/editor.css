@@ -1,0 +1,364 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+main {
+  min-height: 100vh;
+  height: 100vh;
+}
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+main {
+  background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
+  background-repeat: no-repeat;
+  padding: 30px 0;
+  position: relative;
+  overflow-x: hidden;
+}
+.title_container {
+  max-width: 90vw;
+  margin: 0.4rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+}
+
+.title_background {
+  width: 90%;
+  margin: 0 auto;
+  padding: 0.4rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+}
+.title {
+  font-size: 1rem;
+  color: #ad3100;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  max-width: 90vw;
+  margin: 0 auto;
+  position: relative;
+}
+#files,
+#title,
+#price,
+#description {
+  margin-top: 10px;
+  padding: 5px;
+  outline: none;
+  border: none;
+  font-family: "Poppins", sans-serif;
+}
+
+#title,
+#price,
+#description {
+  color: #ad3100;
+}
+#title:focus,
+#price:focus,
+#description:focus {
+  outline: 2px solid #ad3100;
+}
+#description {
+  resize: none;
+}
+#title,
+#price {
+  height: 25px;
+}
+#title {
+  margin-top: 20px;
+}
+input[type="file"]::-webkit-input-placeholder {
+  color: white;
+  padding: 5px;
+}
+
+input[type="button" i] input[type="submit" i] input[type="reset" i],
+input[type="file" i]::-webkit-file-upload-button,
+.button {
+  background-color: #ad3100;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  min-width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  margin: 15px;
+  position: relative;
+  font-family: "Roboto", "Noto", sans-serif;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+  border: none;
+}
+.characters_left {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: green;
+}
+.characters {
+  margin: 0;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  font-size: 0.9rem;
+  -webkit-transition: color 0.3s, font-size 0.3s;
+  -moz-transition: color 0.3s, font-size 0.3s;
+  -o-transition: color 0.3s, font-size 0.3s;
+  transition: color 0.3s, font-size 0.3s;
+}
+.alert_char {
+  color: red;
+  font-size: 1rem;
+}
+.images_container {
+  max-width: 90vw;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.4rem;
+  margin: 0.4rem 0;
+}
+.image {
+  width: 100px;
+  padding: 0.2rem;
+  position: relative;
+}
+.img {
+  width: 100%;
+  border-radius: 0.6rem;
+}
+.image_thumb {
+  outline: 4px solid #ad3100;
+}
+.svg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+.buttons {
+  display: flex;
+  flex-direction: column;
+  max-width: 90vw;
+}
+.action_button {
+  background-color: #ad3100aa;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 0.4rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+/* .action_button:hover {
+  background-color: #c5572b;
+} */
+.action_button > p {
+  margin-left: 0.4rem;
+  user-select: none;
+  pointer-events: none;
+}
+.danger {
+  background-color: red;
+}
+.danger:hover {
+  background-color: rgba(255, 100, 100, 0.942);
+}
+.card {
+  display: flex;
+  justify-content: center;
+  margin: 5px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  grid-row-end: span 11;
+}
+.border {
+  border: 5px solid rgb(255, 0, 0);
+  border-style: inset;
+  border-radius: 5%;
+}
+.thumbzz {
+  color: #ad3100;
+  font-size: 0.8rem;
+  width: 100%;
+}
+.thumbzz_hidden {
+  display: none;
+}
+footer {
+  height: 25px;
+}
+.gif_background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -200px;
+  background-color: rgba(40, 40, 40, 0.8);
+  transition: 0.2s ease;
+}
+.background_hidden {
+  display: none;
+}
+
+.navigation {
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
+}
+.nav_button {
+  background-color: #ad3100;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.nav_button:hover {
+  background-color: #c5572b;
+}
+.svg_edit,
+.stats {
+  padding-right: 5px;
+}
+
+.light_item,
+.dark_item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+.light_item > p,
+.dark_item > p {
+  font-size: 0.9rem;
+}
+.dark_item {
+  background-color: #6f3e05;
+}
+.delete_item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.user_count {
+  text-align: center;
+  color: black;
+  font-size: 0.8rem;
+  line-height: 2rem;
+}
+.users_link {
+  color: white;
+  text-decoration: none;
+}
+
+@media screen and (min-width: 768px) {
+  .title_container {
+    margin: 1rem 0;
+    max-width: 70vw;
+  }
+  .title_background {
+    width: 70%;
+  }
+  .title {
+    font-size: 1.4rem;
+  }
+  .form,
+  .images_container,
+  .buttons {
+    max-width: 70vw;
+  }
+  .image {
+    width: 120px;
+  }
+  .navigation {
+    width: 70vw;
+    flex-direction: row;
+  }
+  .nav_button {
+    width: 280px;
+    margin-left: 5px;
+  }
+  .buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .action_button {
+    width: 220px;
+    margin: 0 0.4rem;
+  }
+  .images {
+    max-width: 50vw;
+  }
+  .gif_menu_show {
+    right: -50vw;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .title_container {
+    max-width: 50vw;
+  }
+  .title {
+    font-size: 1.6rem;
+  }
+  .form,
+  .images_container,
+  .buttons {
+    max-width: 50vw;
+  }
+  .image {
+    width: 160px;
+  }
+  .navigation {
+    width: 50vw;
+  }
+  .buttons {
+    padding: 0 1.8rem;
+  }
+  .action_button {
+    width: 280px;
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+  .images {
+    max-width: 50vw;
+  }
+  .gif_menu_show {
+    right: -50vw;
+  }
+}

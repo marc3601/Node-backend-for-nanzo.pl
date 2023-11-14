@@ -6,7 +6,7 @@ const image = async (req, res) => {
     const readStream = getFileStream(key);
     readStream.pipe(res);
   } catch (err) {
-    res.sendStatus(404);
+    res.sendStatus(500);
   }
 };
 

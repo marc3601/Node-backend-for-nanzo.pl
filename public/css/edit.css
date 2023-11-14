@@ -208,13 +208,14 @@ input[type="number"] {
 }
 
 .edit_button {
-  background-color: #ad31006d;
+  background-color: #ad3100;
   font-size: 0.6rem;
   border: none;
   color: white;
   padding: 0.2rem 1rem;
   border-radius: 0.2rem;
   cursor: pointer;
+  text-decoration: none;
 }
 /* .edit_button:hover {
   background-color: #c5572b;

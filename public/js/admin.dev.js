@@ -58,35 +58,7 @@ const handleDelete = (e) => {
     .get(`https://admin.noanzo.pl/delete?id=${id}`)
     .then((res) => {
       console.log(res);
-      handleAuctionsDataFetch();
-    })
-    .catch((err) => console.log(err));
-};
-
-const handleAuctionsDataFetch = () => {
-  deleteContainer.innerHTML = `<p style="padding-left:10px">Ładowanie ogłoszeń</p>`;
-  axios
-    .get("https://admin.noanzo.pl/api/auctions")
-    .then((res) => (auctionsData = res.data))
-    .finally(() => {
-      if (auctionsData.length > 0) {
-        deleteContainer.innerHTML = `<ul>${auctionsData
-          .map((auction, i) => {
-            return `<li class=${i % 2 === 0 ? "light_item" : "dark_item"} id=${
-              auction.id
-            }><div><img width="50px" src=${handleDeleteThumbnail(
-              auction.image
-            )}/><p>${
-              auction.title
-            }</p></div><div class="delete_item">${deleteIcon}</div><li>`;
-          })
-          .join("")}<ul>`;
-        const deleteHandler = document.querySelectorAll(".delete_item");
-        const arr = Array.from(deleteHandler);
-        arr.forEach((item) => item.addEventListener("click", handleDelete));
-      } else {
-        deleteContainer.innerHTML = `<p style="padding-left:10px">Nic tu nie ma!</p>`;
-      }
+      // handleAuctionsDataFetch();
     })
     .catch((err) => console.log(err));
 };
