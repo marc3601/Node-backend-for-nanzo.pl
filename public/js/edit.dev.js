@@ -84,6 +84,8 @@ function handlePriceUpdate() {
     price.childNodes[1].remove();
     const input = createElement("input", ["price_input"], "", {
       type: "number",
+      min: "0",
+      max: "50000",
     });
     price.appendChild(input);
     input.value = price.attributes["data-price"].value;
@@ -91,7 +93,7 @@ function handlePriceUpdate() {
       let price_value = e.target.parentNode.attributes["data-price"].value;
       let auction_id = e.target.parentNode.attributes["data-id"].value;
       let parent = price.parentElement.parentElement.parentElement;
-      let input_value = e.target.value;
+      let input_value = e.target.value < 50000 ? e.target.value : 50000;
       if (!parent.classList.contains("auction_content_edited")) {
         parent.classList.add("auction_content_edited");
       } else if (price_value === input_value) {
