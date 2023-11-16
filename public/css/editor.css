@@ -170,7 +170,7 @@ input[type="file" i]::-webkit-file-upload-button,
   max-width: 90vw;
 }
 .action_button {
-  background-color: #ad3100aa;
+  background-color: #ad3100;
   margin-top: 10px;
   margin-bottom: 10px;
   padding: 0.4rem;
@@ -183,9 +183,9 @@ input[type="file" i]::-webkit-file-upload-button,
   color: white;
   font-family: "Poppins", sans-serif;
 }
-/* .action_button:hover {
+.action_button:hover {
   background-color: #c5572b;
-} */
+}
 .action_button > p {
   margin-left: 0.4rem;
   user-select: none;
