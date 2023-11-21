@@ -21,7 +21,7 @@ const queryMostPopularPagesinWeb = {
   startDate: from,
   endDate: to,
   dimensions: ["query"],
-  rowLimit: 20,
+  rowLimit: 10,
   orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
   type: ["web"],
 };
@@ -30,7 +30,7 @@ const queryMostPopularPagesinImage = {
   startDate: from,
   endDate: to,
   dimensions: ["query"],
-  rowLimit: 20,
+  rowLimit: 10,
   orderBy: [{ fieldName: "clicks", sortOrder: "desc" }],
   type: ["image"],
 };
