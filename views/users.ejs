@@ -34,11 +34,34 @@
           <img>
         </div>
       </div>
-      <!-- <div class="google">
-        <h2>Google performance</h2>
-      </div> -->
-      <h3>Odwiedzający stronę</h3>
       <div class="container">
+        <div class="google">
+          <div class="google_headline">
+            <h2>Słowa kluczowe w <span class="google_text">
+              <span class="letter">G</span>
+              <span class="letter">o</span>
+              <span class="letter">o</span>
+              <span class="letter">g</span>
+              <span class="letter">l</span>
+              <span class="letter">e</span>
+            </span></h2>
+          </div>
+          
+          <div class="google_container">
+            <table class="google_data">
+              <tr>
+                <th>Słowo kluczowe</th>
+                <th>Kliknięcia</th>
+                <th>Wyświetlenia</th>
+              </tr>
+            </table>
+            <div class="google_placeholder">
+              <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+            </div>
+          </div>
+        </div>
+        <h3>Odwiedzający stronę</h3>
+        <div class="visitors">
         <% let id = 1  %>
         <% for(const item of data.docs) { %>
           <div id="<%="ID" + "_" + id++;%>" class="user_badge">
@@ -92,6 +115,8 @@
           </div>
         </div>
         <% } %>
+ 
+      </div>
       </div>
       <div class="navigation">
         <div class="btn_l">

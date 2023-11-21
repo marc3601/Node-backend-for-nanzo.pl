@@ -33,8 +33,7 @@ h3 {
 }
 
 .chart_container,
-.summary,
-.google {
+.summary {
   margin: 0 auto;
   width: 90vw;
   margin-bottom: 1rem;
@@ -42,13 +41,6 @@ h3 {
   padding: 20px;
   background-color: #f1c99c;
   border-radius: 10px;
-}
-.google {
-  text-align: center;
-  color: #7b4505;
-  -webkit-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
-  box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
 }
 
 .range {
@@ -94,6 +86,120 @@ h3 {
   width: 95vw;
   margin: 1rem auto;
   z-index: 0;
+}
+.google {
+  width: 90vw;
+  margin: 0 auto 1rem;
+  padding: 1rem 0;
+  min-height: 400px;
+  background-color: #f1c99c;
+  color: #7b4505;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  text-align: center;
+}
+.google_headline {
+  display: inline-block;
+  margin: 1rem 0;
+  padding: 0.4rem;
+  width: 90%;
+  background-color: #f1e6d9;
+  border-radius: 5px;
+}
+.google h2 {
+  font-size: 1rem;
+  display: inline-block;
+}
+.google_text {
+  display: inline-flex;
+  font-size: 1.2rem;
+  padding-left: 0.3rem;
+}
+.letter:nth-of-type(1) {
+  color: #4285f4;
+}
+.letter:nth-of-type(2) {
+  color: #ea4335;
+}
+.letter:nth-of-type(3) {
+  color: #fbbc05;
+}
+.letter:nth-of-type(4) {
+  color: #4285f4;
+}
+.letter:nth-of-type(5) {
+  color: #34a853;
+}
+.letter:nth-of-type(6) {
+  color: #ea4335;
+}
+.google_container {
+  width: 90%;
+  margin: 0.5rem auto;
+}
+.google_data {
+  width: 100%;
+  font-size: 0.8rem;
+  border-collapse: collapse;
+  border-style: hidden;
+}
+.google_data th {
+  background-color: #f1e6d9;
+  padding: 0.4rem;
+}
+.google_data td {
+  padding: 0.3rem;
+  text-align: left;
+}
+.google_data td,
+.google_data th {
+  border: 1px solid #7b4505;
+}
+.google_placeholder {
+  padding: 1.6rem;
+}
+.info {
+  padding-top: 0.4rem;
+  color: #7b4505;
+  font-size: 0.8rem;
+}
+/* loader */
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #d27303 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 .user_badge {
   background-color: #e6cba8;
@@ -169,6 +275,15 @@ h3 {
   }
   .range {
     font-size: 1.2rem;
+  }
+  .google h2 {
+    font-size: 1.2rem;
+  }
+  .google_text {
+    font-size: 1.5rem;
+  }
+  .google_data {
+    font-size: 0.9rem;
   }
 }
 @media (min-width: 1150px) {

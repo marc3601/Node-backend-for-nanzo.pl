@@ -7,7 +7,9 @@ const body = document.querySelector("body");
 const range_title = document.querySelector(".range-title");
 const summary_text = document.querySelector(".summary_text");
 const summary_icon = document.querySelector(".summary_icon");
-
+const google_container = document.querySelector(".google_container");
+const data_table = document.querySelector("tbody");
+const google_placeholder = document.querySelector(".google_placeholder");
 let dataToBuildGraph = {};
 
 let graphData = {
@@ -176,7 +178,7 @@ const websitePerformance = () => {
   summary_text.textContent = createTextSummary(dataToBuildGraph, currentEvent);
 };
 
-const fetchData = (link) => {
+const fetchDates = (link) => {
   axios
     .get(link)
     .then((res) => {
@@ -188,6 +190,31 @@ const fetchData = (link) => {
       //building the graph initial
       graphBuilder();
       websitePerformance();
+    })
+    .catch((err) => console.error(err.message));
+};
+
+const fetchKeywords = (link) => {
+  axios
+    .get(link)
+    .then((res) => {
+      const data = res.data;
+      google_placeholder.remove();
+      data.forEach((item, id) => {
+        const tr = document.createElement("tr");
+        data_table.appendChild(tr);
+        for (const [key, value] of Object.entries(item)) {
+          const td = document.createElement("td");
+          td.textContent = value;
+          if (key !== "domain") {
+            tr.appendChild(td);
+          }
+        }
+      });
+      const p = document.createElement("p");
+      p.textContent = "Dane dotyczą ostatnich 30 dni";
+      p.classList.add("info");
+      google_container.appendChild(p);
     })
     .catch((err) => console.error(err.message));
 };
@@ -212,4 +239,5 @@ range.addEventListener("change", (e) => {
     range_title.innerText = "Ostatni miesiąc";
   }
 });
-fetchData(`https://admin.noanzo.pl/dates`);
+fetchKeywords(`https://admin.noanzo.pl/api/most-popular-keywords`);
+fetchDates(`https://admin.noanzo.pl/dates`);
