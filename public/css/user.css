@@ -201,6 +201,10 @@ h3 {
     transform: rotate(360deg);
   }
 }
+.visitors {
+  position: relative;
+  z-index: -1;
+}
 .user_badge {
   background-color: #e6cba8;
   color: black;
