@@ -55,7 +55,7 @@ const handleDeleteThumbnail = (data) => {
 const handleDelete = (e) => {
   let id = e.currentTarget.parentElement.id;
   axios
-    .get(`https://admin.noanzo.pl/delete?id=${id}`)
+    .get(`http://localhost:8080/delete?id=${id}`)
     .then((res) => {
       console.log(res);
       // handleAuctionsDataFetch();

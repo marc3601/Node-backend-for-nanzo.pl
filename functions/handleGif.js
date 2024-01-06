@@ -23,7 +23,7 @@ const handleGif = (req, res, gif, auction) => {
             .then(async () => {
               await probe(fs.createReadStream(path))
                 .then((data) => {
-                  const url = `https://admin.noanzo.pl/images/${name}`;
+                  const url = `http://localhost:8080/images/${name}`;
                   gif.width = data.width;
                   gif.height = data.height;
                   gif.url = url;
