@@ -252,5 +252,5 @@ range.addEventListener("change", (e) => {
     range_title.innerText = "Cały czas";
   }
 });
-fetchKeywords(`http://localhost:8080/api/most-popular-keywords`);
-fetchDates(`http://localhost:8080/dates`);
+fetchKeywords(`https://admin.noanzo.pl/api/most-popular-keywords`);
+fetchDates(`https://admin.noanzo.pl/dates`);

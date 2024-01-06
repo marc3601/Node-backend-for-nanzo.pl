@@ -26,7 +26,7 @@ const handleImageUpload = async (req, res) => {
           await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
             console.log(err)
           );
-          const url = `http://localhost:8080/images/${item.filename}`;
+          const url = `https://admin.noanzo.pl/images/${item.filename}`;
           image.push({
             width: data.width,
             height: data.height,
