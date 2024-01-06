@@ -116,8 +116,10 @@ const createTextSummary = (users, period) => {
   let iterable = Object.keys(users);
   iterable.forEach((item) => {
     let init = 0;
-    const stuff = users[item].reduce((acc, curr) => acc + curr.y, init);
-    parsedUsers[item] = stuff;
+    if (users[item][0]) {
+      const stuff = users[item].reduce((acc, curr) => acc + curr.y, init);
+      parsedUsers[item] = stuff;
+    }
   });
   if (period == "week") {
     perioidsToCompare.current = parsedUsers.week;
@@ -160,18 +162,20 @@ const createTextSummary = (users, period) => {
     default:
       break;
   }
-
-  return `Liczba wyświetleń w tym ${
-    period == "week" ? "tygodniu" : "miesiącu"
-  } to ${perioidsToCompare.current}. ${
-    perioidsToCompare.current !== perioidsToCompare.prev
-      ? `Ruch ${trafficUp ? "wzrósł" : "spadł"} o ${Math.abs(
-          percent.toFixed(0)
-        )}% w porównaniu z poprzednim ${
-          period == "week" ? "tygodniem" : "miesiącem"
-        }.`
-      : "Tyle samo co w poprzednim tygodniu"
-  }`;
+  if (period !== "all") {
+    return `Liczba wyświetleń w tym ${
+      period == "week" ? "tygodniu" : "miesiącu"
+    } to ${perioidsToCompare.current}. ${
+      perioidsToCompare.current !== perioidsToCompare.prev
+        ? `Ruch ${trafficUp ? "wzrósł" : "spadł"} o ${Math.abs(
+            percent.toFixed(0)
+          )}% w porównaniu z poprzednim ${
+            period == "week" ? "tygodniem" : "miesiącem"
+          }.`
+        : "Tyle samo co w poprzednim tygodniu"
+    }`;
+  } else
+    return `Statystyki najpopularniejszych godzin jeszcze nie gotowe... 🔨🔨`;
 };
 
 const websitePerformance = () => {
@@ -237,6 +241,15 @@ range.addEventListener("change", (e) => {
     graphBuilder();
     websitePerformance();
     range_title.innerText = "Ostatni miesiąc";
+  } else if (currentEvent === "all") {
+    graphData.data = Object.fromEntries(
+      Object.entries(dataToBuildGraph.monthly).reverse()
+    );
+    const keysArray = Object.keys(graphData.data);
+    graphData.labels = keysArray.map((item) => item);
+    graphBuilder();
+    websitePerformance();
+    range_title.innerText = "Cały czas";
   }
 });
 fetchKeywords(`https://admin.noanzo.pl/api/most-popular-keywords`);
