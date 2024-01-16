@@ -6,6 +6,7 @@ const mongoosePaginate = require("mongoose-paginate");
 const dateSchema = new mongoose.Schema({
   x: { type: String, default: null },
   y: { type: Number, default: null },
+  hours: { type: Array, default: [] },
 });
 dateSchema.plugin(mongoosePaginate);
 const Dates = mongoose.model("Date", dateSchema);

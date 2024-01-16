@@ -80,6 +80,52 @@ h3 {
   justify-content: center;
   align-items: center;
 }
+.hours {
+  width: 90vw;
+  margin: 0 auto 1rem;
+  padding: 1rem;
+  background-color: #f1c99c;
+  color: #7b4505;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 14px -8px rgba(0, 0, 0, 0.75);
+}
+.hours_headline {
+  margin: 0 auto 1rem;
+  padding: 0.4rem;
+  /* width: 90%; */
+  background-color: #f1e6d9;
+  border-radius: 5px;
+  text-align: center;
+}
+.hours_headline h2 {
+  font-size: 1.2rem;
+}
+.hours_stats {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+}
+.hours_stats div {
+  height: 50px;
+  outline: 1px solid #d27303;
+}
+
+.hours_stats .lebels {
+  background-color: #d27303;
+  font-weight: bold;
+  color: white;
+}
+.hours_stats .lebels,
+.hours_stats .data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* color: white; */
+}
 
 .container {
   position: relative;
@@ -268,7 +314,8 @@ h3 {
   .user_badge,
   .chart_container,
   .summary,
-  .google {
+  .google,
+  .hours {
     width: 70vw;
   }
   .summary_text {
@@ -294,7 +341,8 @@ h3 {
   .user_badge,
   .chart_container,
   .summary,
-  .google {
+  .google,
+  .hours {
     width: 50vw;
   }
   .summary_text {
