@@ -121,61 +121,6 @@ app.post("/api/edit", authenticateToken, editAuction);
 app.post("/analitics", analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
 app.get("/api/most-popular-keywords", authenticateToken, mostPopularKeywords);
-
-//temporary - delete after use
-
-app.get("/data-update", async (req, res) => {
-  const updateEntries = async () => {
-    return new Promise((resolve, reject) => {
-      User.find(async (err, data) => {
-        if (err) {
-          console.error(err);
-          reject(err);
-        }
-
-        const count = await Dates.countDocuments({}).exec();
-
-        const dataWithTimestamps = data.filter((item) => item.timestamp);
-
-        for (let index = 1; index < count + 1; index++) {
-          const hours = [];
-          const now = Date.now() - 86400000 * index;
-          const date = `${parseTimestamp(now, "d")}/${parseTimestamp(
-            now,
-            "m"
-          )}/${parseTimestamp(now, "y")}`;
-          console.log(date);
-
-          dataWithTimestamps.forEach((item) => {
-            const itemDate = `${parseTimestamp(
-              item.timestamp,
-              "d"
-            )}/${parseTimestamp(item.timestamp, "m")}/${parseTimestamp(
-              item.timestamp,
-              "y"
-            )}`;
-
-            if (itemDate === date) {
-              hours.push(`${parseTimestamp(item.timestamp, "h")}`);
-            }
-          });
-
-          await Dates.findOneAndUpdate({ x: date }, { hours: hours });
-        }
-
-        resolve();
-      });
-    });
-  };
-
-  try {
-    await updateEntries();
-    res.send("OK");
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });
 });
