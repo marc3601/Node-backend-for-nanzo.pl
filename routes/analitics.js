@@ -1,6 +1,7 @@
 const User = require("../database/schemas/userSchema");
 const DeviceDetector = require("node-device-detector");
 const saveUserInfo = require("../functions/saveUserInfo");
+
 //Device detector
 const detector = new DeviceDetector({
   clientIndexes: true,
