@@ -191,7 +191,7 @@ desc.onchange = (e) => {
 desc.addEventListener("input", () => {
   let length = desc.value.length;
   characters.innerText = length;
-  if (length > 170) {
+  if (length > 1400) {
     if (!characters.classList.contains("alert_char")) {
       characters.classList.add("alert_char");
     }

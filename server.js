@@ -31,6 +31,8 @@ const analitics = require("./routes/analitics");
 const uploadImages = require("./routes/uploadImages");
 const fastPriceEditor = require("./routes/fastPriceEditor");
 const mostPopularKeywords = require("./routes/mostPopularKeywords");
+const Dates = require("./database/schemas/dateSchema");
+const viewCounter = require("./middleware/viewCounter");
 
 require("dotenv").config();
 app.use(cors());
@@ -44,6 +46,7 @@ app.use(function (req, res, next) {
   next();
 });
 app.locals.parseTimestamp = parseTimestamp;
+
 process.on("uncaughtException", (error, origin) => {
   console.log("----- Uncaught exception -----");
   console.log(error);
@@ -118,10 +121,9 @@ app.get("/images/:key", image);
 app.get("/favicon.ico", favicon);
 app.post("/api/edit-price", authenticateToken, fastPriceEditor);
 app.post("/api/edit", authenticateToken, editAuction);
-app.post("/analitics", analitics);
+app.post("/analitics", viewCounter, analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
 app.get("/api/most-popular-keywords", authenticateToken, mostPopularKeywords);
-
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });
 });

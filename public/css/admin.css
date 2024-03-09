@@ -302,6 +302,13 @@ footer {
   font-size: 0.8rem;
   line-height: 2rem;
 }
+.live_count {
+  background-color: white;
+  width: 300px;
+  margin: 0 auto;
+  border-radius: 5px;
+  outline: 1px solid #6f3e05;
+}
 .users_link {
   color: white;
   text-decoration: none;

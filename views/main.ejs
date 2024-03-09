@@ -50,7 +50,7 @@
           <textarea
             placeholder="Wpisz opis"
             type="text"
-            maxlength="300"
+            maxlength="1500"
             name="description"
             id="description"
             cols="30"
@@ -206,6 +206,10 @@
       </center>
       <p class="user_count">
         Liczba wyświetleń strony: <span class="data_count"><%= count; %></span>
+      </p>
+      <p class="user_count live_count">
+        Test wyświetleń na żywo od 28.02:
+        <span class="data_count"><b><%= live; %></b></span>
       </p>
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

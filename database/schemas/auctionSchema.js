@@ -9,6 +9,15 @@ const auctionSchema = new mongoose.Schema({
       height: Number,
       url: String,
       thumbnail: { type: Boolean, default: false },
+      id: String,
+    },
+  ],
+  imageLarge: [
+    {
+      width: Number,
+      height: Number,
+      url: String,
+      id: String,
     },
   ],
   gif: {

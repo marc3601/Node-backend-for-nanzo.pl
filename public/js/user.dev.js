@@ -10,6 +10,154 @@ const summary_icon = document.querySelector(".summary_icon");
 const google_container = document.querySelector(".google_container");
 const data_table = document.querySelector("tbody");
 const google_placeholder = document.querySelector(".google_placeholder");
+const mondays = document.querySelectorAll([
+  "#M1",
+  "#M2",
+  "#M3",
+  "#M4",
+  "#M5",
+  "#M6",
+  "#M7",
+]);
+const tuesdays = document.querySelectorAll([
+  "#T1",
+  "#T2",
+  "#T3",
+  "#T4",
+  "#T5",
+  "#T6",
+  "#T7",
+]);
+const wednesdays = document.querySelectorAll([
+  "#W1",
+  "#W2",
+  "#W3",
+  "#W4",
+  "#W5",
+  "#W6",
+  "#W7",
+]);
+const thursdays = document.querySelectorAll([
+  "#TH1",
+  "#TH2",
+  "#TH3",
+  "#TH4",
+  "#TH5",
+  "#TH6",
+  "#TH7",
+]);
+const fridays = document.querySelectorAll([
+  "#F1",
+  "#F2",
+  "#F3",
+  "#F4",
+  "#F5",
+  "#F6",
+  "#F7",
+]);
+const saturdays = document.querySelectorAll([
+  "#ST1",
+  "#ST2",
+  "#ST3",
+  "#ST4",
+  "#ST5",
+  "#ST6",
+  "#ST7",
+]);
+const sundays = document.querySelectorAll([
+  "#SA1",
+  "#SA2",
+  "#SA3",
+  "#SA4",
+  "#SA5",
+  "#SA6",
+  "#SA7",
+]);
+
+const createHoursGraph = (data) => {
+  const dates = data;
+  const daysOfWeek = {
+    Ndz: [],
+    Pon: [],
+    Wt: [],
+    Śr: [],
+    Czw: [],
+    Pt: [],
+    Sb: [],
+  };
+  const daysColumns = [
+    mondays,
+    tuesdays,
+    wednesdays,
+    thursdays,
+    fridays,
+    saturdays,
+    sundays,
+  ];
+  const daysNames = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sb", "Ndz"];
+  const ranges = ["6-8", "9-11", "12-14", "15-17", "18-20", "21-23"];
+
+  for (day in daysOfWeek) {
+    dates.forEach((date) => {
+      if (getDayOfWeek(date.x) === day) {
+        daysOfWeek[day].push(...date.hours);
+      }
+    });
+
+    const groupedRanges = {
+      "6-8": [],
+      "9-11": [],
+      "12-14": [],
+      "15-17": [],
+      "18-20": [],
+      "21-23": [],
+    };
+    daysOfWeek[day].forEach((element) => {
+      const num = parseInt(element, 10);
+      if (num >= 6 && num <= 8) {
+        groupedRanges["6-8"].push(element);
+      } else if (num >= 9 && num <= 11) {
+        groupedRanges["9-11"].push(element);
+      } else if (num >= 12 && num <= 14) {
+        groupedRanges["12-14"].push(element);
+      } else if (num >= 15 && num <= 17) {
+        groupedRanges["15-17"].push(element);
+      } else if (num >= 18 && num <= 20) {
+        groupedRanges["18-20"].push(element);
+      } else if (num >= 21 && num <= 23) {
+        groupedRanges["21-23"].push(element);
+      }
+    });
+
+    daysOfWeek[day] = groupedRanges;
+  }
+
+  let largestNumber = 0;
+  for (let i = 0; i < 7; i++) {
+    for (let j = 0; j < 6; j++) {
+      const count = daysOfWeek[daysNames[i]][ranges[j]].length;
+      if (count > largestNumber) {
+        largestNumber = count;
+      }
+      daysColumns[i][j].firstChild.textContent = count;
+    }
+  }
+
+  for (let i = 0; i < 7; i++) {
+    for (let j = 0; j < 6; j++) {
+      if (daysColumns[i][j].firstChild.style.color === "white") {
+        daysColumns[i][j].firstChild.style.color = "#7b4505";
+      }
+      const count = parseInt(daysColumns[i][j].firstChild.textContent);
+      const alpha = (count / largestNumber).toFixed(2);
+      if (alpha >= 0.6) {
+        daysColumns[i][j].firstChild.style.color = "white";
+      }
+      daysColumns[i][j].style.backgroundColor = `rgb(210, 115, 3, ${alpha})`;
+    }
+  }
+};
+
 let dataToBuildGraph = {};
 
 let graphData = {
@@ -174,12 +322,24 @@ const createTextSummary = (users, period) => {
           }.`
         : "Tyle samo co w poprzednim tygodniu"
     }`;
-  } else
-    return `Statystyki najpopularniejszych godzin jeszcze nie gotowe... 🔨🔨`;
+  } else return ``;
 };
 
 const websitePerformance = () => {
   summary_text.textContent = createTextSummary(dataToBuildGraph, currentEvent);
+};
+
+const getDayOfWeek = (dateString) => {
+  const dateParts = dateString.split("/");
+  const day = dateParts[0];
+  const month = dateParts[1];
+  const year = dateParts[2];
+  const date = year + "-" + month + "-" + day;
+  const inputDate = new Date(date);
+  const daysOfWeek = ["Ndz", "Pon", "Wt", "Śr", "Czw", "Pt", "Sb"];
+  const dayIndex = inputDate.getDay();
+
+  return daysOfWeek[dayIndex];
 };
 
 const fetchDates = (link) => {
@@ -187,6 +347,7 @@ const fetchDates = (link) => {
     .get(link)
     .then((res) => {
       dataToBuildGraph = res.data;
+      createHoursGraph(dataToBuildGraph.week);
       dataToBuildGraph.month.reverse();
       graphData.data = dataToBuildGraph.week.reverse();
       graphData.labels = dataToBuildGraph.week.map((item) => item.x);
@@ -230,12 +391,14 @@ range.addEventListener("change", (e) => {
     chart_main.removeChild(chart_main.lastChild);
   }
   if (currentEvent === "week") {
+    createHoursGraph(dataToBuildGraph.week);
     graphData.data = dataToBuildGraph.week;
     graphData.labels = dataToBuildGraph.week.map((item) => item.x);
     graphBuilder();
     websitePerformance();
     range_title.innerText = "Ostatni tydzień";
   } else if (currentEvent === "month") {
+    createHoursGraph(dataToBuildGraph.month);
     graphData.data = dataToBuildGraph.month;
     graphData.labels = dataToBuildGraph.month.map((item) => item.x);
     graphBuilder();

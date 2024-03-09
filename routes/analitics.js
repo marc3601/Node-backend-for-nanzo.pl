@@ -1,6 +1,7 @@
 const User = require("../database/schemas/userSchema");
 const DeviceDetector = require("node-device-detector");
 const saveUserInfo = require("../functions/saveUserInfo");
+
 //Device detector
 const detector = new DeviceDetector({
   clientIndexes: true,
@@ -21,7 +22,7 @@ const analitics = async (req, res) => {
       return;
     }
   });
-  res.sendStatus(200);
+  res.json({ response: "OK" });
 };
 
 module.exports = analitics;
