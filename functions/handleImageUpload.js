@@ -6,61 +6,84 @@ const fs = require("fs");
 const unlinkFile = util.promisify(fs.unlink);
 const Auction = require("../database/schemas/auctionSchema");
 const handleGif = require("./handleGif");
-let image = [];
+
 const handleImageUpload = async (req, res) => {
-  const title = req.body.title;
-  const description = req.body.description;
-  const price = req.body.price;
-  const thumbnail = req.body.thumbnail;
-  let gif = null;
-  let auction = null;
+  const { title, description, price, thumbnail } = req.body;
+  let image = [];
+  let imageLarge = [];
+
   if (!req.files) return next();
-  await Promise.all(
-    req.files["image"].map(async (item, id) => {
-      await sharp(item.path, { failOnError: false })
-        .rotate()
+
+  try {
+    for (const [id, item] of req.files["image"].entries()) {
+      // Small images
+      const imageID = uuidv4();
+      const data = await sharp(item.path, { failOnError: false })
         .resize(550)
         .jpeg({ mozjpeg: true })
-        .toFile(`upload/result${id}.jpeg`)
-        .then(async (data) => {
-          await uploadFile(`upload/result${id}.jpeg`, item).catch((err) =>
-            console.log(err)
-          );
-          const url = `https://admin.noanzo.pl/images/${item.filename}`;
-          image.push({
-            width: data.width,
-            height: data.height,
-            url: url,
-            thumbnail: item.originalname === thumbnail ? true : false,
-          });
-          await unlinkFile(item.path);
-          await unlinkFile(`upload/result${id}.jpeg`);
-        });
-    })
-  )
-    .then(() => {
-      auction = new Auction({
-        image: image,
-        description: description,
-        price: price,
-        title: title,
-        id: uuidv4(),
+        .toFile(`upload/result${id}.jpeg`);
+
+      await uploadFile(`upload/result${id}.jpeg`, item, "");
+
+      const url = `https://admin.noanzo.pl/images/${item.filename}`;
+      const urlLarge = `https://admin.noanzo.pl/images/${item.filename}_large`;
+      image.push({
+        width: data.width,
+        height: data.height,
+        url: url,
+        thumbnail: item.originalname === thumbnail,
+        id: imageID,
       });
-      if (req.files["gif"] === undefined) {
-        auction.save((err, auction) => {
-          if (err) return console.error(err);
+
+      // Large images
+      const dataLarge = await sharp(item.path, { failOnError: false })
+        .resize(1920)
+        .jpeg({ mozjpeg: true })
+        .toFile(`upload/result${id}_large.jpeg`);
+
+      await uploadFile(`upload/result${id}_large.jpeg`, item, "_large");
+
+      imageLarge.push({
+        width: dataLarge.width,
+        height: dataLarge.height,
+        url: urlLarge,
+        id: imageID,
+      });
+
+      await Promise.all([
+        await unlinkFile(item.path),
+        await unlinkFile(`upload/result${id}.jpeg`),
+        unlinkFile(`upload/result${id}_large.jpeg`),
+      ]);
+    }
+
+    let auction = new Auction({
+      image: image,
+      imageLarge: imageLarge,
+      description: description,
+      price: price,
+      title: title,
+      id: uuidv4(),
+    });
+
+    if (req.files["gif"]) {
+      handleGif(req, res, null, auction);
+    } else {
+      auction.save((err, auction) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send("Błąd podczas zapisywania aukcji");
+        } else {
           console.log("Saved: " + auction);
           image = [];
           res.send("Ogłoszenie zostało dodane.");
-        });
-      } else {
-        handleGif(req, res, gif, auction);
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Bład przesyłania");
-    });
+        }
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Błąd przesyłania");
+  }
 };
 
 module.exports = handleImageUpload;

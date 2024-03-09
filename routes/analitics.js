@@ -22,7 +22,7 @@ const analitics = async (req, res) => {
       return;
     }
   });
-  res.sendStatus(200);
+  res.json({ response: "OK" });
 };
 
 module.exports = analitics;

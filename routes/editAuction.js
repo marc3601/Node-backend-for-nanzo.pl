@@ -15,6 +15,9 @@ const editAuction = async (req, res) => {
         doc.image.forEach((item) => {
           ids.push(deleteURLsAndKeepIDs(item.url));
         });
+        doc.imageLarge.forEach((item) => {
+          ids.push(deleteURLsAndKeepIDs(item.url));
+        });
         // delete images in s3 bucket
         deleteManyImages(deleteFiles, ids)
           .then(() => {
@@ -27,7 +30,7 @@ const editAuction = async (req, res) => {
       }
     });
   } else if (action === "edit" && id) {
-    const idsLeft = req.body.image.map((item) => item._id);
+    const imageIdsLeftAfterEdit = req.body.image.map((item) => item.id);
     const update = req.body;
     Auction.findOneAndUpdate(
       { _id: id },
@@ -37,11 +40,21 @@ const editAuction = async (req, res) => {
         if (err) {
           res.send("Wystąpił błąd");
         } else {
-          const idsAll = doc.image.map((item) => String(item._id));
-          const idsToDelete = idsAll.filter((item) => !idsLeft.includes(item));
-          const imagesToDelete = doc.image.filter((item) =>
-            idsToDelete.includes(item._id)
+          const idsAll = doc.image.map((item) => String(item.id));
+          const idsToDelete = idsAll.filter(
+            (item) => !imageIdsLeftAfterEdit.includes(item)
           );
+          const imagesSmallToDelete = doc.image.filter((item) =>
+            idsToDelete.includes(item.id)
+          );
+          const imagesLargeToDelete = doc.imageLarge.filter((item) =>
+            idsToDelete.includes(item.id)
+          );
+
+          const imagesToDelete = [
+            ...imagesSmallToDelete,
+            ...imagesLargeToDelete,
+          ];
           const urlsToDelete = imagesToDelete.map((item) =>
             deleteURLsAndKeepIDs(item.url)
           );

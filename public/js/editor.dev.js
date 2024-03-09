@@ -13,7 +13,7 @@ let updatedAuction = {};
 desc.addEventListener("input", () => {
   let length = desc.value.length;
   characters.innerText = length;
-  if (length > 170) {
+  if (length > 1400) {
     if (!characters.classList.contains("alert_char")) {
       characters.classList.add("alert_char");
     }
@@ -72,10 +72,14 @@ const handleImageDelete = (e) => {
   if (imagesCount < 1) {
     alert("W ogłoszeniu musi być minimalnie jedno zdjęcie.");
   } else {
-    const filteredImages = updatedAuction.image.filter(
-      (item) => item._id !== id
+    const filteredImagesSmall = updatedAuction.image.filter(
+      (item) => item.id !== id
     );
-    updatedAuction.image = filteredImages;
+    const filteredImagesLarge = updatedAuction.imageLarge.filter(
+      (item) => item.id !== id
+    );
+    updatedAuction.image = filteredImagesSmall;
+    updatedAuction.imageLarge = filteredImagesLarge;
     e.currentTarget.parentNode.remove();
   }
 };
