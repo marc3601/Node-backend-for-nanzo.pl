@@ -11,9 +11,7 @@ const handleImageUpload = async (req, res) => {
   const { title, description, price, thumbnail } = req.body;
   let image = [];
   let imageLarge = [];
-
   if (!req.files) return next();
-
   try {
     for (const [id, item] of req.files["image"].entries()) {
       // Small images
