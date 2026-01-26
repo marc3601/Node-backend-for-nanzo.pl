@@ -65,9 +65,9 @@ const fetchAuctionState = (id) => {
 };
 
 const handleImageDelete = (e) => {
-  const id = e.currentTarget.parentNode.id;
-  const imagesCount =
-    e.currentTarget.parentNode.parentNode.childElementCount - 1;
+  const imageContainer = e.currentTarget.parentNode;
+  const id = imageContainer.id;
+  const imagesCount = imageContainer.parentNode.childElementCount - 1;
 
   if (imagesCount < 1) {
     alert("W ogłoszeniu musi być minimalnie jedno zdjęcie.");
@@ -80,7 +80,14 @@ const handleImageDelete = (e) => {
     );
     updatedAuction.image = filteredImagesSmall;
     updatedAuction.imageLarge = filteredImagesLarge;
-    e.currentTarget.parentNode.remove();
+    
+    // Add removing class to trigger fade-out animation
+    imageContainer.classList.add('removing');
+    
+    // Wait for animation to complete before removing
+    setTimeout(() => {
+      imageContainer.remove();
+    }, 300);
   }
 };
 

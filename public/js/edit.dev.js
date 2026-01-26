@@ -169,6 +169,46 @@ async function getData(url) {
     .catch((err) => console.log(err));
 }
 
+// Add 'loaded' class to images when they finish loading
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('.auction_image > img');
+  
+  images.forEach(img => {
+    if (img.complete) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', function() {
+        img.classList.add('loaded');
+      });
+    }
+  });
+  
+  // For dynamically added images (if you're loading auctions via AJAX)
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1) {
+          const newImages = node.querySelectorAll('.auction_image > img');
+          newImages.forEach(img => {
+            if (img.complete) {
+              img.classList.add('loaded');
+            } else {
+              img.addEventListener('load', function() {
+                img.classList.add('loaded');
+              });
+            }
+          });
+        }
+      });
+    });
+  });
+  
+  observer.observe(document.querySelector('.content_container'), {
+    childList: true,
+    subtree: true
+  });
+});
+
 fastEditButton.addEventListener("click", handleFastEditMode);
 getData("/api/auctions");
 
