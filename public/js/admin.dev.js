@@ -11,16 +11,11 @@ const cards = document.getElementsByClassName("card");
 const images = document.getElementsByTagName("img");
 const characters = document.querySelector(".characters");
 const thumbInfo = document.querySelector(".thumbzz");
-const gifFile = document.querySelector("#gif");
-const gifMenu = document.querySelector(".gif_menu");
-const gifShow = document.querySelector(".gif_icon_show");
-const gifHide = document.querySelector(".gif_icon_hide");
 const deleteMenu = document.querySelector(".delete_menu");
 const deleteShow = document.querySelector(".delete_icon_show");
 const deleteHide = document.querySelector(".delete_icon_hide");
 const deleteContainer = document.querySelector(".delete_container");
 const loadingAlert = document.querySelector(".loading_alert");
-const gifBcg = document.querySelector(".gif_background");
 const userCount = document.querySelector(".data_count");
 const formData = new FormData();
 let progressValue = 0;
@@ -63,21 +58,7 @@ const handleDelete = (e) => {
     .catch((err) => console.log(err));
 };
 
-// Gif menu handler
-gifShow.addEventListener("click", () => {
-  if (!gifMenu.classList.contains("gif_menu_show")) {
-    main.style = "overflow:hidden";
-    gifMenu.classList.add("gif_menu_show");
-    gifBcg.classList.remove("background_hidden");
-  }
-});
-gifHide.addEventListener("click", () => {
-  if (gifMenu.classList.contains("gif_menu_show")) {
-    main.style = "overflow-x: hidden";
-    gifMenu.classList.remove("gif_menu_show");
-    gifBcg.classList.add("background_hidden");
-  }
-});
+
 
 const checkmark = `<span style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24"><path style="fill:green;" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.393 7.5l-5.643 5.784-2.644-2.506-1.856 1.858 4.5 4.364 7.5-7.643-1.857-1.857z"/></svg></span>`;
 
@@ -169,11 +150,7 @@ imagefile.onchange = (e) => {
     });
   }
 };
-gifFile.onchange = (e) => {
-  formData.delete("gif");
-  let file = [...e.target.files][0];
-  formData.append("gif", file);
-};
+
 
 title.onchange = (e) => {
   formData.delete("title");
@@ -297,4 +274,42 @@ button.addEventListener("click", (e) => {
   } else {
     response.innerHTML = `${warning}<span class="alertzz">${checklist()}</span>`;
   }
+});
+
+// Ripple effect on click for all buttons
+document.addEventListener('DOMContentLoaded', function() {
+  const buttons = document.querySelectorAll('.button, .nav_button');
+  
+  buttons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      // Remove any existing ripples
+      const existingRipple = this.querySelector('.ripple');
+      if (existingRipple) {
+        existingRipple.remove();
+      }
+      
+      // Create ripple element
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple');
+      
+      // Get button dimensions and click position
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      // Set ripple position and size
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      
+      // Add ripple to button
+      this.appendChild(ripple);
+      
+      // Remove ripple after animation
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    });
+  });
 });
