@@ -131,3 +131,17 @@ deleteButton.addEventListener("click", handleDelete);
 });
 submitButton.addEventListener("click", handleSubmit);
 fetchAuctionState(auctionID);
+      // Add 'loaded' class to images when they finish loading
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('.img');
+  
+  images.forEach(img => {
+    if (img.complete) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', function() {
+        img.classList.add('loaded');
+      });
+    }
+  });
+});

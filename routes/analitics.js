@@ -14,6 +14,7 @@ const analitics = async (req, res) => {
   let userData = req.body;
   const userAgent = req.headers["user-agent"];
   const device = detector.detect(userAgent);
+  console.log(userData);
   User.findOne({ userIp: ip }, (err, user) => {
     if (err) return console.error(err);
     if (!user) {

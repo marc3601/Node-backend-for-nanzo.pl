@@ -153,21 +153,5 @@
     </main>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/public/js/editor.dev.js"></script>
-    <script>
-      // Add 'loaded' class to images when they finish loading
-document.addEventListener('DOMContentLoaded', function() {
-  const images = document.querySelectorAll('.img');
-  
-  images.forEach(img => {
-    if (img.complete) {
-      img.classList.add('loaded');
-    } else {
-      img.addEventListener('load', function() {
-        img.classList.add('loaded');
-      });
-    }
-  });
-});
-    </script>
   </body>
 </html>
