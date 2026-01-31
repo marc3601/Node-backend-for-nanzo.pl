@@ -1,84 +1,294 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100vh;
+  height: 100vh;
+}
+
 body {
   overflow: hidden;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   background: linear-gradient(360deg, rgba(255, 255, 255, 1) 0%, #d27303 100%);
-  min-height: 150vh;
+  background-repeat: no-repeat;
   color: white;
   font-family: "Poppins", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 center {
-  margin-top: 60px;
+  width: 100%;
+  padding: 20px;
 }
-#username,
-#password {
-  margin: 10px;
-  padding: 5px;
-  height: 25px;
-  outline: none;
-  border: none;
+
+/* Logo styling */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
   color: #ad3100;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1 {
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .form {
   display: flex;
   flex-direction: column;
-  max-width: 30vw;
+  max-width: 400px;
   margin: 0 auto;
+  gap: 0.6rem;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
 }
-input[type="button" i] input[type="submit" i] input[type="reset" i],
-input[type="file" i]::-webkit-file-upload-button,
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#username,
+#password {
+  padding: 0.6rem 0.8rem;
+  outline: none;
+  border: 2px solid transparent;
+  background-color: white;
+  border-radius: 0.5rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.85rem;
+  color: #ad3100;
+  transition: all 0.3s ease;
+  height: auto;
+}
+
+#username::placeholder,
+#password::placeholder {
+  color: #d4935d;
+}
+
+#username:focus,
+#password:focus {
+  outline: none;
+  border: 2px solid #ad3100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .button {
   background-color: #ad3100;
   color: white;
   text-align: center;
   cursor: pointer;
   user-select: none;
-  border-radius: 4px;
-  min-width: 36px;
-  height: 36px;
-  box-sizing: border-box;
-  padding: 0 8px;
-  margin: 10px;
-  position: relative;
-  font-family: "Roboto", "Noto", sans-serif;
-  font-weight: 500;
-  -webkit-font-smoothing: antialiased;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  font-size: 14px;
-  line-height: 20px;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  margin: 0.5rem auto 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
   outline: none;
   border: none;
+  width: 100%;
+  max-width: 200px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-transform: none;
 }
+
+.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    background-color: #c5572b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Ripple effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: rippleEffect 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes rippleEffect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
 .message {
-  color: #000000;
+  color: #ad3100;
   margin: 10px 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  min-height: 24px;
 }
+
 @keyframes warning {
   0% {
-    font-size: 1rem;
+    font-size: 0.85rem;
   }
   40% {
-    font-size: 1.2rem;
-  }
-  100% {
     font-size: 1rem;
   }
+  100% {
+    font-size: 0.85rem;
+  }
 }
+
 .alertzz {
-  font-size: 1rem;
+  font-size: 0.85rem;
   animation: warning 0.3s ease-in-out;
 }
 
 @media screen and (max-width: 550px) {
   .form {
     max-width: 90vw;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-container {
+    margin-bottom: 0.8rem;
+  }
+
+  .logo {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .logo-container {
+    margin-bottom: 1.2rem;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  #username,
+  #password {
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+
+  .button {
+    font-size: 0.9rem;
+    padding: 0.8rem 1.5rem;
+    max-width: 250px;
+  }
+
+  .message {
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  .logo-container {
+    margin-bottom: 1.5rem;
+  }
+
+  .logo {
+    width: 70px;
+    height: 70px;
+  }
+
+  #username,
+  #password {
+    font-size: 0.95rem;
+    padding: 0.8rem 1.1rem;
+  }
+
+  .button {
+    font-size: 0.95rem;
+    padding: 0.9rem 1.8rem;
+    max-width: 280px;
+  }
+
+  .message {
+    font-size: 0.95rem;
   }
 }
