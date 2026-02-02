@@ -290,7 +290,6 @@ const createTextSummary = (users, period) => {
     ? (arrowFlag = "down")
     : (arrowFlag = "none");
 
-  //generate icon indicator
   const hasImgChild = summary_icon.lastElementChild.tagName === "IMG";
   if (hasImgChild) {
     summary_icon.removeChild(summary_icon.lastElementChild);
@@ -352,7 +351,6 @@ const fetchDates = (link) => {
       graphData.data = dataToBuildGraph.week.reverse();
       graphData.labels = dataToBuildGraph.week.map((item) => item.x);
 
-      //building the graph initial
       graphBuilder();
       websitePerformance();
     })
