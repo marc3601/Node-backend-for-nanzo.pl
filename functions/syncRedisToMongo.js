@@ -16,37 +16,32 @@ client.on("connect", () => {
 
 client.connect().catch((err) => {
   console.error("Failed to connect to Redis:", err.message);
-  console.log("App will continue without Redis");
 });
 
 const syncRedisToMongo = async () => {
   if (!isRedisConnected) {
-    console.log("Skipping Redis sync - Redis not connected");
     return;
   }
 
   try {
-    
-    
     const keys = await client.keys("url:*");
     
     for (const key of keys) {
       const data = await client.hGetAll(key);
       
       if (data.url && data.views) {
-        await UrlView.findOneAndUpdate(
-          { url: data.url },
-          { 
-            views: parseInt(data.views)
-          },
-          { 
-            upsert: true,
-            new: true 
-          }
-        );
+        const redisViews = parseInt(data.views);
+        const existingDoc = await UrlView.findOne({ url: data.url });
+        
+        if (!existingDoc || existingDoc.views !== redisViews) {
+          await UrlView.findOneAndUpdate(
+            { url: data.url },
+            { views: redisViews },
+            { upsert: true, new: true }
+          );
+        }
       }
     }
-    
   } catch (error) {
     console.error("Error syncing Redis to MongoDB:", error);
   }
