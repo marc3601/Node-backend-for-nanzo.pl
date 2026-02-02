@@ -102,29 +102,45 @@ h3 {
 .hours_headline h2 {
   font-size: 1.2rem;
 }
+
+/* IMPROVED HEATMAP STYLES */
 .hours_stats {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(7, 1fr);
-  grid-column-gap: 5px;
-  grid-row-gap: 5px;
+  grid-column-gap: 2px;
+  grid-row-gap: 2px;
+  font-size: 0.65rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
+
 .hours_stats div {
-  height: 50px;
+  min-height: 35px;
+  height: 35px;
   outline: 1px solid #d27303;
+  font-size: 0.65rem;
 }
 
 .hours_stats .lebels {
   background-color: #d27303;
   font-weight: bold;
   color: white;
+  font-size: 0.6rem;
+  padding: 2px;
 }
+
+.hours_stats .lebels span,
+.hours_stats .data span {
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
 .hours_stats .lebels,
 .hours_stats .data {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* color: white; */
 }
 
 .container {
@@ -310,6 +326,56 @@ h3 {
   z-index: -1;
 }
 
+/* MOBILE SPECIFIC IMPROVEMENTS */
+@media (max-width: 600px) {
+  .hours_stats {
+    grid-column-gap: 1px;
+    grid-row-gap: 1px;
+    font-size: 0.55rem;
+  }
+  
+  .hours_stats div {
+    min-height: 30px;
+    height: 30px;
+  }
+  
+  .hours_stats .lebels {
+    font-size: 0.5rem;
+    padding: 1px;
+  }
+  
+  .hours_stats .lebels span,
+  .hours_stats .data span {
+    font-size: 0.55rem;
+  }
+  
+  .hours_headline h2 {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .hours_stats {
+    grid-column-gap: 3px;
+    grid-row-gap: 3px;
+    font-size: 0.75rem;
+  }
+  
+  .hours_stats div {
+    min-height: 45px;
+    height: 45px;
+  }
+  
+  .hours_stats .lebels {
+    font-size: 0.7rem;
+  }
+  
+  .hours_stats .lebels span,
+  .hours_stats .data span {
+    font-size: 0.75rem;
+  }
+}
+
 @media (min-width: 800px) {
   .user_badge,
   .chart_container,
@@ -336,7 +402,27 @@ h3 {
   .google_data {
     font-size: 0.9rem;
   }
+  
+  .hours_stats {
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    font-size: 0.85rem;
+  }
+  
+  .hours_stats div {
+    height: 50px;
+  }
+  
+  .hours_stats .lebels {
+    font-size: 0.8rem;
+  }
+  
+  .hours_stats .lebels span,
+  .hours_stats .data span {
+    font-size: 0.85rem;
+  }
 }
+
 @media (min-width: 1150px) {
   .user_badge,
   .chart_container,
@@ -351,12 +437,36 @@ h3 {
   .placeholder {
     min-height: 250px;
   }
+  
+  .hours_stats {
+    font-size: 0.9rem;
+  }
+  
+  .hours_stats .lebels span,
+  .hours_stats .data span {
+    font-size: 0.9rem;
+  }
 }
+
 @media (min-width: 1600px) {
   .summary_text {
     line-height: 2rem;
   }
+  
+  .hours_stats {
+    font-size: 1rem;
+  }
+  
+  .hours_stats .lebels {
+    font-size: 0.9rem;
+  }
+  
+  .hours_stats .lebels span,
+  .hours_stats .data span {
+    font-size: 1rem;
+  }
 }
+
 .flag_section {
   padding: 1rem;
   display: flex;
