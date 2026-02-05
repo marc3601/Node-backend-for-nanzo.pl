@@ -261,12 +261,90 @@ const fetchKeywords = (link) => {
         });
       });
       
-      const p = document.createElement("p");
-      p.textContent = "Dane dotyczą ostatnich 30 dni";
-      p.classList.add("info");
-      google_container.appendChild(p);
+      const footer = document.createElement("div");
+      footer.classList.add("google_footer");
+      footer.innerHTML = `
+        <div class="popular_info_note">
+          <svg class="info_icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 7V11M8 5V5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div class="info_text">
+            <p>Dane dotyczą ostatnich 30 dni i pochodzą z Google Search Console.</p>
+          </div>
+        </div>
+      `;
+      google_container.appendChild(footer);
     })
     .catch((err) => console.error(err.message));
+};
+
+const fetchPopularPages = (link) => {
+  const popularList = document.querySelector('.popular_list');
+  
+  // Helper function for Polish pluralization
+  const getViewsText = (count) => {
+    if (count === 1) {
+      return 'wyświetlenie';
+    } else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+      return 'wyświetlenia';
+    } else {
+      return 'wyświetleń';
+    }
+  };
+  
+  axios
+    .get(link)
+    .then((res) => {
+      const data = res.data;
+     
+      const topPages = data
+        .filter(item => item.viewcount > 0)
+        .sort((a, b) => b.viewcount - a.viewcount)
+        .slice(0, 10)
+        .map(item => ({
+          thumbnail: item.image?.find(img => img.thumbnail)?.url || item.image?.[0]?.url || null,
+          title: item.title,
+          viewcount: item.viewcount,
+          url: `https://noanzo.pl/produkt/${item.id}`
+        }));
+
+      popularList.innerHTML = '';
+      
+      if (topPages.length === 0) {
+        popularList.innerHTML = '<div class="popular_empty">Brak danych o popularnych stronach</div>';
+        return;
+      }
+      
+      topPages.forEach((item, index) => {
+        const popularItem = document.createElement('a');
+        popularItem.classList.add('popular_item');
+        popularItem.href = item.url;
+        popularItem.target = '_blank';
+        
+        const thumbnailHtml = item.thumbnail 
+          ? `<img src="${item.thumbnail}" alt="${item.title}" loading="lazy" 
+                 onerror="this.style.display='none'; this.parentElement.classList.add('popular_thumbnail--placeholder');">`
+          : '';
+        
+        popularItem.innerHTML = `
+          <div class="popular_rank">${index + 1}</div>
+          <div class="popular_thumbnail ${!item.thumbnail ? 'popular_thumbnail--placeholder' : ''}">
+            ${thumbnailHtml}
+          </div>
+          <div class="popular_info">
+            <div class="popular_title" title="${item.title}">${item.title}</div>
+            <div class="popular_views">${item.viewcount} ${getViewsText(item.viewcount)}</div>
+          </div>
+        `;
+        
+        popularList.appendChild(popularItem);
+      });
+    })
+    .catch((err) => {
+      console.error(err.message);
+      popularList.innerHTML = '<div class="popular_empty">Błąd podczas ładowania danych</div>';
+    });
 };
 
 const updateGraphForPeriod = (period) => {
@@ -321,4 +399,5 @@ range.addEventListener("change", (e) => {
 });
 
 fetchKeywords("https://admin.noanzo.pl/api/most-popular-keywords");
+fetchPopularPages("https://admin.noanzo.pl/api/auctions");
 fetchDates("https://admin.noanzo.pl/dates");
