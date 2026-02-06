@@ -7,6 +7,20 @@ const unlinkFile = util.promisify(fs.unlink);
 const Auction = require("../database/schemas/auctionSchema");
 const handleGif = require("./handleGif");
 
+// Helper function to generate URL slug from title and UUID
+const generateSlug = (title, uuid) => {
+  const titleSlug = title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+  
+  const uuidSuffix = uuid.split('-').pop(); // Get last part of UUID
+  
+  return `${titleSlug}-${uuidSuffix}`;
+};
+
 const handleImageUpload = async (req, res) => {
   const { title, description, price, thumbnail } = req.body;
   let image = [];
@@ -55,13 +69,16 @@ const handleImageUpload = async (req, res) => {
       ]);
     }
 
+    const auctionUuid = uuidv4();
+    const slug = generateSlug(title, auctionUuid);
+
     let auction = new Auction({
       image: image,
       imageLarge: imageLarge,
       description: description,
       price: price,
       title: title,
-      id: uuidv4(),
+      id: slug, 
     });
 
     if (req.files["gif"]) {
