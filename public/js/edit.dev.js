@@ -13,9 +13,10 @@ function createElement(
   attributes = {}
 ) {
   const element = document.createElement(elementType);
-  if (textContent) {
-    element.textContent = textContent;
+  if (textContent !== undefined && textContent !== null) {
+  element.textContent = textContent;
   }
+
   if (classes.length > 0) {
     element.classList.add(...classes);
   }
@@ -25,7 +26,7 @@ function createElement(
   return element;
 }
 
-function createAuctionBadge(image, title, price, id) {
+function createAuctionBadge(image, title, price, id, viewcount) {
   // Using the function to create elements and structure the HTML
   const auction_content = createElement("div", ["auction_content"]);
   const auction_image = createElement("div", ["auction_image"]);
@@ -41,10 +42,17 @@ function createAuctionBadge(image, title, price, id) {
     ["data-price"]: price,
   });
   const span = createElement("span", [], `${price} zł`);
+  const auction_bottom = createElement("div", ["auction_bottom"]);
   const auction_edit = createElement("div", ["auction_edit"]);
   const a = createElement("a", ["edit_button"], "Edytuj", {
     href: `/edit/editor?id=${id}`,
   });
+  
+  const auction_viewcount = createElement("div", ["auction_viewcount"]);
+  // Ensure we always show a number, defaulting to 0
+  const displayCount = (viewcount !== undefined && viewcount !== null) ? viewcount : 0;
+  const viewcountSpan = createElement("span", [], displayCount);
+  
   const parents = [
     auction,
     auction_content,
@@ -56,7 +64,10 @@ function createAuctionBadge(image, title, price, id) {
     auction_price,
     p,
     auction_text_section,
+    auction_bottom,
+    auction_bottom,
     auction_edit,
+    auction_viewcount,
   ];
 
   const children = [
@@ -69,8 +80,11 @@ function createAuctionBadge(image, title, price, id) {
     auction_price,
     p,
     span,
+    auction_bottom,
     auction_edit,
+    auction_viewcount,
     a,
+    viewcountSpan,
   ];
 
   parents.forEach((item, i) => {
@@ -160,7 +174,7 @@ async function getData(url) {
         if (image.length === 0) {
           image = [item.image[0]];
         }
-        createAuctionBadge(image[0].url, item.title, item.price, item._id);
+        createAuctionBadge(image[0].url, item.title, item.price, item._id, item.viewcount || 0);
       });
       if (!fastEditButton.style.visibility) {
         fastEditButton.style.visibility = "visible";

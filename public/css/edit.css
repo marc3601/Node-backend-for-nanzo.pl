@@ -287,6 +287,32 @@ input[type="number"] {
   outline: 3px solid #ad3100;
 }
 
+.auction_bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auction_viewcount {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #ad3100;
+  font-size: 0.7rem;
+  user-select: none;
+}
+
+.auction_viewcount::before {
+  content: '👁';
+  font-size: 0.9rem;
+}
+
+.auction_viewcount span {
+  line-height: 1;
+  font-weight: 500;
+}
+
 .edit_button {
   background-color: #ad3100;
   font-size: 0.7rem;
@@ -301,6 +327,7 @@ input[type="number"] {
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: inline-block;
+  white-space: nowrap;
 }
 
 .fast_edit_button {
@@ -380,6 +407,15 @@ input[type="number"] {
     font-size: 0.8rem;
   }
 
+  .auction_viewcount {
+    font-size: 0.75rem;
+  }
+
+  .auction_viewcount svg {
+    width: 15px;
+    height: 15px;
+  }
+
   .edit_button {
     font-size: 0.75rem;
     padding: 0.4rem 0.85rem;
@@ -432,6 +468,15 @@ input[type="number"] {
 
   .auction_price {
     font-size: 1rem;
+  }
+
+  .auction_viewcount {
+    font-size: 0.85rem;
+  }
+
+  .auction_viewcount svg {
+    width: 16px;
+    height: 16px;
   }
 
   .price_input {
