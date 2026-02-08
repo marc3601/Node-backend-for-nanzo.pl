@@ -408,6 +408,66 @@ h3 {
   color: #7b4505;
   font-size: 0.9rem;
 }
+
+/* Homepage Card Styles */
+.homepage_section {
+  margin-bottom: 1.5rem;
+}
+
+.homepage_card .popular_rank {
+  color: #d27303;
+  font-size: 1.6rem;
+}
+
+.homepage_thumbnail {
+  background: linear-gradient(135deg, #d27303 0%, #e68404 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.homepage_thumbnail .logo {
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+/* Divider Styles */
+.popular_divider {
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider_line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(210, 115, 3, 0) 0%,
+    rgba(210, 115, 3, 0.3) 20%,
+    rgba(210, 115, 3, 0.5) 50%,
+    rgba(210, 115, 3, 0.3) 80%,
+    rgba(210, 115, 3, 0) 100%
+  );
+  position: relative;
+}
+
+.divider_line::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: #d27303;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(210, 115, 3, 0.2);
+}
+
 .popular_thumbnail--placeholder {
   background: linear-gradient(135deg, #d27303 0%, #e68404 50%, #f1c99c 100%);
   position: relative;
