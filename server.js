@@ -34,6 +34,7 @@ const mostPopularKeywords = require("./routes/mostPopularKeywords");
 const Dates = require("./database/schemas/dateSchema");
 const UrlView = require("./database/schemas/urlViewSchema");
 const viewCounter = require("./middleware/viewCounter");
+const promotion = require("./routes/promotion"); 
 require("./functions/syncRedisToMongo");
 
 require("dotenv").config();
@@ -125,20 +126,9 @@ app.post("/api/edit-price", authenticateToken, fastPriceEditor);
 app.post("/api/edit", authenticateToken, editAuction);
 app.post("/analitics", viewCounter, analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
+app.post("/api/promotion",authenticateToken, promotion);
 app.get("/api/most-popular-keywords", authenticateToken, mostPopularKeywords);
 
-// for testing popular URLs
-app.get("/popular", async (req, res) => {
-  try {
-    const urlViews = await UrlView.find()
-      .sort({ views: -1 });
-    
-    res.json(urlViews);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error fetching popular URLs" });
-  }
-});
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });
 });

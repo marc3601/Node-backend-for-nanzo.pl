@@ -102,26 +102,73 @@ h1 {
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.2rem;
 }
 .edit_mode {
   text-align: center;
-  margin-bottom: 1rem;
 }
 
-.fast_edit_container {
+.edit_buttons_container {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.message_container {
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.message_text {
+  text-align: center;
+  font-size: 0.75rem;
+  color: white;
+  margin: 0;
+  padding: 0.2rem 0;
+}
+
+.promote_instruction {
+  font-size: 0.75rem;
+  color: white;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.promote_instruction.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fast_edit_container,
+.promote_container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.money_svg {
+
+.money_svg,
+.star_svg {
   display: flex;
   align-items: center;
 }
+
 .money_svg svg {
   width: 24px;
   height: 24px;
 }
+
+.star_svg svg {
+  width: 22px;
+  height: 22px;
+}
+
 .btn_title {
   display: flex;
   align-items: center;
@@ -131,7 +178,7 @@ h1 {
 .btn_title > p {
   user-select: none !important;
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
 }
 
 .placeholder,
@@ -147,7 +194,7 @@ h1 {
 
 .placeholder_content,
 .auction_content {
-  margin: .8rem;
+  margin: .4rem .8rem;
   padding: 0.5rem;
   background: #e6cba8;
   border-radius: 0.6rem;
@@ -155,6 +202,7 @@ h1 {
   gap: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
 }
 
 .auction_content:hover {
@@ -164,6 +212,73 @@ h1 {
 
 .auction_content_edited {
   outline: 3px solid #ad3100;
+}
+
+/* Promotion mode styles */
+.auction_content.promote_mode {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auction_content.promote_mode:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.auction_content.promote_selected {
+  background: #d4b08a;
+  outline: 3px solid #ad3100;
+  box-shadow: 0 6px 12px rgba(173, 49, 0, 0.3);
+}
+
+.promotion_badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background: #ad3100;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  border: 3px solid white;
+}
+
+/* Promotion star indicator in top right corner */
+.promotion_star {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.promotion_star svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.promotion_number {
+  position: relative;
+  z-index: 1;
+  color: #ad3100;
+  font-weight: 700;
+  font-size: 0.6rem;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .placeholder_image {
@@ -242,6 +357,7 @@ h1 {
 
 .auction_headline {
   color: #ad3100;
+  padding-right: 32px;
 }
 
 .auction_headline > h2 {
@@ -330,17 +446,26 @@ input[type="number"] {
   white-space: nowrap;
 }
 
-.fast_edit_button {
+.fast_edit_button,
+.promote_button {
   background-color: #ad3100;
-  margin: 0 auto;
-  padding: 0.4rem 0.8rem;
+  margin: 0;
+  padding: 0.35rem 0.6rem;
   border-radius: 0.4rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   visibility: hidden;
   transition: all 0.3s ease;
 }
 
-.fast_edit_button:active {
+.fast_edit_button:disabled,
+.promote_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fast_edit_button:active,
+.promote_button:active {
   transform: translateY(1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -353,7 +478,8 @@ input[type="number"] {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
 
-  .fast_edit_button:hover {
+  .fast_edit_button:hover,
+  .promote_button:hover {
     background-color: #c5572b;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
@@ -362,11 +488,19 @@ input[type="number"] {
   .fast_edit_button:hover #price_fill {
     fill: #c5572b !important;
   }
+
+  .promote_button:hover #star_fill {
+    fill: #c5572b !important;
+  }
 }
 
 @media screen and (min-width: 768px) {
   .container {
     width: 70vw;
+  }
+
+  .edit_buttons_container {
+    gap: 0.6rem;
   }
 
   .search_input {
@@ -384,11 +518,26 @@ input[type="number"] {
     height: 26px;
   }
 
+  .star_svg svg {
+    width: 24px;
+    height: 24px;
+  }
+
   .btn_title > p {
     font-size: 0.85rem;
   }
 
-  .fast_edit_button {
+  .promote_instruction {
+    font-size: 0.8rem;
+  }
+
+  .message_text {
+    font-size: 0.8rem;
+    padding: 0.25rem 0;
+  }
+
+  .fast_edit_button,
+  .promote_button {
     padding: 0.5rem 1rem;
   }
 
@@ -423,9 +572,30 @@ input[type="number"] {
 
   .placeholder_content,
   .auction_content {
-    margin: .8rem;
+    margin: .4rem .8rem;
     padding: 0.6rem;
     gap: 0.7rem;
+  }
+
+  .promotion_badge {
+    width: 52px;
+    height: 52px;
+    font-size: 1.5rem;
+  }
+
+  .promotion_star {
+    width: 32px;
+    height: 32px;
+    top: 0.4rem;
+    right: 0.4rem;
+  }
+
+  .promotion_number {
+    font-size: 0.65rem;
+  }
+
+  .auction_headline {
+    padding-right: 36px;
   }
 }
 
@@ -447,11 +617,26 @@ input[type="number"] {
     height: 30px;
   }
 
+  .star_svg svg {
+    width: 28px;
+    height: 28px;
+  }
+
   .btn_title > p {
     font-size: 0.95rem;
   }
 
-  .fast_edit_button {
+  .promote_instruction {
+    font-size: 0.9rem;
+  }
+
+  .message_text {
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
+  }
+
+  .fast_edit_button,
+  .promote_button {
     padding: 0.7rem 1.4rem;
   }
 
@@ -492,8 +677,29 @@ input[type="number"] {
 
   .placeholder_content,
   .auction_content {
-    margin: .8rem;
+    margin: .4rem .8rem;
     padding: 1rem;
     gap: 1.1rem;
+  }
+
+  .promotion_badge {
+    width: 60px;
+    height: 60px;
+    font-size: 1.75rem;
+  }
+
+  .promotion_star {
+    width: 36px;
+    height: 36px;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .promotion_number {
+    font-size: 0.7rem;
+  }
+
+  .auction_headline {
+    padding-right: 40px;
   }
 }

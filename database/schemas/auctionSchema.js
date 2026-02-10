@@ -29,6 +29,7 @@ const auctionSchema = new mongoose.Schema({
   title: String,
   price: Number,
   id: String,
+  promotion: { type: Number, default: 0 },
 });
 auctionSchema.plugin(mongoosePaginate);
 
