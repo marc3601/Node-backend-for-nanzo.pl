@@ -7,8 +7,8 @@ const unlinkFile = util.promisify(fs.unlink);
 const Auction = require("../database/schemas/auctionSchema");
 const handleGif = require("./handleGif");
 
-// Helper function to generate URL slug from title and UUID
-const generateSlug = (title, uuid) => {
+// Helper function to generate URL slug from title
+const generateBaseSlug = (title) => {
   // Map of Polish characters to their ASCII equivalents
   const polishCharsMap = {
     'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
@@ -23,16 +23,31 @@ const generateSlug = (title, uuid) => {
     .map(char => polishCharsMap[char] || char)
     .join('');
   
-  const titleSlug = normalizedTitle
+  return normalizedTitle
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '') // Remove special characters
     .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+};
+
+// Helper function to find unique slug by checking database
+const findUniqueSlug = async (baseSlug) => {
+  let slug = baseSlug;
+  let counter = 2;
   
-  const uuidSuffix = uuid.split('-').pop(); // Get last part of UUID
+  // Check if base slug exists
+  let exists = await Auction.findOne({ id: slug });
   
-  return `${titleSlug}-${uuidSuffix}`;
+  // If exists, keep incrementing counter until we find unique slug
+  while (exists) {
+    slug = `${baseSlug}-${counter}`;
+    exists = await Auction.findOne({ id: slug });
+    counter++;
+  }
+  
+  return slug;
 };
 
 const handleImageUpload = async (req, res) => {
@@ -83,8 +98,11 @@ const handleImageUpload = async (req, res) => {
       ]);
     }
 
-    const auctionUuid = uuidv4();
-    const slug = generateSlug(title, auctionUuid);
+    // Generate base slug from title
+    const baseSlug = generateBaseSlug(title);
+    
+    // Find unique slug by checking database
+    const slug = await findUniqueSlug(baseSlug);
 
     let auction = new Auction({
       image: image,
