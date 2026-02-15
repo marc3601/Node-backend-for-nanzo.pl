@@ -1,5 +1,5 @@
 const Auction = require("../database/schemas/auctionSchema");
-const UrlView = require("../database/schemas/urlViewSchema"); // Import UrlView schema
+const UrlView = require("../database/schemas/urlViewSchema");
 
 const auctions = async (req, res) => {
   try {
@@ -23,8 +23,8 @@ const auctions = async (req, res) => {
       // Create a map of auction ID to view count
       const viewCountMap = {};
       urlViews.forEach(urlView => {
-        // Extract auction ID from URL
-        const match = urlView.url.match(/\/produkt\/([a-f0-9-]+)/i);
+        // Extract auction ID from URL - changed to match both UUIDs and text slugs
+        const match = urlView.url.match(/\/produkt\/([a-z0-9-]+)/i);
         if (match && match[1]) {
           viewCountMap[match[1]] = urlView.views;
         }
@@ -68,7 +68,8 @@ const auctions = async (req, res) => {
       // Create a map of auction ID to view count
       const viewCountMap = {};
       urlViews.forEach(urlView => {
-        const match = urlView.url.match(/\/produkt\/([a-f0-9-]+)/i);
+        // Extract auction ID from URL - changed to match both UUIDs and text slugs
+        const match = urlView.url.match(/\/produkt\/([a-z0-9-]+)/i);
         if (match && match[1]) {
           viewCountMap[match[1]] = urlView.views;
         }
