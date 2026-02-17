@@ -242,12 +242,14 @@
             <p class="device"><b>Urządzenie:</b> <%= item?.device?.device.brand ? item.device.device.brand + " " + item.device.device.model : "nieznane" %></p>
             <p class="source"><b>Źródło wizyty:</b>
                <%= item?.visitSource ?  item.visitSource.substring(0,50) : "nieznane" %></p>
-            <p class="target"><b>Odwiedzona strona:</b> 
-              <% if (item?.entryPage) {  %>
-                <a href="<%= item.entryPage.substring(0,65); %>" target="_blank"><%= item.entryPage.substring(0,65); %></a>
-              <% } else {%>
-              nieznana
-              <% } %>
+           <p class="target"><b>Odwiedzona strona:</b> 
+              <% if (item?.entryPage) { %>
+              <a href="<%= item.entryPage.substring(0, 65); %>" target="_blank">
+              <%= item.entryPageTitle || item.entryPage.substring(0, 65); %>
+              </a>
+              <% } else { %>
+                nieznana
+            <% } %>
             </p>
             </div>
           </div>
