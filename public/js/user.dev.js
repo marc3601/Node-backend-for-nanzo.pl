@@ -32,7 +32,7 @@ const timeAgo = (date) => {
   const hours = Math.floor(minutes / 60);
   if (hours < 24)     return hours === 1 ? 'godzinę temu' : (hours < 5 ? `${hours} godziny temu` : `${hours} godzin temu`);
   const days = Math.floor(hours / 24);
-  if (days < 7)       return days === 1 ? 'wczoraj' : `${days} dni temu`;
+  if (days < 7)       return `${days} ${days === 1 ? 'dzień' : 'dni'} temu`;
   const weeks = Math.floor(days / 7);
   if (weeks < 4)      return weeks === 1 ? 'tydzień temu' : `${weeks} tygodnie temu`;
   const months = Math.floor(days / 30);
@@ -392,13 +392,13 @@ const formatResetDate = (date) => {
   const pad = (n) => String(n).padStart(2, "0");
   const absolute = `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
   const relative = timeAgo(date);
-  return `${absolute} (${relative})`;
+  return `<strong>${absolute}</strong> <span style="white-space:nowrap">(${relative})</span>`;
 };
 
 // Restore reset label from backend on page load
 axios.get("https://admin.noanzo.pl/api/snapshot/latest", { withCredentials: true })
   .then((res) => {
-    resetLabelText.textContent = `Test wyświetleń od: ${formatResetDate(new Date(res.data.createdAt))}`;
+    resetLabelText.innerHTML = `Test wyświetleń od: ${formatResetDate(new Date(res.data.createdAt))}`;
   })
   .catch(() => {
     // No snapshot yet — label stays empty
@@ -424,7 +424,7 @@ popularToggleBtn.addEventListener("click", () => {
     // Fetch snapshot to get reset date label and homepage baseline
     axios.get("https://admin.noanzo.pl/api/snapshot/latest", { withCredentials: true })
       .then((res) => {
-        resetLabelText.textContent = `Test wyświetleń od: ${formatResetDate(new Date(res.data.createdAt))}`;
+        resetLabelText.innerHTML = `Test wyświetleń od: ${formatResetDate(new Date(res.data.createdAt))}`;
         const homepageSnap = res.data.items.find((i) => i.id === "homepage");
         const baseline = homepageSnap ? homepageSnap.viewcount : homepageViewsAtLoad;
         const diff = Math.max(0, homepageViewsAtLoad - baseline);
@@ -503,7 +503,7 @@ popularResetBtn.addEventListener("click", () => {
     })
     .then((res) => {
       const now = new Date(res.data.createdAt);
-      resetLabelText.textContent = `Test wyświetleń od: ${formatResetDate(now)}`;
+      resetLabelText.innerHTML = `Test wyświetleń od: ${formatResetDate(now)}`;
       resetLabel.style.display = "flex";
 
       // Homepage diff is 0 right after reset

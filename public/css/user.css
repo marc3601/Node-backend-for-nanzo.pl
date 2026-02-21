@@ -1385,6 +1385,8 @@ a {
   border-radius: 0 6px 6px 0;
   padding: 4px 10px;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  word-break: keep-all;
 }
 
 @media (min-width: 800px) {
