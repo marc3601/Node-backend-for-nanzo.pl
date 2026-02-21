@@ -1303,3 +1303,153 @@ h3 {
 a {
   text-decoration: none;
 }
+
+/* ===== NEW: popular_headline control buttons ===== */
+.popular_headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0.6rem;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  margin: 0 auto 1rem;
+}
+
+.popular_headline h2 {
+  font-size: 1.1rem;
+  flex: 1;
+  text-align: center;
+}
+
+.popular_ctrl_btn {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.reset_btn {
+  background: rgba(210, 115, 3, 0.15);
+  color: #7b4505;
+  border: 1px solid rgba(210, 115, 3, 0.3);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.reset_btn.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.reset_btn:hover {
+  background: rgba(210, 115, 3, 0.3);
+  box-shadow: 0 2px 6px rgba(210, 115, 3, 0.2);
+}
+
+.toggle_btn {
+  background: #d27303;
+  color: white;
+  border: 1px solid #b86202;
+  box-shadow: 0 2px 6px rgba(210, 115, 3, 0.3);
+}
+
+.toggle_btn:hover {
+  background: #b86202;
+  box-shadow: 0 3px 10px rgba(210, 115, 3, 0.4);
+}
+
+.toggle_btn.active {
+  background: #7b4505;
+  border-color: #5a3204;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Reset date label shown under headline when reset view is active */
+.reset_label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: #7b4505;
+  background: rgba(255,255,255,0.5);
+  border-left: 3px solid #d27303;
+  border-radius: 0 6px 6px 0;
+  padding: 4px 10px;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 800px) {
+  .reset_label {
+    font-size: 0.9rem;
+    padding: 6px 14px;
+  }
+}
+
+@media (min-width: 1150px) {
+  .reset_label {
+    font-size: 1rem;
+    padding: 7px 16px;
+  }
+}
+
+.reset_label_dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d27303;
+  flex-shrink: 0;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+@media (max-width: 600px) {
+  .popular_ctrl_btn {
+    font-size: 0.6rem;
+    padding: 4px 7px;
+  }
+
+  .popular_headline h2 {
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 800px) {
+  .popular_ctrl_btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+/* ===== BETA badge ===== */
+.popular_pages {
+  position: relative;
+}
+
+.beta_badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: linear-gradient(135deg, #d27303 0%, #e68404 100%);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(210, 115, 3, 0.4);
+  pointer-events: none;
+  z-index: 10;
+}

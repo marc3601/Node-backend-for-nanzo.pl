@@ -100,16 +100,26 @@
           </div>
         </div>
       </div>
-      
+
 <!-- Popular Pages Section -->
       <div class="container">
-        <div class="popular_pages">
+        <div class="popular_pages" id="popularPages">
+          <div class="beta_badge" id="betaBadge" style="display:none;">BETA</div>
           <div class="popular_headline">
+            <button class="popular_ctrl_btn reset_btn" id="popularResetBtn" title="Ustaw punkt startowy dla testu wyświetleń">Reset</button>
             <h2>10 najpopularniejszych stron</h2>
+            <button class="popular_ctrl_btn toggle_btn" id="popularToggleBtn">Test wyświetleń</button>
           </div>
+
+          <!-- Reset date label (hidden until reset is pressed) -->
+          <div class="reset_label" id="resetLabel" style="display:none;">
+            <span class="reset_label_dot"></span>
+            <span id="resetLabelText"></span>
+          </div>
+
           <div class="popular_container">
             <!-- Homepage Card -->
-            <div class="homepage_section">
+            <div class="homepage_section" id="homepageSection" data-views="<%= data.homepageViews %>">
               <a href="https://noanzo.pl" target="_blank" class="popular_item homepage_card">
                 <div class="popular_rank">★</div>
                 <div class="popular_thumbnail homepage_thumbnail">
@@ -121,7 +131,7 @@
                 </div>
                 <div class="popular_info">
                   <div class="popular_title">Strona główna noanzo.pl</div>
-                  <div class="popular_views"><span><%= data.homepageViews; %></span></div>
+                  <div class="popular_views" id="homepageViewsDisplay"></div>
                 </div>
               </a>
             </div>
@@ -130,9 +140,9 @@
             <div class="popular_divider">
               <div class="divider_line"></div>
             </div>
-            
-            <div class="popular_list">
-              <!-- Loading placeholders -->
+
+            <!-- Main list (od 01.02.2026) -->
+            <div class="popular_list" id="popularListMain">
               <div class="popular_item skeleton">
                 <div class="popular_rank">1</div>
                 <div class="popular_thumbnail skeleton-img"></div>
@@ -158,6 +168,35 @@
                 </div>
               </div>
             </div>
+
+            <!-- Test wyświetleń list (od daty resetu) — hidden by default -->
+            <div class="popular_list" id="popularListReset" style="display:none;">
+              <div class="popular_item skeleton">
+                <div class="popular_rank">1</div>
+                <div class="popular_thumbnail skeleton-img"></div>
+                <div class="popular_info">
+                  <div class="skeleton-text skeleton-title"></div>
+                  <div class="skeleton-text skeleton-views"></div>
+                </div>
+              </div>
+              <div class="popular_item skeleton">
+                <div class="popular_rank">2</div>
+                <div class="popular_thumbnail skeleton-img"></div>
+                <div class="popular_info">
+                  <div class="skeleton-text skeleton-title"></div>
+                  <div class="skeleton-text skeleton-views"></div>
+                </div>
+              </div>
+              <div class="popular_item skeleton">
+                <div class="popular_rank">3</div>
+                <div class="popular_thumbnail skeleton-img"></div>
+                <div class="popular_info">
+                  <div class="skeleton-text skeleton-title"></div>
+                  <div class="skeleton-text skeleton-views"></div>
+                </div>
+              </div>
+            </div>
+
            <div class="popular_footer">
               <div class="popular_info_note">
                 <svg class="info_icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -166,7 +205,7 @@
                 </svg>
                 <div class="info_text">
                   <p>Wyświetlenia dotyczą wszystkich wejść na strony.</p>
-                   <p>Dane zbierane od 01.02.2026.</p>
+                   <p id="dataCollectedNote">Dane zbierane od 01.02.2026.</p>
                   <p>Aktualizacja co 10 minut.</p>
                 </div>
               </div>

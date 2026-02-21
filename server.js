@@ -27,6 +27,8 @@ const image = require("./routes/image");
 const latestAuction = require("./routes/latestAuction");
 const favicon = require("./routes/favicon");
 const editAuction = require("./routes/editAuction");
+const snapshotRoutes = require("./routes/snapshotRoutes");
+
 const analitics = require("./routes/analitics");
 const uploadImages = require("./routes/uploadImages");
 const fastPriceEditor = require("./routes/fastPriceEditor");
@@ -128,6 +130,7 @@ app.post("/analitics", viewCounter, analitics);
 app.post("/upload", authenticateTokenForUpload, cpUpload, uploadImages);
 app.post("/api/promotion",authenticateToken, promotion);
 app.get("/api/most-popular-keywords", authenticateToken, mostPopularKeywords);
+app.use("/api/snapshot", authenticateToken, snapshotRoutes);
 
 app.get("*", async (req, res) => {
   res.status(404).json({ error: "Podana strona nie istnieje." });
