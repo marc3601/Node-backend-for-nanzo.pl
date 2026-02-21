@@ -23,6 +23,24 @@ const daysColumns = [mondays, tuesdays, wednesdays, thursdays, fridays, saturday
 const daysNames = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sb", "Ndz"];
 const ranges = ["6-8", "9-11", "12-14", "15-17", "18-20", "21-23"];
 
+// ─── TimeAgo (Polish) ────────────────────────────────────────────────────────
+const timeAgo = (date) => {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60)   return 'przed chwilą';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60)   return minutes === 1 ? 'minutę temu' : (minutes < 5 ? `${minutes} minuty temu` : `${minutes} minut temu`);
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24)     return hours === 1 ? 'godzinę temu' : (hours < 5 ? `${hours} godziny temu` : `${hours} godzin temu`);
+  const days = Math.floor(hours / 24);
+  if (days < 7)       return days === 1 ? 'wczoraj' : `${days} dni temu`;
+  const weeks = Math.floor(days / 7);
+  if (weeks < 4)      return weeks === 1 ? 'tydzień temu' : `${weeks} tygodnie temu`;
+  const months = Math.floor(days / 30);
+  if (months < 12)    return months === 1 ? 'miesiąc temu' : (months < 5 ? `${months} miesiące temu` : `${months} miesięcy temu`);
+  const years = Math.floor(days / 365);
+  return years === 1 ? 'rok temu' : `${years} lata temu`;
+};
+
 let dataToBuildGraph = {};
 let graphData = { labels: [], data: [] };
 let arrowFlag = "none";
@@ -300,7 +318,7 @@ const fetchDiffPages = (auctionsLink, listEl) => {
 
   Promise.all([
     axios.get(auctionsLink),
-    axios.get("https://admin.noanzo.pl/api/snapshot/latest"),
+    axios.get("https://admin.noanzo.pl/api/snapshot/latest", { withCredentials: true }),
   ])
     .then(([auctionsRes, snapshotRes]) => {
       const auctions = auctionsRes.data;
@@ -339,7 +357,7 @@ const fetchDiffPages = (auctionsLink, listEl) => {
       });
     })
     .catch((err) => {
-      console.error("fetchDiffPages error:", err.message);
+      console.error("fetchDiffPages error:", err.response?.status, err.response?.data, err);
       if (err.response?.status === 404) {
         listEl.innerHTML = '<div class="popular_empty">Brak resetu — kliknij "Reset" aby rozpocząć test</div>';
       } else {
@@ -372,11 +390,13 @@ let popularView = "main";
 
 const formatResetDate = (date) => {
   const pad = (n) => String(n).padStart(2, "0");
-  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  const absolute = `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  const relative = timeAgo(date);
+  return `${absolute} (${relative})`;
 };
 
 // Restore reset label from backend on page load
-axios.get("https://admin.noanzo.pl/api/snapshot/latest")
+axios.get("https://admin.noanzo.pl/api/snapshot/latest", { withCredentials: true })
   .then((res) => {
     resetLabelText.textContent = `Test wyświetleń od: ${formatResetDate(new Date(res.data.createdAt))}`;
   })
@@ -402,7 +422,7 @@ popularToggleBtn.addEventListener("click", () => {
     homepageViewsDisplay.innerHTML = '<span class="homepage_views_loading"></span>';
 
     // Fetch snapshot to get reset date label and homepage baseline
-    axios.get("https://admin.noanzo.pl/api/snapshot/latest")
+    axios.get("https://admin.noanzo.pl/api/snapshot/latest", { withCredentials: true })
       .then((res) => {
         resetLabelText.textContent = `Test wyświetleń od: ${formatResetDate(new Date(res.data.createdAt))}`;
         const homepageSnap = res.data.items.find((i) => i.id === "homepage");
@@ -479,7 +499,7 @@ popularResetBtn.addEventListener("click", () => {
       // Include homepage with a fixed id
       items.push({ id: "homepage", viewcount: homepageViewsAtLoad });
 
-      return axios.post("https://admin.noanzo.pl/api/snapshot", { items });
+      return axios.post("https://admin.noanzo.pl/api/snapshot", { items }, { withCredentials: true });
     })
     .then((res) => {
       const now = new Date(res.data.createdAt);
@@ -492,7 +512,7 @@ popularResetBtn.addEventListener("click", () => {
       popularListReset.innerHTML = '<div class="popular_empty">Brak nowych wyświetleń od czasu resetu</div>';
     })
     .catch((err) => {
-      console.error("Snapshot error:", err.message);
+      console.error("Snapshot error:", err.response?.status, err.response?.data, err);
       popularListReset.innerHTML = '<div class="popular_empty">Błąd podczas zapisywania resetu</div>';
     })
     .finally(() => {
