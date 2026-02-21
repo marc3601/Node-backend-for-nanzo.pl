@@ -271,7 +271,32 @@ const fetchPopularPages = (link, listEl) => {
  * Only items with viewcount > snapshot viewcount (i.e. new views since reset) are shown.
  */
 const fetchDiffPages = (auctionsLink, listEl) => {
-  listEl.innerHTML = '<div class="popular_empty">Ładowanie...</div>';
+  listEl.innerHTML = `
+    <div class="popular_item skeleton">
+      <div class="popular_rank"></div>
+      <div class="popular_thumbnail skeleton-img"></div>
+      <div class="popular_info">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-views"></div>
+      </div>
+    </div>
+    <div class="popular_item skeleton">
+      <div class="popular_rank"></div>
+      <div class="popular_thumbnail skeleton-img"></div>
+      <div class="popular_info">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-views"></div>
+      </div>
+    </div>
+    <div class="popular_item skeleton">
+      <div class="popular_rank"></div>
+      <div class="popular_thumbnail skeleton-img"></div>
+      <div class="popular_info">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-views"></div>
+      </div>
+    </div>
+  `;
 
   Promise.all([
     axios.get(auctionsLink),
@@ -373,6 +398,9 @@ popularToggleBtn.addEventListener("click", () => {
 
     resetLabel.style.display = "flex";
 
+    // Show shimmer while fetching snapshot
+    homepageViewsDisplay.innerHTML = '<span class="homepage_views_loading"></span>';
+
     // Fetch snapshot to get reset date label and homepage baseline
     axios.get("https://admin.noanzo.pl/api/snapshot/latest")
       .then((res) => {
@@ -407,9 +435,36 @@ popularToggleBtn.addEventListener("click", () => {
 });
 
 popularResetBtn.addEventListener("click", () => {
+  if (!confirm("Potwierdź reset")) return;
   popularResetBtn.disabled = true;
-  popularResetBtn.textContent = "...";
-  popularListReset.innerHTML = '<div class="popular_empty">Zapisywanie resetu...</div>';
+  popularResetBtn.innerHTML = '<span class="dot-flashing"><span></span><span></span><span></span></span>';
+  popularToggleBtn.classList.add("disabled");
+  popularListReset.innerHTML = `
+    <div class="popular_item skeleton">
+      <div class="popular_rank"></div>
+      <div class="popular_thumbnail skeleton-img"></div>
+      <div class="popular_info">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-views"></div>
+      </div>
+    </div>
+    <div class="popular_item skeleton">
+      <div class="popular_rank"></div>
+      <div class="popular_thumbnail skeleton-img"></div>
+      <div class="popular_info">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-views"></div>
+      </div>
+    </div>
+    <div class="popular_item skeleton">
+      <div class="popular_rank"></div>
+      <div class="popular_thumbnail skeleton-img"></div>
+      <div class="popular_info">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-views"></div>
+      </div>
+    </div>
+  `;
 
   // First fetch the current state of all auctions so we have real viewcounts,
   // then POST them to the backend as the snapshot baseline.
@@ -443,6 +498,7 @@ popularResetBtn.addEventListener("click", () => {
     .finally(() => {
       popularResetBtn.disabled = false;
       popularResetBtn.textContent = "Reset";
+      popularToggleBtn.classList.remove("disabled");
     });
 });
 

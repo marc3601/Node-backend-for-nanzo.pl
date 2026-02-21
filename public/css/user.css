@@ -1442,14 +1442,84 @@ a {
   position: absolute;
   top: -10px;
   right: -10px;
-  background: linear-gradient(135deg, #d27303 0%, #e68404 100%);
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
   color: white;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 20px;
-  box-shadow: 0 2px 6px rgba(210, 115, 3, 0.4);
+  box-shadow: 0 2px 6px rgba(197, 48, 48, 0.5);
   pointer-events: none;
   z-index: 10;
+}
+
+@media (min-width: 800px) {
+  .beta_badge {
+    font-size: 0.65rem;
+    padding: 3px 9px;
+    top: -11px;
+    right: -11px;
+  }
+}
+
+@media (min-width: 1150px) {
+  .beta_badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    top: -12px;
+    right: -12px;
+  }
+}
+
+/* ===== Homepage views shimmer placeholder ===== */
+.homepage_views_loading {
+  display: inline-block;
+  width: 100px;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(210, 115, 3, 0.1) 0%,
+    rgba(210, 115, 3, 0.25) 50%,
+    rgba(210, 115, 3, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  vertical-align: middle;
+}
+
+/* ===== Reset button loading dots ===== */
+.dot-flashing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.dot-flashing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #7b4505;
+  animation: dotWave 1s infinite ease-in-out;
+}
+
+.dot-flashing span:nth-child(1) { animation-delay: 0s; }
+.dot-flashing span:nth-child(2) { animation-delay: 0.15s; }
+.dot-flashing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dotWave {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50%       { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ===== Toggle button disabled state during reset ===== */
+.toggle_btn.disabled {
+  background: #e8a84a;
+  border-color: #d4963a;
+  box-shadow: none;
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.6;
 }
