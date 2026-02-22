@@ -28,7 +28,13 @@ const timeAgo = (date) => {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
   if (seconds < 60)   return 'przed chwilą';
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60)   return minutes === 1 ? 'minutę temu' : (minutes < 5 ? `${minutes} minuty temu` : `${minutes} minut temu`);
+  if (minutes < 60) {
+    if (minutes === 1) return 'minutę temu';
+    const m = minutes % 10;
+    const m100 = minutes % 100;
+    if (m >= 2 && m <= 4 && (m100 < 10 || m100 >= 20)) return `${minutes} minuty temu`;
+    return `${minutes} minut temu`;
+  }
   const hours = Math.floor(minutes / 60);
   if (hours < 24)     return hours === 1 ? 'godzinę temu' : (hours < 5 ? `${hours} godziny temu` : `${hours} godzin temu`);
   const days = Math.floor(hours / 24);
