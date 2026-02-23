@@ -47,7 +47,7 @@ const timeAgo = (date) => {
   if (days < 7)       return `${days} ${days === 1 ? 'dzień' : 'dni'} temu`;
   const weeks = Math.floor(days / 7);
   if (weeks < 4)      return weeks === 1 ? 'tydzień temu' : `${weeks} tygodnie temu`;
-  const months = Math.floor(days / 30);
+  const months = Math.max(1, Math.floor(days / 30));
   if (months < 12)    return months === 1 ? 'miesiąc temu' : (months < 5 ? `${months} miesiące temu` : `${months} miesięcy temu`);
   const years = Math.floor(days / 365);
   return years === 1 ? 'rok temu' : `${years} lata temu`;
