@@ -713,6 +713,97 @@ h3 {
   border: 1px solid rgba(210, 115, 3, 0.1);
 }
 
+.google_source_badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: default;
+}
+
+/* ===== Facebook source badge on user_badge ===== */
+
+.facebook_source_badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: default;
+}
+
+@media (max-width: 600px) {
+  .facebook_source_badge {
+    width: 22px;
+    height: 22px;
+    top: 7px;
+    right: 7px;
+  }
+
+  .facebook_source_badge svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (min-width: 800px) {
+  .facebook_source_badge {
+    width: 28px;
+    height: 28px;
+    top: 12px;
+    right: 12px;
+  }
+
+  .facebook_source_badge svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .google_source_badge {
+    width: 22px;
+    height: 22px;
+    top: 7px;
+    right: 7px;
+  }
+
+  .google_source_badge svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (min-width: 800px) {
+  .google_source_badge {
+    width: 28px;
+    height: 28px;
+    top: 12px;
+    right: 12px;
+  }
+
+  .google_source_badge svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+
 .flag_section {
   padding: 1rem;
   display: flex;
