@@ -15,7 +15,7 @@ const viewCounter = async (req, res, next) => {
     
     if (url) {
       // Create a hash key for this URL (using the URL as key)
-      const urlKey = `url:${url}`;
+      const urlKey = `url:${new URL(url).origin + new URL(url).pathname}`;
       
       // Check if URL exists, if not initialize it
       const exists = await client.exists(urlKey);
